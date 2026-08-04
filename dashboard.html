@@ -44,6 +44,11 @@ body{
 </head>
 
 <body>
+<script>
+if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "index.html";
+}
+</script>
 
 <div class="header">
 <h1>APEX BANK</h1>
