@@ -1,23 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Apex Wallet</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Bank</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f7fb;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:90%;
+max-width:400px;
+background:white;
+padding:30px;
+border-radius:18px;
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+.logo{
+text-align:center;
+font-size:30px;
+font-weight:bold;
+color:#003366;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#0056d6;
+color:white;
+border:none;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#003fa5;
+}
+
+.secure{
+text-align:center;
+margin-top:20px;
+color:#666;
+font-size:14px;
+}
+
+</style>
 </head>
+
 <body>
 
-<h1>APEX WALLET</h1>
-<h2>Your Trusted Digital Wallet</h2>
+<div class="container">
 
-<p>Welcome to Apex Wallet.</p>
+<div class="logo">APEX BANK</div>
 
-<input type="text" placeholder="Full Name"><br><br>
+<div class="subtitle">
+Secure Online Banking
+</div>
 
-<input type="email" placeholder="Email"><br><br>
+<input type="text" placeholder="Full Name">
 
-<input type="password" placeholder="Password"><br><br>
+<input type="email" placeholder="Email Address">
 
-<button>Create Account</button>
-<button>Login</button>
+<input type="password" placeholder="Password">
+
+<button>Sign In</button>
+
+<div class="secure">
+🔒 Protected by 256-bit encryption
+</div>
+
+</div>
 
 </body>
 </html>
