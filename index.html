@@ -90,19 +90,25 @@ font-size:14px;
 Secure Online Banking
 </div>
 
-<input type="text" placeholder="Full Name">
+<form id="loginForm">
+  <input type="email" id="email" placeholder="Email Address" required>
 
-<input type="email" placeholder="Email Address">
+  <input type="password" id="password" placeholder="Password" required>
 
-<input type="password" placeholder="Password">
-
-<button onclick="localStorage.setItem('loggedIn','true'); window.location.href='dashboard.html';">Sign In</button>
-
+  <button type="submit">Sign In</button>
+</form>
 <div class="secure">
 🔒 Protected by 256-bit encryption
 </div>
 
 </div>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
+    localStorage.setItem("loggedIn", "true");
+    window.location.href = "dashboard.html";
+});
+</script>
 </body>
 </html>
