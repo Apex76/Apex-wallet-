@@ -5,12 +5,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "YOUR_REAL_API_KEY",
+  authDomain: "apex-bank-6745c.firebaseapp.com",
+  projectId: "apex-bank-6745c",
+  storageBucket: "apex-bank-6745c.appspot.com",
+  messagingSenderId: "152191975529",
+  appId: "YOUR_REAL_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
