@@ -112,9 +112,21 @@ Secure Online Banking
 document.getElementById("loginForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    localStorage.setItem("loggedIn", "true");
-    window.location.href = "dashboard.html";
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    let savedEmail = localStorage.getItem("email");
+    let savedPassword = localStorage.getItem("password");
+
+    if (email === savedEmail && password === savedPassword) {
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Invalid email or password!");
+    }
 });
+
+
 </script>
 </body>
 </html>
