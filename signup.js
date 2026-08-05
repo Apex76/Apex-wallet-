@@ -20,7 +20,13 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
   const email = document.querySelector('input[type="email"]').value;
-  const password = document.querySelector('input[type="password"]').value;
+  const password = document.querySelectorAll('input[type="password"]')[0].value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
 
   createUserWithEmailAndPassword(auth, email, password)
     .then(() => {
