@@ -77,6 +77,17 @@ color:#666;
 font-size:14px;
 }
 
+.link{
+text-align:center;
+margin-top:15px;
+}
+
+.link a{
+text-decoration:none;
+color:#0056d6;
+font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -113,7 +124,6 @@ Secure Online Banking
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
 import {
 getAuth,
 signInWithEmailAndPassword
@@ -131,29 +141,29 @@ appId: "1:152191975529:web:959ef05137a60e9ccda2f8"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-document.getElementById("loginForm").addEventListener("submit", (e) => {
+document.getElementById("loginForm").addEventListener("submit",(e)=>{
 
 e.preventDefault();
 
-const email = document.getElementById("email").value.trim();
-const password = document.getElementById("password").value;
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
 
-signInWithEmailAndPassword(auth, email, password)
+signInWithEmailAndPassword(auth,email,password)
 
-.then((userCredential) => {
+.then((userCredential)=>{
 
-localStorage.setItem("loggedIn", "true");
+localStorage.setItem("loggedIn","true");
 
 localStorage.setItem(
 "fullname",
 userCredential.user.displayName || "User"
 );
 
-window.location.href = "dashboard.html";
+window.location.href="dashboard2.html";
 
 })
 
-.catch((error) => {
+.catch((error)=>{
 
 alert(error.message);
 
