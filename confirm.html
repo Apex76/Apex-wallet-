@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirm Transfer</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f7fb;
+}
+
+.header{
+background:#1f4ed8;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+background:white;
+width:90%;
+max-width:500px;
+margin:20px auto;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.info{
+margin:15px 0;
+font-size:18px;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#1f4ed8;
+color:white;
+border:none;
+border-radius:10px;
+font-size:17px;
+cursor:pointer;
+margin-top:20px;
+}
+
+a{
+display:block;
+text-align:center;
+margin-top:20px;
+text-decoration:none;
+color:#1f4ed8;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h2>Confirm Transfer</h2>
+</div>
+
+<div class="container">
+
+<div class="info"><strong>Recipient:</strong> <span id="recipient"></span></div>
+
+<div class="info"><strong>Account Number:</strong> <span id="account"></span></div>
+
+<div class="info"><strong>Bank:</strong> <span id="bank"></span></div>
+
+<div class="info"><strong>Country:</strong> <span id="country"></span></div>
+
+<div class="info"><strong>Amount:</strong> $<span id="amount"></span></div>
+
+<button onclick="window.location.href='cot.html'">
+Confirm Transfer
+</button>
+
+<a href="transfer.html">← Back</a>
+
+</div>
+
+<script>
+document.getElementById("recipient").innerHTML = localStorage.getItem("recipient");
+document.getElementById("account").innerHTML = localStorage.getItem("account");
+document.getElementById("bank").innerHTML = localStorage.getItem("bank");
+document.getElementById("country").innerHTML = localStorage.getItem("country");
+document.getElementById("amount").innerHTML = localStorage.getItem("amount");
+</script>
+
+</body>
+</html>
