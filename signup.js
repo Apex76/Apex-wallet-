@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import {
   getAuth,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  updateProfile
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -19,8 +20,9 @@ const auth = getAuth(app);
 document.getElementById("signupForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const email = document.querySelector('input[type="email"]').value;
-  const password = document.querySelectorAll('input[type="password"]')[0].value;
+  const fullname = document.getElementById("fullname").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
 
   if (password !== confirmPassword) {
@@ -29,6 +31,13 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
   }
 
   createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+
+      return updateProfile(userCredential.user, {
+        displayName: fullname
+      });
+
+    })
     .then(() => {
       alert("Account created successfully!");
       window.location.href = "index.html";
