@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transfer Money</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+}
+
+.header{
+    background:#1f4ed8;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.container{
+    background:white;
+    width:90%;
+    max-width:500px;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+input,select{
+    width:100%;
+    padding:14px;
+    margin-top:12px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    box-sizing:border-box;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#1f4ed8;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#153ba7;
+}
+
+.back{
+    display:block;
+    text-align:center;
+    margin-top:20px;
+    color:#1f4ed8;
+    text-decoration:none;
+    font-weight:bold;
+}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+<h2>Transfer Money</h2>
+</div>
+
+<div class="container">
+
+<input type="text" placeholder="Recipient Account Number">
+
+<input type="text" placeholder="Recipient Name">
+
+<input type="text" placeholder="Bank Name">
+
+<input type="text" placeholder="Country">
+
+<input type="number" placeholder="Amount (USD)">
+
+<input type="password" placeholder="Enter COT Code">
+
+<button onclick="alert('Transfer Failed: Invalid COT Code')">
+Send Money
+</button>
+
+<a href="dashboard.html" class="back">← Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
