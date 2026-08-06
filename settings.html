@@ -28,9 +28,16 @@ body{
 }
 
 .item{
+    display:block;
     padding:15px 0;
     border-bottom:1px solid #ddd;
     font-size:18px;
+    text-decoration:none;
+    color:#000;
+}
+
+.item:hover{
+    color:#1f4ed8;
 }
 
 .btn{
@@ -55,11 +62,15 @@ body{
 
 <div class="card">
 
-<div class="item">👤 Profile</div>
-<div class="item">🔒 Change Password</div>
-<div class="item">🌐 Language</div>
-<div class="item">🔔 Notifications</div>
-<div class="item">📞 Contact Support</div>
+<a href="profile.html" class="item">👤 Profile</a>
+
+<a href="password.html" class="item">🔒 Change Password</a>
+
+<a href="language.html" class="item">🌐 Language</a>
+
+<a href="notification.html" class="item">🔔 Notifications</a>
+
+<a href="support.html" class="item">📞 Contact Support</a>
 
 <a href="dashboard.html" class="btn">Back to Dashboard</a>
 
