@@ -81,7 +81,9 @@ if(!localStorage.getItem("loggedIn")){
 
 <div class="header">
 
-<img src="https://i.imgur.com/4Z7bKQp.png" class="profile-pic">
+<img id="profilePic"
+src="https://i.imgur.com/4Z7bKQp.png"
+class="profile-pic">
 
 <div class="name" id="welcomeName">
 Welcome 👋
@@ -118,11 +120,19 @@ Settings
 </div>
 
 <script>
+// Show user's name
 const fullname = localStorage.getItem("fullname");
 
 if(fullname){
     document.getElementById("welcomeName").innerHTML =
     "Welcome, " + fullname + " 👋";
+}
+
+// Show saved profile picture
+const savedImage = localStorage.getItem("profileImage");
+
+if(savedImage){
+    document.getElementById("profilePic").src = savedImage;
 }
 </script>
 
