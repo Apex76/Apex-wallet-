@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+}
+
+.header{
+    background:#1f4ed8;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+.container{
+    width:90%;
+    max-width:450px;
+    margin:20px auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    text-align:center;
+}
+
+img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:4px solid #1f4ed8;
+    object-fit:cover;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    background:#1f4ed8;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:17px;
+    cursor:pointer;
+}
+
+a{
+    display:block;
+    margin-top:20px;
+    text-decoration:none;
+    color:#1f4ed8;
+    font-weight:bold;
+}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+<h2>My Profile</h2>
+</div>
+
+<div class="container">
+
+<img id="profilePic" src="https://i.imgur.com/4Z7bKQp.png">
+
+<input type="file" id="imageUpload" accept="image/*">
+
+<h3 id="userName"></h3>
+
+<p id="userEmail"></p>
+
+<button onclick="saveProfile()">Save Profile</button>
+
+<a href="dashboard.html">← Back to Dashboard</a>
+
+</div>
+
+<script>
+document.getElementById("userName").innerHTML =
+localStorage.getItem("fullname") || "User";
+
+document.getElementById("userEmail").innerHTML =
+localStorage.getItem("email") || "";
+
+const savedImage = localStorage.getItem("profileImage");
+
+if(savedImage){
+    document.getElementById("profilePic").src = savedImage;
+}
+
+document.getElementById("imageUpload").addEventListener("change", function(){
+
+const file = this.files[0];
+
+if(file){
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+
+document.getElementById("profilePic").src = e.target.result;
+
+localStorage.setItem("profileImage", e.target.result);
+
+}
+
+reader.readAsDataURL(file);
+
+}
+
+});
+
+function saveProfile(){
+
+alert("Profile updated successfully!");
+
+}
+</script>
+
+</body>
+</html>
