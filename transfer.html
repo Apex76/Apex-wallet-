@@ -6,66 +6,68 @@
 <title>Transfer Money</title>
 
 <style>
+
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f4f7fb;
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f7fb;
 }
 
 .header{
-    background:#1f4ed8;
-    color:white;
-    text-align:center;
-    padding:20px;
+background:#1f4ed8;
+color:white;
+padding:20px;
+text-align:center;
 }
 
 .container{
-    background:white;
-    width:90%;
-    max-width:500px;
-    margin:20px auto;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
+background:white;
+width:90%;
+max-width:500px;
+margin:20px auto;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,select{
-    width:100%;
-    padding:14px;
-    margin-top:12px;
-    border:1px solid #ccc;
-    border-radius:10px;
-    box-sizing:border-box;
-    font-size:16px;
+input{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:1px solid #ccc;
+border-radius:10px;
+box-sizing:border-box;
+font-size:16px;
 }
 
 button{
-    width:100%;
-    padding:15px;
-    margin-top:20px;
-    border:none;
-    border-radius:10px;
-    background:#1f4ed8;
-    color:white;
-    font-size:17px;
-    cursor:pointer;
+width:100%;
+padding:15px;
+margin-top:20px;
+background:#1f4ed8;
+color:white;
+border:none;
+border-radius:10px;
+font-size:17px;
+cursor:pointer;
 }
 
 button:hover{
-    background:#153ba7;
+background:#153ba7;
 }
 
 .back{
-    display:block;
-    text-align:center;
-    margin-top:20px;
-    color:#1f4ed8;
-    text-decoration:none;
-    font-weight:bold;
+display:block;
+text-align:center;
+margin-top:20px;
+color:#1f4ed8;
+text-decoration:none;
+font-weight:bold;
 }
-</style>
 
+</style>
 </head>
+
 <body>
 
 <div class="header">
@@ -74,25 +76,50 @@ button:hover{
 
 <div class="container">
 
-<input type="text" placeholder="Recipient Account Number">
+<input type="text" id="recipient" placeholder="Recipient Name" required>
 
-<input type="text" placeholder="Recipient Name">
+<input type="text" id="account" placeholder="Account Number" required>
 
-<input type="text" placeholder="Bank Name">
+<input type="text" id="bank" placeholder="Bank Name" required>
 
-<input type="text" placeholder="Country">
+<input type="text" id="country" placeholder="Country" required>
 
-<input type="number" placeholder="Amount (USD)">
+<input type="number" id="amount" placeholder="Amount (USD)" required>
 
-<input type="password" placeholder="Enter COT Code">
-
-<button onclick="alert('Transfer Failed: Invalid COT Code')">
-Send Money
+<button onclick="continueTransfer()">
+Continue
 </button>
 
-<a href="dashboard.html" class="back">← Back to Dashboard</a>
+<a href="dashboard.html" class="back">
+← Back to Dashboard
+</a>
 
 </div>
+
+<script>
+
+function continueTransfer(){
+
+localStorage.setItem("recipient",
+document.getElementById("recipient").value);
+
+localStorage.setItem("account",
+document.getElementById("account").value);
+
+localStorage.setItem("bank",
+document.getElementById("bank").value);
+
+localStorage.setItem("country",
+document.getElementById("country").value);
+
+localStorage.setItem("amount",
+document.getElementById("amount").value);
+
+window.location.href="confirm.html";
+
+}
+
+</script>
 
 </body>
 </html>
