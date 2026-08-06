@@ -45,6 +45,14 @@ button:hover{
     background:#153ba7;
 }
 
+.current{
+    text-align:center;
+    font-size:18px;
+    margin-bottom:20px;
+    color:#1f4ed8;
+    font-weight:bold;
+}
+
 a{
     display:block;
     text-align:center;
@@ -65,6 +73,8 @@ a{
 
 <div class="container">
 
+<div class="current" id="currentLanguage"></div>
+
 <button onclick="saveLanguage('English')">🇺🇸 English</button>
 
 <button onclick="saveLanguage('Español')">🇪🇸 Español</button>
@@ -82,11 +92,48 @@ a{
 </div>
 
 <script>
-function saveLanguage(language){
-    localStorage.setItem("language", language);
-    alert("Language changed to " + language);
-    window.location.href="settings.html";
+
+// Detect browser language the first time
+if(!localStorage.getItem("language")){
+
+    const browser = navigator.language.toLowerCase();
+
+    if(browser.startsWith("pt")){
+        localStorage.setItem("language","Português");
+    }
+    else if(browser.startsWith("es")){
+        localStorage.setItem("language","Español");
+    }
+    else if(browser.startsWith("fr")){
+        localStorage.setItem("language","Français");
+    }
+    else if(browser.startsWith("de")){
+        localStorage.setItem("language","Deutsch");
+    }
+    else if(browser.startsWith("it")){
+        localStorage.setItem("language","Italiano");
+    }
+    else{
+        localStorage.setItem("language","English");
+    }
+
 }
+
+// Show current language
+document.getElementById("currentLanguage").innerHTML =
+"Current Language: " + localStorage.getItem("language");
+
+// Save language
+function saveLanguage(language){
+
+    localStorage.setItem("language",language);
+
+    alert("Language changed to " + language);
+
+    location.reload();
+
+}
+
 </script>
 
 </body>
