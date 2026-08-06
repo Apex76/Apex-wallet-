@@ -91,14 +91,15 @@ Secure Online Banking
 </div>
 
 <form id="loginForm">
-  <input type="email" id="email" placeholder="Email Address" required>
 
-  <input type="password" id="password" placeholder="Password" required>
+<input type="email" id="email" placeholder="Email Address" required>
 
-  <button type="submit">Sign In</button>
+<input type="password" id="password" placeholder="Password" required>
+
+<button type="submit">Sign In</button>
 
 <div class="link">
-    <a href="signup.html">Create Account</a>
+<a href="signup.html">Create Account</a>
 </div>
 
 </form>
@@ -108,40 +109,59 @@ Secure Online Banking
 </div>
 
 </div>
+
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
 import {
-  getAuth,
-  signInWithEmailAndPassword
+getAuth,
+signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBvC9ED0-sEEziluox2oG9FZdlbyIttPzU",
-  authDomain: "apex-bank-6745c.firebaseapp.com",
-  projectId: "apex-bank-6745c",
-  storageBucket: "apex-bank-6745c.appspot.com",
-  messagingSenderId: "152191975529",
-  appId: "1:152191975529:web:959ef05137a60e9ccda2f8"
+apiKey: "AIzaSyBvC9ED0-sEEziluox2oG9FZdlbyIttPzU",
+authDomain: "apex-bank-6745c.firebaseapp.com",
+projectId: "apex-bank-6745c",
+storageBucket: "apex-bank-6745c.appspot.com",
+messagingSenderId: "152191975529",
+appId: "1:152191975529:web:959ef05137a60e9ccda2f8"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 document.getElementById("loginForm").addEventListener("submit", (e) => {
-  e.preventDefault();
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+e.preventDefault();
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      window.location.href = "dashboard.html";
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth, email, password)
+
+.then((userCredential) => {
+
+localStorage.setItem("loggedIn", "true");
+
+localStorage.setItem(
+"fullname",
+userCredential.user.displayName || "User"
+);
+
+window.location.href = "dashboard.html";
+
+})
+
+.catch((error) => {
+
+alert(error.message);
+
+});
+
 });
 
 </script>
+
 </body>
 </html>
