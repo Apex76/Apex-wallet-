@@ -83,7 +83,7 @@ if(!localStorage.getItem("loggedIn")){
 
 <img src="https://i.imgur.com/4Z7bKQp.png" class="profile-pic">
 
-<div class="name">
+<div class="name" id="welcomeName">
 Welcome 👋
 </div>
 
@@ -116,6 +116,15 @@ Settings
 </a>
 
 </div>
+
+<script>
+const fullname = localStorage.getItem("fullname");
+
+if(fullname){
+    document.getElementById("welcomeName").innerHTML =
+    "Welcome, " + fullname + " 👋";
+}
+</script>
 
 </body>
 </html>
