@@ -1,5 +1,4 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -22,12 +21,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 document.getElementById("signupForm").addEventListener("submit", async (e) => {
-
   e.preventDefault();
 
   const fullname = document.getElementById("fullname").value.trim();
@@ -41,7 +38,6 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   }
 
   try {
-
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
     await updateProfile(userCredential.user, {
@@ -51,20 +47,15 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
     await setDoc(doc(db, "users", userCredential.user.uid), {
       fullname: fullname,
       email: email,
-      balance: 0,
-      createdAt: new Date().toISOString()
+      balance: 0
     });
 
     localStorage.setItem("fullname", fullname);
 
     alert("Account created successfully!");
-
     window.location.href = "index.html";
 
   } catch (error) {
-
     alert(error.message);
-
   }
-
 });
