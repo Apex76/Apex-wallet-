@@ -39,8 +39,13 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
 
     })
     .then(() => {
+
+      // Save the user's name for the dashboard
+      localStorage.setItem("fullname", fullname);
+
       alert("Account created successfully!");
       window.location.href = "index.html";
+
     })
     .catch((error) => {
       alert(error.message);
