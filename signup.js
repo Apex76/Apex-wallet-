@@ -1,9 +1,16 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBvC9ED0-sEEziluox2oG9FZdlbyIttPzU",
@@ -15,9 +22,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 
-document.getElementById("signupForm").addEventListener("submit", (e) => {
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+
   e.preventDefault();
 
   const fullname = document.getElementById("fullname").value.trim();
@@ -30,24 +40,31 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
     return;
   }
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+  try {
 
-      return updateProfile(userCredential.user, {
-        displayName: fullname
-      });
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    })
-    .then(() => {
-
-      // Save the user's name for the dashboard
-      localStorage.setItem("fullname", fullname);
-
-      alert("Account created successfully!");
-      window.location.href = "index.html";
-
-    })
-    .catch((error) => {
-      alert(error.message);
+    await updateProfile(userCredential.user, {
+      displayName: fullname
     });
+
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      fullname: fullname,
+      email: email,
+      balance: 0,
+      createdAt: new Date().toISOString()
+    });
+
+    localStorage.setItem("fullname", fullname);
+
+    alert("Account created successfully!");
+
+    window.location.href = "index.html";
+
+  } catch (error) {
+
+    alert(error.message);
+
+  }
+
 });
