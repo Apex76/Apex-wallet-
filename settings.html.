@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+}
+
+.header{
+    background:#1f4ed8;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    margin:20px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.item{
+    padding:15px 0;
+    border-bottom:1px solid #ddd;
+}
+
+.item:last-child{
+    border-bottom:none;
+}
+
+a{
+    text-decoration:none;
+    color:#1f4ed8;
+    font-weight:bold;
+}
+
+.back{
+    display:block;
+    width:90%;
+    max-width:350px;
+    margin:20px auto;
+    text-align:center;
+    background:#1f4ed8;
+    color:white;
+    padding:15px;
+    border-radius:10px;
+    text-decoration:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h2>Settings</h2>
+</div>
+
+<div class="card">
+
+<div class="item">
+<strong>Profile</strong><br>
+View your account information
+</div>
+
+<div class="item">
+<strong>Security</strong><br>
+Change your password
+</div>
+
+<div class="item">
+<strong>Notifications</strong><br>
+Manage alerts
+</div>
+
+<div class="item">
+<strong>Language</strong><br>
+English
+</div>
+
+<div class="item">
+<strong>Support</strong><br>
+Contact customer support
+</div>
+
+</div>
+
+<a href="dashboard.html" class="back">← Back to Dashboard</a>
+
+</body>
+</html>
