@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Virtual Card</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+background:#eef3ff;
+font-family:Arial,sans-serif;
+}
+
+.header{
+background:#1f4ed8;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.card{
+width:90%;
+max-width:380px;
+margin:30px auto;
+padding:25px;
+border-radius:20px;
+background:linear-gradient(135deg,#1f4ed8,#4c7dff);
+color:white;
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.bank{
+font-size:24px;
+font-weight:bold;
+margin-bottom:30px;
+}
+
+.chip{
+font-size:38px;
+margin-bottom:20px;
+}
+
+.number{
+font-size:24px;
+letter-spacing:4px;
+margin-bottom:20px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+font-size:15px;
+}
+
+.name{
+margin-top:30px;
+font-size:18px;
+font-weight:bold;
+}
+
+.logo{
+text-align:right;
+font-size:32px;
+margin-top:15px;
+}
+
+.back{
+display:block;
+width:90%;
+max-width:350px;
+margin:20px auto;
+background:#1f4ed8;
+color:white;
+padding:15px;
+text-align:center;
+text-decoration:none;
+border-radius:12px;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h2>Demo Virtual Card</h2>
+</div>
+
+<div class="card">
+
+<div class="bank">
+APEX BANK
+</div>
+
+<div class="chip">
+💳
+</div>
+
+<div class="number">
+**** **** **** 4587
+</div>
+
+<div class="row">
+<div>
+VALID THRU<br>
+08/30
+</div>
+
+<div>
+CVV<br>
+***
+</div>
+</div>
+
+<div class="name" id="cardName">
+USER
+</div>
+
+<div class="logo">
+<i class="fa-brands fa-cc-visa"></i>
+</div>
+
+</div>
+
+<a href="dashboard.html" class="back">
+← Back to Dashboard
+</a>
+
+<script>
+
+const fullname=localStorage.getItem("fullname");
+
+if(fullname){
+document.getElementById("cardName").innerHTML=fullname.toUpperCase();
+}
+
+</script>
+
+</body>
+</html>
