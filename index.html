@@ -108,24 +108,39 @@ Secure Online Banking
 </div>
 
 </div>
-<script>
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
+const firebaseConfig = {
+  apiKey: "AIzaSyBvC9ED0-sEEziluox2oG9FZdlbyIttPzU",
+  authDomain: "apex-bank-6745c.firebaseapp.com",
+  projectId: "apex-bank-6745c",
+  storageBucket: "apex-bank-6745c.appspot.com",
+  messagingSenderId: "152191975529",
+  appId: "1:152191975529:web:959ef05137a60e9ccda2f8"
+};
 
-    let savedEmail = localStorage.getItem("email");
-    let savedPassword = localStorage.getItem("password");
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-    if (email === savedEmail && password === savedPassword) {
-        localStorage.setItem("loggedIn", "true");
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Invalid email or password!");
-    }
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      window.location.href = "dashboard.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
 });
-
 
 </script>
 </body>
