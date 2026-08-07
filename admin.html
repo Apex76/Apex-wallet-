@@ -46,13 +46,15 @@ color:#0056d6;
 margin:15px 0 25px;
 }
 
-input{
+input,
+select{
 width:100%;
 padding:15px;
 margin-bottom:15px;
 border:1px solid #ccc;
 border-radius:10px;
 font-size:16px;
+background:white;
 }
 
 button{
@@ -69,6 +71,12 @@ cursor:pointer;
 
 button:hover{
 background:#003fa5;
+}
+
+#message{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
 }
 </style>
 
@@ -90,17 +98,202 @@ ADMIN DASHBOARD
 $999,999,999
 </div>
 
-<input type="email" id="userEmail" placeholder="User Email">
+<input
+type="email"
+id="userEmail"
+placeholder="User Email"
+required
+>
 
-<input type="number" id="amount" placeholder="Amount (USD)">
+<input
+type="number"
+id="amount"
+placeholder="Amount (USD)"
+min="0"
+step="0.01"
+required
+>
+
+<select id="action">
+<option value="credit">Credit User</option>
+<option value="debit">Debit User</option>
+</select>
 
 <button id="transferBtn">
 Transfer Money
 </button>
 
+<div id="message"></div>
+
 </div>
 
 </div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+query,
+where,
+getDocs,
+doc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+authDomain: "apex-wallet-2.firebaseapp.com",
+projectId: "apex-wallet-2",
+storageBucket: "apex-wallet-2.firebasestorage.app",
+messagingSenderId: "660772557652",
+appId: "1:660772557652:web:b9535515388134f8802ec1",
+measurementId: "G-KEJP4GN5VV"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+const transferBtn = document.getElementById("transferBtn");
+
+const message = document.getElementById("message");
+
+
+transferBtn.addEventListener("click", async () => {
+
+const email = document.getElementById("userEmail").value.trim();
+
+const amount = Number(document.getElementById("amount").value);
+
+const action = document.getElementById("action").value;
+
+
+message.textContent = "";
+
+
+if(!email){
+
+message.textContent = "Enter the user's email.";
+
+return;
+
+}
+
+
+if(!amount || amount <= 0){
+
+message.textContent = "Enter a valid amount.";
+
+return;
+
+}
+
+
+transferBtn.disabled = true;
+
+transferBtn.textContent = "Processing...";
+
+
+try{
+
+
+const usersRef = collection(db, "users");
+
+const userQuery = query(
+usersRef,
+where("email", "==", email)
+);
+
+const snapshot = await getDocs(userQuery);
+
+
+if(snapshot.empty){
+
+message.textContent = "User not found.";
+
+transferBtn.disabled = false;
+
+transferBtn.textContent = "Transfer Money";
+
+return;
+
+}
+
+
+const userDoc = snapshot.docs[0];
+
+const userData = userDoc.data();
+
+
+const currentBalance = Number(userData.balance || 0);
+
+
+let newBalance;
+
+
+if(action === "credit"){
+
+newBalance = currentBalance + amount;
+
+}else{
+
+if(amount > currentBalance){
+
+message.textContent = "User does not have enough balance.";
+
+transferBtn.disabled = false;
+
+transferBtn.textContent = "Transfer Money";
+
+return;
+
+}
+
+newBalance = currentBalance - amount;
+
+}
+
+
+await updateDoc(
+doc(db, "users", userDoc.id),
+{
+balance: newBalance
+}
+);
+
+
+message.textContent =
+action === "credit"
+? `Success! User balance is now $${newBalance.toLocaleString("en-US",{minimumFractionDigits:2})}`
+: `Success! User balance is now $${newBalance.toLocaleString("en-US",{minimumFractionDigits:2})}`;
+
+
+document.getElementById("amount").value = "";
+
+
+}catch(error){
+
+console.error(error);
+
+message.textContent = "Transfer failed: " + error.message;
+
+}
+
+
+transferBtn.disabled = false;
+
+transferBtn.textContent = "Transfer Money";
+
+});
+
+</script>
 
 </body>
 </html>
