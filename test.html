@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firestore Test</title>
+</head>
+
+<body>
+
+<h2>Firestore Test</h2>
+
+<button id="saveBtn">Save Test User</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBvC9ED0-sEEziluox2oG9FZdlbyIttPzU",
+  authDomain: "apex-bank-6745c.firebaseapp.com",
+  projectId: "apex-bank-6745c",
+  storageBucket: "apex-bank-6745c.appspot.com",
+  messagingSenderId: "152191975529",
+  appId: "1:152191975529:web:959ef05137a60e9ccda2f8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("saveBtn").onclick = async () => {
+  try {
+    await setDoc(doc(db, "users", "testuser"), {
+      fullname: "Test User",
+      email: "test@example.com",
+      balance: 100
+    });
+
+    alert("Saved Successfully!");
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+</script>
+
+</body>
+</html>
