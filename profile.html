@@ -3,134 +3,343 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Profile</title>
+<title>Profile - Apex Bank</title>
 
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f4f7fb;
+background:#f4f7fb;
 }
 
 .header{
-    background:#1f4ed8;
-    color:white;
-    text-align:center;
-    padding:25px;
+background:#1f4ed8;
+color:white;
+padding:20px;
+text-align:center;
 }
 
-.container{
-    width:90%;
-    max-width:450px;
-    margin:20px auto;
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
-    text-align:center;
+.card{
+background:white;
+margin:20px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+text-align:center;
 }
 
-img{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    border:4px solid #1f4ed8;
-    object-fit:cover;
+.profilePic{
+width:140px;
+height:140px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #1f4ed8;
+margin-bottom:20px;
 }
 
 input{
-    width:100%;
-    padding:12px;
-    margin-top:15px;
-    border:1px solid #ccc;
-    border-radius:10px;
-    box-sizing:border-box;
+width:100%;
+padding:12px;
+margin:15px 0;
 }
 
 button{
-    width:100%;
-    padding:15px;
-    margin-top:20px;
-    background:#1f4ed8;
-    color:white;
-    border:none;
-    border-radius:10px;
-    font-size:17px;
-    cursor:pointer;
+width:100%;
+padding:15px;
+background:#1f4ed8;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
 }
 
-a{
-    display:block;
-    margin-top:20px;
-    text-decoration:none;
-    color:#1f4ed8;
-    font-weight:bold;
+#message{
+margin-top:15px;
+font-weight:bold;
+}
+
+.back{
+display:block;
+margin-top:15px;
+text-decoration:none;
+color:#1f4ed8;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="header">
 <h2>My Profile</h2>
 </div>
 
-<div class="container">
+<div class="card">
 
-<img id="profilePic" src="https://i.imgur.com/4Z7bKQp.png">
+<img
+id="profilePreview"
+class="profilePic"
+src=""
+alt="Profile Picture"
+>
 
-<input type="file" id="imageUpload" accept="image/*">
+<h3>Change Profile Picture</h3>
 
-<h3 id="userName"></h3>
+<input
+type="file"
+id="photoInput"
+accept="image/*"
+>
 
-<p id="userEmail"></p>
+<button id="saveBtn">
+Save Profile Picture
+</button>
 
-<button onclick="saveProfile()">Save Profile</button>
+<div id="message"></div>
 
-<a href="dashboard.html">← Back to Dashboard</a>
+<a href="dashboard2.html" class="back">
+Back to Dashboard
+</a>
 
 </div>
 
-<script>
-document.getElementById("userName").innerHTML =
-localStorage.getItem("fullname") || "User";
 
-document.getElementById("userEmail").innerHTML =
-localStorage.getItem("email") || "";
+<script type="module">
 
-const savedImage = localStorage.getItem("profileImage");
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
-if(savedImage){
-    document.getElementById("profilePic").src = savedImage;
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+authDomain: "apex-wallet-2.firebaseapp.com",
+projectId: "apex-wallet-2",
+storageBucket: "apex-wallet-2.firebasestorage.app",
+messagingSenderId: "660772557652",
+appId: "1:660772557652:web:b9535515388134f8802ec1",
+measurementId: "G-KEJP4GN5VV"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+const photoInput = document.getElementById("photoInput");
+const saveBtn = document.getElementById("saveBtn");
+const preview = document.getElementById("profilePreview");
+const message = document.getElementById("message");
+
+let currentUser = null;
+let selectedImage = null;
+
+
+// Check logged-in user
+onAuthStateChanged(auth, async (user) => {
+
+if(!user){
+
+window.location.href = "index.html";
+
+return;
+
 }
 
-document.getElementById("imageUpload").addEventListener("change", function(){
+currentUser = user;
 
-const file = this.files[0];
 
-if(file){
+// Load existing picture
+try{
 
-const reader = new FileReader();
+const userRef = doc(db, "users", user.uid);
 
-reader.onload = function(e){
+const userSnap = await getDoc(userRef);
 
-document.getElementById("profilePic").src = e.target.result;
+if(userSnap.exists()){
 
-localStorage.setItem("profileImage", e.target.result);
+const data = userSnap.data();
+
+if(data.profileImage){
+
+preview.src = data.profileImage;
 
 }
 
-reader.readAsDataURL(file);
+}
+
+}catch(error){
+
+console.error(error);
 
 }
 
 });
 
-function saveProfile(){
 
-alert("Profile updated successfully!");
+// Select picture
+photoInput.addEventListener("change", (event) => {
+
+const file = event.target.files[0];
+
+if(!file){
+return;
+}
+
+
+// Make sure it is an image
+if(!file.type.startsWith("image/")){
+
+message.textContent = "Please choose an image.";
+
+return;
 
 }
+
+
+// Compress image before saving
+const reader = new FileReader();
+
+reader.onload = (e) => {
+
+const image = new Image();
+
+image.onload = () => {
+
+const canvas = document.createElement("canvas");
+
+const maxSize = 400;
+
+let width = image.width;
+let height = image.height;
+
+
+if(width > height){
+
+if(width > maxSize){
+
+height = height * (maxSize / width);
+
+width = maxSize;
+
+}
+
+}else{
+
+if(height > maxSize){
+
+width = width * (maxSize / height);
+
+height = maxSize;
+
+}
+
+}
+
+
+canvas.width = width;
+canvas.height = height;
+
+
+const ctx = canvas.getContext("2d");
+
+ctx.drawImage(image, 0, 0, width, height);
+
+
+// Compressed image
+selectedImage = canvas.toDataURL("image/jpeg", 0.75);
+
+preview.src = selectedImage;
+
+message.textContent = "Picture selected. Tap Save.";
+
+};
+
+image.src = e.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+
+// Save picture
+saveBtn.addEventListener("click", async () => {
+
+if(!currentUser){
+
+message.textContent = "Please login first.";
+
+return;
+
+}
+
+if(!selectedImage){
+
+message.textContent = "Choose a picture first.";
+
+return;
+
+}
+
+
+saveBtn.disabled = true;
+
+saveBtn.textContent = "Saving...";
+
+
+try{
+
+const userRef = doc(db, "users", currentUser.uid);
+
+await updateDoc(userRef, {
+
+profileImage: selectedImage
+
+});
+
+
+// Also update the old localStorage value
+// so existing dashboard code keeps working
+localStorage.setItem("profileImage", selectedImage);
+
+message.textContent = "Profile picture saved successfully!";
+
+
+}catch(error){
+
+console.error(error);
+
+message.textContent = "Could not save picture: " + error.message;
+
+}
+
+
+saveBtn.disabled = false;
+
+saveBtn.textContent = "Save Profile Picture";
+
+});
+
 </script>
 
 </body>
