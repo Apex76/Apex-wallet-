@@ -12,12 +12,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBvC9ED0-sEEziluox2oG9FZdlbyIttPzU",
-  authDomain: "apex-bank-6745c.firebaseapp.com",
-  projectId: "apex-bank-6745c",
-  storageBucket: "apex-bank-6745c.appspot.com",
-  messagingSenderId: "152191975529",
-  appId: "1:152191975529:web:959ef05137a60e9ccda2f8"
+  apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+  authDomain: "apex-wallet-2.firebaseapp.com",
+  projectId: "apex-wallet-2",
+  storageBucket: "apex-wallet-2.firebasestorage.app",
+  messagingSenderId: "660772557652",
+  appId: "1:660772557652:web:b9535515388134f8802ec1",
+  measurementId: "G-KEJP4GN5VV"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -38,7 +39,11 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   }
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
     await updateProfile(userCredential.user, {
       displayName: fullname
