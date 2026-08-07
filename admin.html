@@ -6,9 +6,14 @@
 <title>Admin Dashboard</title>
 
 <style>
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
+}
+
+body{
 background:#f4f7fb;
 }
 
@@ -17,10 +22,14 @@ background:#003366;
 color:white;
 padding:20px;
 text-align:center;
+font-size:22px;
+font-weight:bold;
 }
 
 .container{
 padding:20px;
+max-width:500px;
+margin:auto;
 }
 
 .card{
@@ -30,15 +39,36 @@ border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-h2{
-margin:0;
-}
-
 .balance{
-font-size:30px;
+font-size:32px;
 font-weight:bold;
 color:#0056d6;
-margin-top:10px;
+margin:15px 0 25px;
+}
+
+input{
+width:100%;
+padding:15px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#0056d6;
+color:white;
+border:none;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#003fa5;
 }
 </style>
 
@@ -47,18 +77,26 @@ margin-top:10px;
 <body>
 
 <div class="header">
-<h2>ADMIN DASHBOARD</h2>
+ADMIN DASHBOARD
 </div>
 
 <div class="container">
 
 <div class="card">
 
-<p>Admin Balance</p>
+<h3>Admin Balance</h3>
 
 <div class="balance">
 $999,999,999
 </div>
+
+<input type="email" id="userEmail" placeholder="User Email">
+
+<input type="number" id="amount" placeholder="Amount (USD)">
+
+<button id="transferBtn">
+Transfer Money
+</button>
 
 </div>
 
