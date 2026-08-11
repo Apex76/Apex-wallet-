@@ -317,12 +317,6 @@ if(fullname){
 }
 
 
-// Keep the existing profile picture
-const profileImage = localStorage.getItem("profileImage");
-
-if(profileImage){
-  document.getElementById("profilePic").src = profileImage;
-}
 
 
 // Get the logged-in user's Firestore balance
@@ -341,7 +335,16 @@ onAuthStateChanged(auth, async (user) => {
     if(userSnap.exists()){
 
       const userData = userSnap.data();
+// Load this user's own profile picture
+if(userData.profileImage){
 
+    const profilePic = document.getElementById("profilePic");
+
+    if(profilePic){
+        profilePic.src = userData.profileImage;
+    }
+
+}
       const balance = Number(userData.balance || 0);
 
       const balanceElement = document.getElementById("balance");
