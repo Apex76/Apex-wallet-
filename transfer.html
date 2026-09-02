@@ -6,117 +6,1326 @@
 <title>Transfer Money</title>
 
 <style>
-
 body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#f4f7fb;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
 }
 
 .header{
-background:#1f4ed8;
-color:white;
-padding:20px;
-text-align:center;
+    background:#1f4ed8;
+    color:white;
+    padding:20px;
+    text-align:center;
 }
 
 .container{
-background:white;
-width:90%;
-max-width:500px;
-margin:20px auto;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+    background:white;
+    width:90%;
+    max-width:500px;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input{
-width:100%;
-padding:14px;
-margin-top:12px;
-border:1px solid #ccc;
-border-radius:10px;
-box-sizing:border-box;
-font-size:16px;
+label{
+    display:block;
+    margin-top:14px;
+    font-weight:bold;
+    color:#333;
+}
+
+input, select{
+    width:100%;
+    padding:14px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    box-sizing:border-box;
+    font-size:16px;
+    background:white;
 }
 
 button{
-width:100%;
-padding:15px;
-margin-top:20px;
-background:#1f4ed8;
-color:white;
-border:none;
-border-radius:10px;
-font-size:17px;
-cursor:pointer;
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    background:#1f4ed8;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:17px;
+    cursor:pointer;
 }
 
 button:hover{
-background:#153ba7;
+    background:#153ba7;
+}
+
+.conversion{
+    margin-top:15px;
+    padding:15px;
+    background:#eef4ff;
+    border-radius:10px;
+    text-align:center;
+}
+
+.rate{
+    color:#555;
+    font-size:14px;
+}
+
+.receive{
+    margin-top:8px;
+    font-size:21px;
+    font-weight:bold;
+    color:#1f4ed8;
+}
+
+.note{
+    margin-top:8px;
+    font-size:12px;
+    color:#777;
 }
 
 .back{
-display:block;
-text-align:center;
-margin-top:20px;
-color:#1f4ed8;
-text-decoration:none;
-font-weight:bold;
+    display:block;
+    text-align:center;
+    margin-top:20px;
+    color:#1f4ed8;
+    text-decoration:none;
+    font-weight:bold;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<h2>Transfer Money</h2>
+    <h2>Transfer Money</h2>
 </div>
 
 <div class="container">
 
-<input type="text" id="recipient" placeholder="Recipient Name" required>
+<label>Recipient Name</label>
+<input type="text" id="recipient" placeholder="Recipient Name">
 
-<input type="text" id="account" placeholder="Account Number" required>
+<label>Country</label>
+<select id="country" onchange="countryChanged()">
+    <option value="">-- Select Country --</option>
 
-<input type="text" id="bank" placeholder="Bank Name" required>
+    <!-- Africa -->
+    <option value="NG">🇳🇬 Nigeria</option>
+    <option value="ZA">🇿🇦 South Africa</option>
+    <option value="EG">🇪🇬 Egypt</option>
+    <option value="MA">🇲🇦 Morocco</option>
 
-<input type="text" id="country" placeholder="Country" required>
+    <!-- Asia -->
+    <option value="ID">🇮🇩 Indonesia</option>
+    <option value="VN">🇻🇳 Vietnam</option>
+    <option value="JP">🇯🇵 Japan</option>
+    <option value="CN">🇨🇳 China</option>
+    <option value="IN">🇮🇳 India</option>
+    <option value="TH">🇹🇭 Thailand</option>
+    <option value="PH">🇵🇭 Philippines</option>
+    <option value="MY">🇲🇾 Malaysia</option>
+    <option value="SG">🇸🇬 Singapore</option>
+    <option value="KR">🇰🇷 South Korea</option>
+    <option value="HK">🇭🇰 Hong Kong</option>
+    <option value="TW">🇹🇼 Taiwan</option>
+    <option value="PK">🇵🇰 Pakistan</option>
+    <option value="BD">🇧🇩 Bangladesh</option>
+    <option value="NP">🇳🇵 Nepal</option>
+    <option value="LK">🇱🇰 Sri Lanka</option>
+    <option value="AE">🇦🇪 UAE</option>
+    <option value="SA">🇸🇦 Saudi Arabia</option>
+    <option value="QA">🇶🇦 Qatar</option>
+    <option value="TR">🇹🇷 Turkey</option>
 
-<input type="number" id="amount" placeholder="Amount (USD)" required>
+    <!-- South America -->
+    <option value="BR">🇧🇷 Brazil</option>
+    <option value="AR">🇦🇷 Argentina</option>
+    <option value="CL">🇨🇱 Chile</option>
+    <option value="CO">🇨🇴 Colombia</option>
+    <option value="PE">🇵🇪 Peru</option>
+    <option value="UY">🇺🇾 Uruguay</option>
+    <option value="PY">🇵🇾 Paraguay</option>
+    <option value="BO">🇧🇴 Bolivia</option>
+    <option value="EC">🇪🇨 Ecuador</option>
+    <option value="GY">🇬🇾 Guyana</option>
+    <option value="SR">🇸🇷 Suriname</option>
+    <option value="VE">🇻🇪 Venezuela</option>
+
+    <!-- Europe -->
+    <option value="GB">🇬🇧 United Kingdom</option>
+    <option value="DE">🇩🇪 Germany</option>
+    <option value="FR">🇫🇷 France</option>
+    <option value="IT">🇮🇹 Italy</option>
+    <option value="ES">🇪🇸 Spain</option>
+    <option value="PT">🇵🇹 Portugal</option>
+    <option value="NL">🇳🇱 Netherlands</option>
+    <option value="BE">🇧🇪 Belgium</option>
+    <option value="AT">🇦🇹 Austria</option>
+    <option value="IE">🇮🇪 Ireland</option>
+    <option value="GR">🇬🇷 Greece</option>
+    <option value="SE">🇸🇪 Sweden</option>
+    <option value="NO">🇳🇴 Norway</option>
+    <option value="DK">🇩🇰 Denmark</option>
+    <option value="CH">🇨🇭 Switzerland</option>
+    <option value="PL">🇵🇱 Poland</option>
+    <option value="CZ">🇨🇿 Czech Republic</option>
+    <option value="HU">🇭🇺 Hungary</option>
+    <option value="RO">🇷🇴 Romania</option>
+    <option value="UA">🇺🇦 Ukraine</option>
+
+    <!-- Other -->
+    <option value="US">🇺🇸 United States</option>
+    <option value="CA">🇨🇦 Canada</option>
+    <option value="AU">🇦🇺 Australia</option>
+    <option value="NZ">🇳🇿 New Zealand</option>
+</select>
+
+<label>Currency</label>
+<select id="currency" onchange="updateConversion()">
+    <option value="">-- Select Currency --</option>
+</select>
+
+<label>Bank</label>
+<select id="bank">
+    <option value="">-- Select Bank --</option>
+</select>
+
+<label>Account Number</label>
+<input type="text" id="account" placeholder="Account Number">
+
+<label>Amount (USD)</label>
+<input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01"
+       oninput="updateConversion()">
+
+<div class="conversion">
+
+    <div class="rate" id="rateText">
+        Select a country and currency
+    </div>
+
+    <div class="receive" id="receiveText">
+        Recipient receives: —
+    </div>
+
+    <div class="note">
+        Virtual transfer conversion
+    </div>
+
+</div>
 
 <button onclick="continueTransfer()">
-Continue
+    Continue
 </button>
 
 <a href="dashboard.html" class="back">
-← Back to Dashboard
+    ← Back to Dashboard
 </a>
 
 </div>
 
 <script>
 
+/*
+========================================
+COUNTRY DATA
+========================================
+Rates are demo rates against USD.
+Change the rates whenever you want.
+*/
+
+const countries = {
+
+NG: {
+    currency:"NGN",
+    name:"Nigerian Naira",
+    symbol:"₦",
+    rate:1500,
+    banks:[
+        "Opay",
+        "PalmPay",
+        "Kuda",
+        "Access Bank",
+        "GTBank",
+        "First Bank",
+        "UBA",
+        "Zenith Bank",
+        "Fidelity Bank",
+        "Moniepoint",
+        "FCMB",
+        "Stanbic IBTC",
+        "Union Bank",
+        "Sterling Bank",
+        "Polaris Bank",
+        "Wema Bank"
+    ]
+},
+
+ZA:{
+    currency:"ZAR",
+    name:"South African Rand",
+    symbol:"R",
+    rate:18,
+    banks:[
+        "Capitec",
+        "FNB",
+        "Standard Bank",
+        "Absa",
+        "Nedbank",
+        "TymeBank",
+        "Discovery Bank",
+        "African Bank",
+        "Investec"
+    ]
+},
+
+EG:{
+    currency:"EGP",
+    name:"Egyptian Pound",
+    symbol:"E£",
+    rate:50,
+    banks:[
+        "National Bank of Egypt",
+        "Banque Misr",
+        "CIB",
+        "QNB Alahli",
+        "AlexBank",
+        "ADIB Egypt"
+    ]
+},
+
+MA:{
+    currency:"MAD",
+    name:"Moroccan Dirham",
+    symbol:"د.م.",
+    rate:10,
+    banks:[
+        "Attijariwafa Bank",
+        "Banque Populaire",
+        "Bank of Africa",
+        "CIH Bank",
+        "Crédit du Maroc",
+        "Société Générale Maroc"
+    ]
+},
+
+ID:{
+    currency:"IDR",
+    name:"Indonesian Rupiah",
+    symbol:"Rp",
+    rate:16000,
+    banks:[
+        "Bank Central Asia (BCA)",
+        "Bank Mandiri",
+        "Bank Rakyat Indonesia (BRI)",
+        "BNI",
+        "Bank Danamon",
+        "CIMB Niaga",
+        "Bank Permata"
+    ]
+},
+
+VN:{
+    currency:"VND",
+    name:"Vietnamese Dong",
+    symbol:"₫",
+    rate:25000,
+    banks:[
+        "Vietcombank",
+        "BIDV",
+        "VietinBank",
+        "Agribank",
+        "ACB",
+        "Sacombank",
+        "Techcombank"
+    ]
+},
+
+JP:{
+    currency:"JPY",
+    name:"Japanese Yen",
+    symbol:"¥",
+    rate:150,
+    banks:[
+        "MUFG Bank",
+        "SMBC",
+        "Mizuho Bank",
+        "Resona Bank",
+        "Japan Post Bank"
+    ]
+},
+
+CN:{
+    currency:"CNY",
+    name:"Chinese Yuan",
+    symbol:"¥",
+    rate:7.2,
+    banks:[
+        "Bank of China",
+        "ICBC",
+        "China Construction Bank",
+        "Agricultural Bank of China",
+        "Bank of Communications"
+    ]
+},
+
+IN:{
+    currency:"INR",
+    name:"Indian Rupee",
+    symbol:"₹",
+    rate:85,
+    banks:[
+        "State Bank of India",
+        "HDFC Bank",
+        "ICICI Bank",
+        "Axis Bank",
+        "Kotak Mahindra Bank",
+        "Punjab National Bank"
+    ]
+},
+
+TH:{
+    currency:"THB",
+    name:"Thai Baht",
+    symbol:"฿",
+    rate:35,
+    banks:[
+        "Bangkok Bank",
+        "Kasikornbank",
+        "Krung Thai Bank",
+        "Siam Commercial Bank",
+        "Krungsri",
+        "TTB"
+    ]
+},
+
+PH:{
+    currency:"PHP",
+    name:"Philippine Peso",
+    symbol:"₱",
+    rate:57,
+    banks:[
+        "BDO",
+        "BPI",
+        "Metrobank",
+        "LandBank",
+        "UnionBank",
+        "Security Bank"
+    ]
+},
+
+MY:{
+    currency:"MYR",
+    name:"Malaysian Ringgit",
+    symbol:"RM",
+    rate:4.5,
+    banks:[
+        "Maybank",
+        "CIMB Bank",
+        "Public Bank",
+        "RHB Bank",
+        "Hong Leong Bank",
+        "AmBank"
+    ]
+},
+
+SG:{
+    currency:"SGD",
+    name:"Singapore Dollar",
+    symbol:"S$",
+    rate:1.3,
+    banks:[
+        "DBS",
+        "OCBC",
+        "UOB",
+        "Standard Chartered Singapore",
+        "Citibank Singapore"
+    ]
+},
+
+KR:{
+    currency:"KRW",
+    name:"South Korean Won",
+    symbol:"₩",
+    rate:1400,
+    banks:[
+        "KB Kookmin Bank",
+        "Shinhan Bank",
+        "Woori Bank",
+        "Hana Bank",
+        "NH NongHyup Bank"
+    ]
+},
+
+HK:{
+    currency:"HKD",
+    name:"Hong Kong Dollar",
+    symbol:"HK$",
+    rate:7.8,
+    banks:[
+        "HSBC Hong Kong",
+        "Bank of China Hong Kong",
+        "Hang Seng Bank",
+        "Standard Chartered Hong Kong",
+        "DBS Hong Kong"
+    ]
+},
+
+TW:{
+    currency:"TWD",
+    name:"Taiwan Dollar",
+    symbol:"NT$",
+    rate:32,
+    banks:[
+        "CTBC Bank",
+        "Cathay United Bank",
+        "Taipei Fubon Bank",
+        "E.SUN Bank",
+        "Mega International Commercial Bank"
+    ]
+},
+
+PK:{
+    currency:"PKR",
+    name:"Pakistani Rupee",
+    symbol:"₨",
+    rate:280,
+    banks:[
+        "HBL",
+        "UBL",
+        "Meezan Bank",
+        "MCB Bank",
+        "Allied Bank",
+        "Bank Alfalah"
+    ]
+},
+
+BD:{
+    currency:"BDT",
+    name:"Bangladeshi Taka",
+    symbol:"৳",
+    rate:120,
+    banks:[
+        "Dutch-Bangla Bank",
+        "BRAC Bank",
+        "City Bank",
+        "Eastern Bank",
+        "Prime Bank",
+        "Bank Asia"
+    ]
+},
+
+NP:{
+    currency:"NPR",
+    name:"Nepalese Rupee",
+    symbol:"रू",
+    rate:135,
+    banks:[
+        "Nabil Bank",
+        "Global IME Bank",
+        "NIC Asia Bank",
+        "Nepal Investment Mega Bank",
+        "Himalayan Bank"
+    ]
+},
+
+LK:{
+    currency:"LKR",
+    name:"Sri Lankan Rupee",
+    symbol:"Rs",
+    rate:300,
+    banks:[
+        "Bank of Ceylon",
+        "People's Bank",
+        "Commercial Bank",
+        "Sampath Bank",
+        "Hatton National Bank"
+    ]
+},
+
+AE:{
+    currency:"AED",
+    name:"UAE Dirham",
+    symbol:"د.إ",
+    rate:3.67,
+    banks:[
+        "Emirates NBD",
+        "ADCB",
+        "FAB",
+        "Mashreq",
+        "Dubai Islamic Bank",
+        "RAKBANK"
+    ]
+},
+
+SA:{
+    currency:"SAR",
+    name:"Saudi Riyal",
+    symbol:"﷼",
+    rate:3.75,
+    banks:[
+        "Al Rajhi Bank",
+        "Saudi National Bank",
+        "Riyad Bank",
+        "Bank Albilad",
+        "Arab National Bank"
+    ]
+},
+
+QA:{
+    currency:"QAR",
+    name:"Qatari Riyal",
+    symbol:"﷼",
+    rate:3.64,
+    banks:[
+        "Qatar National Bank",
+        "Doha Bank",
+        "Commercial Bank",
+        "QIB",
+        "Dukhan Bank"
+    ]
+},
+
+TR:{
+    currency:"TRY",
+    name:"Turkish Lira",
+    symbol:"₺",
+    rate:40,
+    banks:[
+        "Ziraat Bank",
+        "Garanti BBVA",
+        "İşbank",
+        "Akbank",
+        "Yapı Kredi",
+        "QNB Finansbank"
+    ]
+},
+
+BR:{
+    currency:"BRL",
+    name:"Brazilian Real",
+    symbol:"R$",
+    rate:5,
+    banks:[
+        "Nubank",
+        "Itaú",
+        "Bradesco",
+        "Banco do Brasil",
+        "Caixa Econômica Federal",
+        "Santander",
+        "Banco Inter",
+        "C6 Bank",
+        "PicPay",
+        "Mercado Pago"
+    ]
+},
+
+AR:{
+    currency:"ARS",
+    name:"Argentine Peso",
+    symbol:"$",
+    rate:1300,
+    banks:[
+        "Banco Nación",
+        "BBVA Argentina",
+        "Santander Argentina",
+        "Galicia",
+        "Banco Macro"
+    ]
+},
+
+CL:{
+    currency:"CLP",
+    name:"Chilean Peso",
+    symbol:"$",
+    rate:950,
+    banks:[
+        "Banco de Chile",
+        "BancoEstado",
+        "Santander Chile",
+        "BCI",
+        "Scotiabank Chile"
+    ]
+},
+
+CO:{
+    currency:"COP",
+    name:"Colombian Peso",
+    symbol:"$",
+    rate:4200,
+    banks:[
+        "Bancolombia",
+        "Davivienda",
+        "Banco de Bogotá",
+        "BBVA Colombia",
+        "Banco de Occidente"
+    ]
+},
+
+PE:{
+    currency:"PEN",
+    name:"Peruvian Sol",
+    symbol:"S/",
+    rate:3.7,
+    banks:[
+        "BCP",
+        "BBVA Perú",
+        "Interbank",
+        "Scotiabank Perú",
+        "Banco de la Nación"
+    ]
+},
+
+UY:{
+    currency:"UYU",
+    name:"Uruguayan Peso",
+    symbol:"$",
+    rate:40,
+    banks:[
+        "Banco República",
+        "Santander Uruguay",
+        "BBVA Uruguay",
+        "Scotiabank Uruguay"
+    ]
+},
+
+PY:{
+    currency:"PYG",
+    name:"Paraguayan Guarani",
+    symbol:"₲",
+    rate:8000,
+    banks:[
+        "Banco Nacional de Fomento",
+        "Banco Continental",
+        "Banco Itaú Paraguay",
+        "Sudameris Bank"
+    ]
+},
+
+BO:{
+    currency:"BOB",
+    name:"Bolivian Boliviano",
+    symbol:"Bs",
+    rate:7,
+    banks:[
+        "Banco Nacional de Bolivia",
+        "Banco Mercantil Santa Cruz",
+        "Banco Unión",
+        "Banco Bisa"
+    ]
+},
+
+EC:{
+    currency:"USD",
+    name:"US Dollar",
+    symbol:"$",
+    rate:1,
+    banks:[
+        "Banco Pichincha",
+        "Banco Guayaquil",
+        "Produbanco",
+        "Banco Bolivariano"
+    ]
+},
+
+GY:{
+    currency:"GYD",
+    name:"Guyanese Dollar",
+    symbol:"$",
+    rate:210,
+    banks:[
+        "Republic Bank Guyana",
+        "Guyana Bank for Trade and Industry",
+        "Demerara Bank",
+        "Citizens Bank Guyana"
+    ]
+},
+
+SR:{
+    currency:"SRD",
+    name:"Surinamese Dollar",
+    symbol:"$",
+    rate:35,
+    banks:[
+        "De Surinaamsche Bank",
+        "Republic Bank Suriname",
+        "Hakrinbank"
+    ]
+},
+
+VE:{
+    currency:"VES",
+    name:"Venezuelan Bolívar",
+    symbol:"Bs.",
+    rate:100,
+    banks:[
+        "Banco de Venezuela",
+        "Banesco",
+        "BBVA Provincial",
+        "Mercantil Banco Universal"
+    ]
+},
+
+GB:{
+    currency:"GBP",
+    name:"British Pound",
+    symbol:"£",
+    rate:0.78,
+    banks:[
+        "Barclays",
+        "HSBC UK",
+        "Lloyds Bank",
+        "NatWest",
+        "Santander UK",
+        "Halifax",
+        "Monzo",
+        "Revolut"
+    ]
+},
+
+DE:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Deutsche Bank",
+        "Commerzbank",
+        "DKB",
+        "ING Germany",
+        "N26"
+    ]
+},
+
+FR:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "BNP Paribas",
+        "Crédit Agricole",
+        "Société Générale",
+        "Banque Populaire",
+        "LCL"
+    ]
+},
+
+IT:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "UniCredit",
+        "Intesa Sanpaolo",
+        "Banco BPM",
+        "BPER Banca",
+        "Poste Italiane"
+    ]
+},
+
+ES:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Banco Santander",
+        "BBVA",
+        "CaixaBank",
+        "Sabadell",
+        "Bankinter"
+    ]
+},
+
+PT:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Millennium BCP",
+        "Caixa Geral de Depósitos",
+        "Novo Banco",
+        "Santander Portugal"
+    ]
+},
+
+NL:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "ING",
+        "ABN AMRO",
+        "Rabobank",
+        "SNS Bank"
+    ]
+},
+
+BE:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "KBC",
+        "BNP Paribas Fortis",
+        "Belfius",
+        "ING Belgium"
+    ]
+},
+
+AT:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Erste Bank",
+        "Raiffeisen Bank",
+        "Bank Austria",
+        "BAWAG"
+    ]
+},
+
+IE:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "AIB",
+        "Bank of Ireland",
+        "Permanent TSB",
+        "Revolut Ireland"
+    ]
+},
+
+GR:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "National Bank of Greece",
+        "Piraeus Bank",
+        "Alpha Bank",
+        "Eurobank"
+    ]
+},
+
+SE:{
+    currency:"SEK",
+    name:"Swedish Krona",
+    symbol:"kr",
+    rate:9.5,
+    banks:[
+        "SEB",
+        "Swedbank",
+        "Handelsbanken",
+        "Nordea"
+    ]
+},
+
+NO:{
+    currency:"NOK",
+    name:"Norwegian Krone",
+    symbol:"kr",
+    rate:10.5,
+    banks:[
+        "DNB",
+        "Nordea Norway",
+        "SpareBank 1",
+        "Handelsbanken Norway"
+    ]
+},
+
+DK:{
+    currency:"DKK",
+    name:"Danish Krone",
+    symbol:"kr",
+    rate:6.4,
+    banks:[
+        "Danske Bank",
+        "Jyske Bank",
+        "Sydbank",
+        "Nordea Denmark"
+    ]
+},
+
+CH:{
+    currency:"CHF",
+    name:"Swiss Franc",
+    symbol:"CHF",
+    rate:0.85,
+    banks:[
+        "UBS",
+        "Credit Suisse",
+        "Zürcher Kantonalbank",
+        "Raiffeisen Switzerland"
+    ]
+},
+
+PL:{
+    currency:"PLN",
+    name:"Polish Zloty",
+    symbol:"zł",
+    rate:3.7,
+    banks:[
+        "PKO Bank Polski",
+        "Bank Pekao",
+        "mBank",
+        "Santander Bank Polska"
+    ]
+},
+
+CZ:{
+    currency:"CZK",
+    name:"Czech Koruna",
+    symbol:"Kč",
+    rate:21.5,
+    banks:[
+        "Česká spořitelna",
+        "ČSOB",
+        "Komerční banka",
+        "Air Bank"
+    ]
+},
+
+HU:{
+    currency:"HUF",
+    name:"Hungarian Forint",
+    symbol:"Ft",
+    rate:350,
+    banks:[
+        "OTP Bank",
+        "K&H Bank",
+        "Erste Bank Hungary",
+        "UniCredit Hungary"
+    ]
+},
+
+RO:{
+    currency:"RON",
+    name:"Romanian Leu",
+    symbol:"lei",
+    rate:4.4,
+    banks:[
+        "Banca Transilvania",
+        "BRD",
+        "BCR",
+        "Raiffeisen Bank Romania"
+    ]
+},
+
+UA:{
+    currency:"UAH",
+    name:"Ukrainian Hryvnia",
+    symbol:"₴",
+    rate:42,
+    banks:[
+        "PrivatBank",
+        "Oschadbank",
+        "Raiffeisen Bank Ukraine",
+        "PUMB"
+    ]
+},
+
+US:{
+    currency:"USD",
+    name:"US Dollar",
+    symbol:"$",
+    rate:1,
+    banks:[
+        "Bank of America",
+        "Chase",
+        "Wells Fargo",
+        "Citibank",
+        "U.S. Bank",
+        "Capital One"
+    ]
+},
+
+CA:{
+    currency:"CAD",
+    name:"Canadian Dollar",
+    symbol:"C$",
+    rate:1.38,
+    banks:[
+        "RBC",
+        "TD Canada Trust",
+        "Scotiabank",
+        "BMO",
+        "CIBC",
+        "National Bank of Canada"
+    ]
+},
+
+AU:{
+    currency:"AUD",
+    name:"Australian Dollar",
+    symbol:"A$",
+    rate:1.55,
+    banks:[
+        "Commonwealth Bank",
+        "Westpac",
+        "ANZ",
+        "NAB",
+        "Macquarie Bank"
+    ]
+},
+
+NZ:{
+    currency:"NZD",
+    name:"New Zealand Dollar",
+    symbol:"NZ$",
+    rate:1.7,
+    banks:[
+        "ANZ New Zealand",
+        "ASB Bank",
+        "BNZ",
+        "Westpac New Zealand",
+        "Kiwibank"
+    ]
+}
+
+};
+
+
+/* ========================================
+   COUNTRY CHANGE
+======================================== */
+
+function countryChanged(){
+
+    const countryCode =
+        document.getElementById("country").value;
+
+    const currency =
+        document.getElementById("currency");
+
+    const bank =
+        document.getElementById("bank");
+
+    currency.innerHTML =
+        '<option value="">-- Select Currency --</option>';
+
+    bank.innerHTML =
+        '<option value="">-- Select Bank --</option>';
+
+    if(!countryCode){
+        updateConversion();
+        return;
+    }
+
+    const data = countries[countryCode];
+
+    /* Add currency */
+
+    const option = document.createElement("option");
+
+    option.value = data.currency;
+
+    option.textContent =
+        data.symbol + " " +
+        data.currency + " — " +
+        data.name;
+
+    option.selected = true;
+
+    currency.appendChild(option);
+
+
+    /* Add banks */
+
+    data.banks.forEach(function(bankName){
+
+        const bankOption =
+            document.createElement("option");
+
+        bankOption.value = bankName;
+
+        bankOption.textContent = bankName;
+
+        bank.appendChild(bankOption);
+
+    });
+
+    updateConversion();
+}
+
+
+/* ========================================
+   CONVERSION
+======================================== */
+
+function updateConversion(){
+
+    const countryCode =
+        document.getElementById("country").value;
+
+    const amount =
+        parseFloat(
+            document.getElementById("amount").value
+        );
+
+    const rateText =
+        document.getElementById("rateText");
+
+    const receiveText =
+        document.getElementById("receiveText");
+
+    if(!countryCode){
+
+        rateText.textContent =
+            "Select a country and currency";
+
+        receiveText.textContent =
+            "Recipient receives: —";
+
+        return;
+    }
+
+    const data = countries[countryCode];
+
+    rateText.textContent =
+        "Exchange rate: 1 USD = " +
+        data.rate.toLocaleString() +
+        " " +
+        data.currency;
+
+    if(isNaN(amount) || amount <= 0){
+
+        receiveText.textContent =
+            "Recipient receives: —";
+
+        return;
+    }
+
+    const converted =
+        amount * data.rate;
+
+    receiveText.textContent =
+        "Recipient receives: " +
+        data.symbol +
+        converted.toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        ) +
+        " " +
+        data.currency;
+}
+
+
+/* ========================================
+   CONTINUE
+======================================== */
+
 function continueTransfer(){
 
-localStorage.setItem("recipient",
-document.getElementById("recipient").value);
+    const recipient =
+        document.getElementById("recipient").value.trim();
 
-localStorage.setItem("account",
-document.getElementById("account").value);
+    const account =
+        document.getElementById("account").value.trim();
 
-localStorage.setItem("bank",
-document.getElementById("bank").value);
+    const countryCode =
+        document.getElementById("country").value;
 
-localStorage.setItem("country",
-document.getElementById("country").value);
+    const currency =
+        document.getElementById("currency").value;
 
-localStorage.setItem("amount",
-document.getElementById("amount").value);
+    const bank =
+        document.getElementById("bank").value;
 
-window.location.href="confirm.html";
+    const amount =
+        document.getElementById("amount").value;
 
+    if(
+        !recipient ||
+        !account ||
+        !countryCode ||
+        !currency ||
+        !bank ||
+        !amount
+    ){
+
+        alert("Please complete all transfer details.");
+
+        return;
+    }
+
+    const data = countries[countryCode];
+
+    const converted =
+        parseFloat(amount) * data.rate;
+
+
+    localStorage.setItem(
+        "recipient",
+        recipient
+    );
+
+    localStorage.setItem(
+        "account",
+        account
+    );
+
+    localStorage.setItem(
+        "bank",
+        bank
+    );
+
+    localStorage.setItem(
+        "country",
+        document.getElementById("country")
+        .selectedOptions[0].text
+    );
+
+    localStorage.setItem(
+        "currency",
+        data.currency
+    );
+
+    localStorage.setItem(
+        "currencyName",
+        data.name
+    );
+
+    localStorage.setItem(
+        "currencySymbol",
+        data.symbol
+    );
+
+    localStorage.setItem(
+        "exchangeRate",
+        data.rate
+    );
+
+    localStorage.setItem(
+        "amount",
+        amount
+    );
+
+    localStorage.setItem(
+        "localAmount",
+        converted
+    );
+
+
+    window.location.href =
+        "confirm.html";
 }
 
 </script>
