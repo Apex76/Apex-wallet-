@@ -73,6 +73,11 @@ button:hover{
 background:#003fa5;
 }
 
+button:disabled{
+opacity:.6;
+cursor:not-allowed;
+}
+
 #message{
 margin-top:15px;
 text-align:center;
@@ -97,6 +102,13 @@ ADMIN DASHBOARD
 <div class="balance">
 $999,999,999
 </div>
+
+<input
+type="text"
+id="senderName"
+placeholder="Sender Name"
+required
+>
 
 <input
 type="email"
@@ -132,7 +144,9 @@ Transfer Money
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
 import {
 getFirestore,
@@ -141,7 +155,8 @@ query,
 where,
 getDocs,
 doc,
-updateDoc
+updateDoc,
+addDoc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
@@ -161,26 +176,45 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-const transferBtn = document.getElementById("transferBtn");
+const transferBtn =
+document.getElementById("transferBtn");
 
-const message = document.getElementById("message");
+const message =
+document.getElementById("message");
 
 
 transferBtn.addEventListener("click", async () => {
 
-const email = document.getElementById("userEmail").value.trim();
+const senderName =
+document.getElementById("senderName").value.trim();
 
-const amount = Number(document.getElementById("amount").value);
+const email =
+document.getElementById("userEmail").value.trim();
 
-const action = document.getElementById("action").value;
+const amount =
+Number(document.getElementById("amount").value);
+
+const action =
+document.getElementById("action").value;
 
 
 message.textContent = "";
 
 
+if(!senderName){
+
+message.textContent =
+"Enter the sender name.";
+
+return;
+
+}
+
+
 if(!email){
 
-message.textContent = "Enter the user's email.";
+message.textContent =
+"Enter the user's email.";
 
 return;
 
@@ -189,7 +223,8 @@ return;
 
 if(!amount || amount <= 0){
 
-message.textContent = "Enter a valid amount.";
+message.textContent =
+"Enter a valid amount.";
 
 return;
 
@@ -198,41 +233,51 @@ return;
 
 transferBtn.disabled = true;
 
-transferBtn.textContent = "Processing...";
+transferBtn.textContent =
+"Processing...";
 
 
 try{
 
+const usersRef =
+collection(db,"users");
 
-const usersRef = collection(db, "users");
 
-const userQuery = query(
+const userQuery =
+query(
 usersRef,
-where("email", "==", email)
+where("email","==",email)
 );
 
-const snapshot = await getDocs(userQuery);
+
+const snapshot =
+await getDocs(userQuery);
 
 
 if(snapshot.empty){
 
-message.textContent = "User not found.";
+message.textContent =
+"User not found.";
 
 transferBtn.disabled = false;
 
-transferBtn.textContent = "Transfer Money";
+transferBtn.textContent =
+"Transfer Money";
 
 return;
 
 }
 
 
-const userDoc = snapshot.docs[0];
+const userDoc =
+snapshot.docs[0];
 
-const userData = userDoc.data();
+const userData =
+userDoc.data();
 
 
-const currentBalance = Number(userData.balance || 0);
+const currentBalance =
+Number(userData.balance || 0);
 
 
 let newBalance;
@@ -240,56 +285,85 @@ let newBalance;
 
 if(action === "credit"){
 
-newBalance = currentBalance + amount;
+newBalance =
+currentBalance + amount;
 
 }else{
 
 if(amount > currentBalance){
 
-message.textContent = "User does not have enough balance.";
+message.textContent =
+"User does not have enough balance.";
 
 transferBtn.disabled = false;
 
-transferBtn.textContent = "Transfer Money";
+transferBtn.textContent =
+"Transfer Money";
 
 return;
 
 }
 
-newBalance = currentBalance - amount;
+newBalance =
+currentBalance - amount;
 
 }
 
 
 await updateDoc(
-doc(db, "users", userDoc.id),
+doc(db,"users",userDoc.id),
 {
-balance: newBalance
+balance:newBalance
+}
+);
+
+
+/* SAVE TRANSACTION */
+
+await addDoc(
+collection(db,"transactions"),
+{
+userId:userDoc.id,
+userEmail:email,
+senderName:senderName,
+amount:amount,
+type:action === "credit"
+? "Money Received"
+: "Money Sent",
+status:"Completed",
+date:new Date().toISOString()
 }
 );
 
 
 message.textContent =
-action === "credit"
-? `Success! User balance is now $${newBalance.toLocaleString("en-US",{minimumFractionDigits:2})}`
-: `Success! User balance is now $${newBalance.toLocaleString("en-US",{minimumFractionDigits:2})}`;
+`Success! User balance is now $${newBalance.toLocaleString(
+"en-US",
+{
+minimumFractionDigits:2
+}
+)}`;
 
 
 document.getElementById("amount").value = "";
+
+document.getElementById("senderName").value = "";
 
 
 }catch(error){
 
 console.error(error);
 
-message.textContent = "Transfer failed: " + error.message;
+message.textContent =
+"Transfer failed: " + error.message;
 
 }
 
 
 transferBtn.disabled = false;
 
-transferBtn.textContent = "Transfer Money";
+transferBtn.textContent =
+"Transfer Money";
 
 });
 
