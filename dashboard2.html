@@ -78,6 +78,136 @@ font-size:15px;
 opacity:.9;
 }
 
+
+/* =========================
+   VIRTUAL CARD
+========================= */
+
+.virtual-card{
+margin:20px 15px;
+height:205px;
+border-radius:22px;
+padding:22px;
+color:white;
+background:linear-gradient(135deg,#111827,#1f4ed8);
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+position:relative;
+overflow:hidden;
+}
+
+.virtual-card::before{
+content:"";
+position:absolute;
+width:220px;
+height:220px;
+border-radius:50%;
+background:rgba(255,255,255,.08);
+right:-80px;
+top:-90px;
+}
+
+.virtual-card::after{
+content:"";
+position:absolute;
+width:180px;
+height:180px;
+border-radius:50%;
+background:rgba(255,255,255,.05);
+left:-80px;
+bottom:-100px;
+}
+
+.card-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:relative;
+z-index:2;
+}
+
+.card-brand{
+font-size:19px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+.virtual-label{
+font-size:11px;
+padding:6px 9px;
+border:1px solid rgba(255,255,255,.5);
+border-radius:20px;
+}
+
+.chip{
+width:45px;
+height:32px;
+background:#d6d6d6;
+border-radius:7px;
+margin-top:25px;
+position:relative;
+z-index:2;
+}
+
+.chip::after{
+content:"";
+position:absolute;
+left:20px;
+top:0;
+width:2px;
+height:32px;
+background:#999;
+}
+
+.chip::before{
+content:"";
+position:absolute;
+left:0;
+top:15px;
+width:45px;
+height:2px;
+background:#999;
+}
+
+.card-number{
+font-size:22px;
+letter-spacing:3px;
+margin-top:15px;
+position:relative;
+z-index:2;
+font-weight:bold;
+}
+
+.card-bottom{
+display:flex;
+justify-content:space-between;
+align-items:flex-end;
+margin-top:13px;
+position:relative;
+z-index:2;
+}
+
+.card-holder-label{
+font-size:9px;
+opacity:.7;
+margin-bottom:4px;
+}
+
+.card-holder{
+font-size:15px;
+font-weight:bold;
+text-transform:uppercase;
+max-width:220px;
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+}
+
+.card-type{
+font-size:17px;
+font-weight:bold;
+font-style:italic;
+}
+
 .quick{
 display:flex;
 justify-content:space-around;
@@ -168,10 +298,17 @@ font-weight:bold;
 <body>
 
 <script>
+
 if(!localStorage.getItem("loggedIn")){
 location.href="index.html";
 }
+
 </script>
+
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <div class="header">
 
@@ -195,6 +332,7 @@ User
 
 </div>
 
+
 <div class="account">
 
 <small>APEX CHECKING ACCOUNT</small>
@@ -212,6 +350,61 @@ View Balance Details
 
 </div>
 
+
+<!-- =========================
+     VIRTUAL CARD
+========================= -->
+
+<div class="virtual-card">
+
+<div class="card-top">
+
+<div class="card-brand">
+APEX WALLET
+</div>
+
+<div class="virtual-label">
+VIRTUAL
+</div>
+
+</div>
+
+
+<div class="chip"></div>
+
+
+<div class="card-number">
+•••• •••• •••• 4821
+</div>
+
+
+<div class="card-bottom">
+
+<div>
+
+<div class="card-holder-label">
+CARDHOLDER
+</div>
+
+<div id="cardHolderName" class="card-holder">
+USER
+</div>
+
+</div>
+
+<div class="card-type">
+VIRTUAL
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     QUICK ACCESS
+========================= -->
+
 <div class="quick">
 
 <a href="#">
@@ -219,27 +412,60 @@ View Balance Details
 <i class="fa-solid fa-building-columns"></i>
 </div>
 My Account
-</a
-  <div class="card">
+</a>
+
+</div>
+
+
+<!-- =========================
+     QUICK SERVICES
+========================= -->
+
+<div class="card">
 
 <h3>Quick Services</h3>
 
 <a href="history.html" class="action">
-<span><i class="fa-solid fa-clock-rotate-left"></i> Transaction History</span>
+
+<span>
+<i class="fa-solid fa-clock-rotate-left"></i>
+Transaction History
+</span>
+
 <i class="fa-solid fa-chevron-right"></i>
+
 </a>
+
 
 <a href="transfer.html" class="action">
-<span><i class="fa-solid fa-money-bill-transfer"></i> Transfer Money</span>
+
+<span>
+<i class="fa-solid fa-money-bill-transfer"></i>
+Transfer Money
+</span>
+
 <i class="fa-solid fa-chevron-right"></i>
+
 </a>
 
+
 <a href="settings.html" class="action">
-<span><i class="fa-solid fa-gear"></i> Settings</span>
+
+<span>
+<i class="fa-solid fa-gear"></i>
+Settings
+</span>
+
 <i class="fa-solid fa-chevron-right"></i>
+
 </a>
 
 </div>
+
+
+<!-- =========================
+     RECENT ACTIVITY
+========================= -->
 
 <div class="card">
 
@@ -251,119 +477,71 @@ No recent transactions.
 
 </div>
 
+
+<!-- =========================
+     BOTTOM NAVIGATION
+========================= -->
+
 <div class="bottom">
 
 <a href="dashboard2.html" class="active">
+
 <i class="fa-solid fa-house"></i>
 Home
+
 </a>
+
 
 <a href="transfer.html">
+
 <i class="fa-solid fa-paper-plane"></i>
 Transfer
+
 </a>
+
 
 <a href="history.html">
+
 <i class="fa-solid fa-file-lines"></i>
 History
+
 </a>
 
+
 <a href="settings.html">
+
 <i class="fa-solid fa-gear"></i>
 Settings
+
 </a>
 
 </div>
 
-<script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+<script>
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+/*
+GET USER NAME
+FROM LOCAL STORAGE
+*/
 
-import {
-  getFirestore,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+const savedName =
+localStorage.getItem("fullname") ||
+localStorage.getItem("fullName") ||
+localStorage.getItem("name");
 
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
-  authDomain: "apex-wallet-2.firebaseapp.com",
-  projectId: "apex-wallet-2",
-  storageBucket: "apex-wallet-2.firebasestorage.app",
-  messagingSenderId: "660772557652",
-  appId: "1:660772557652:web:b9535515388134f8802ec1",
-  measurementId: "G-KEJP4GN5VV"
-};
+if(savedName){
 
+document.getElementById("welcomeName").textContent =
+savedName;
 
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
-
-
-// Keep the existing name
-const fullname = localStorage.getItem("fullname");
-
-if(fullname){
-  document.getElementById("welcomeName").innerHTML = fullname;
-}
-
-
-
-
-// Get the logged-in user's Firestore balance
-onAuthStateChanged(auth, async (user) => {
-
-  if(!user){
-    return;
-  }
-
-  try {
-
-    const userRef = doc(db, "users", user.uid);
-
-    const userSnap = await getDoc(userRef);
-
-    if(userSnap.exists()){
-
-      const userData = userSnap.data();
-// Load this user's own profile picture
-if(userData.profileImage){
-
-    const profilePic = document.getElementById("profilePic");
-
-    if(profilePic){
-        profilePic.src = userData.profileImage;
-    }
+document.getElementById("cardHolderName").textContent =
+savedName;
 
 }
-      const balance = Number(userData.balance || 0);
-
-      const balanceElement = document.getElementById("balance");
-
-      if(balanceElement){
-        balanceElement.textContent = balance.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-
-    }
-
-  } catch(error){
-
-    console.error("Error loading balance:", error);
-
-  }
-
-});
 
 </script>
+
+</body>
+</html>
