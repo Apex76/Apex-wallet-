@@ -76,6 +76,7 @@ margin-top:8px;
 margin-top:10px;
 font-size:15px;
 opacity:.9;
+cursor:pointer;
 }
 
 
@@ -338,12 +339,12 @@ User
 <small>APEX CHECKING ACCOUNT</small>
 
 <div class="balance">
-$<span id="balance">0.00</span>
+$<span id="balance" data-real-balance="0.00">0.00</span>
 </div>
 
-<div class="view">
-<i class="fa-solid fa-eye"></i>
-View Balance Details
+<div class="view" onclick="toggleBalance()">
+<i id="eyeIcon" class="fa-solid fa-eye"></i>
+<span id="balanceLabel">View Balance Details</span>
 </div>
 
 </div>
@@ -538,6 +539,41 @@ savedName;
 
 document.getElementById("cardHolderName").textContent =
 savedName;
+
+}
+
+
+/*
+BALANCE SHOW / HIDE
+*/
+
+let balanceVisible = true;
+
+function toggleBalance(){
+
+const balance = document.getElementById("balance");
+const eyeIcon = document.getElementById("eyeIcon");
+
+if(balanceVisible){
+
+balance.dataset.realBalance = balance.textContent;
+
+balance.textContent = "****";
+
+eyeIcon.className = "fa-solid fa-eye-slash";
+
+balanceVisible = false;
+
+}else{
+
+balance.textContent =
+balance.dataset.realBalance || "0.00";
+
+eyeIcon.className = "fa-solid fa-eye";
+
+balanceVisible = true;
+
+}
 
 }
 
