@@ -298,14 +298,6 @@ font-weight:bold;
 
 <body>
 
-<script>
-
-if(!localStorage.getItem("loggedIn")){
-location.href="index.html";
-}
-
-</script>
-
 
 <!-- =========================
      HEADER
@@ -492,6 +484,7 @@ Home
 
 </a>
 
+
 <a href="transfer.html">
 
 <i class="fa-solid fa-paper-plane"></i>
@@ -499,12 +492,14 @@ Transfer
 
 </a>
 
+
 <a href="history.html">
 
 <i class="fa-solid fa-file-lines"></i>
 History
 
 </a>
+
 
 <a href="settings.html">
 
@@ -517,68 +512,139 @@ Settings
 
 
 <!-- =========================
-     FIREBASE + BALANCE
+     FIREBASE
 ========================= -->
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 import {
 getFirestore,
 doc,
 getDoc
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-import {
-getAuth,
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
+/* =========================
+   FIREBASE CONFIG
+========================= */
 
 const firebaseConfig = {
 
 apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWQKbFfXgcX4w",
+
 authDomain: "apex-wallet-2.firebaseapp.com",
+
 projectId: "apex-wallet-2",
+
 storageBucket: "apex-wallet-2.firebasestorage.app",
+
 messagingSenderId: "660772557652",
+
 appId: "1:660772557652:web:b9535515388134f8802ec1",
+
 measurementId: "G-KEJP4GN5VV"
 
 };
 
 
-const app = initializeApp(firebaseConfig);
+/* =========================
+   INITIALIZE FIREBASE
+========================= */
 
-const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
+const db = getFirestore(app);
+
+
+/* =========================
+   WAIT FOR FIREBASE LOGIN
+========================= */
 
 onAuthStateChanged(auth, async (user) => {
 
 if(!user){
 
-location.href="index.html";
+/*
+Give Firebase time to restore
+the authentication session.
+*/
+
+setTimeout(() => {
+
+if(!auth.currentUser){
+
+window.location.replace("index.html");
+
+}
+
+},1000);
 
 return;
 
 }
 
 
+/* =========================
+   USER IS LOGGED IN
+========================= */
+
+localStorage.setItem("loggedIn","true");
+
+localStorage.setItem(
+"userEmail",
+user.email || ""
+);
+
+
+/* Get user name */
+
+const userName =
+user.displayName ||
+localStorage.getItem("fullname") ||
+localStorage.getItem("fullName") ||
+localStorage.getItem("name") ||
+"User";
+
+
+document.getElementById("welcomeName").textContent =
+userName;
+
+document.getElementById("cardHolderName").textContent =
+userName;
+
+
+/* =========================
+   GET BALANCE
+========================= */
+
 try{
 
-const userRef = doc(db,"users",user.uid);
+const userRef =
+doc(db,"users",user.uid);
 
-const userSnap = await getDoc(userRef);
+const userSnap =
+await getDoc(userRef);
 
 
 if(userSnap.exists()){
 
-const data = userSnap.data();
+const data =
+userSnap.data();
 
-let userBalance = Number(data.balance || 0);
+const userBalance =
+Number(data.balance || 0);
 
 document.getElementById("balance").textContent =
 userBalance.toFixed(2);
@@ -588,10 +654,12 @@ userBalance.toFixed(2);
 
 }
 
-
 }catch(error){
 
-console.error("Balance error:",error);
+console.error(
+"Could not load balance:",
+error
+);
 
 }
 
@@ -601,33 +669,13 @@ console.error("Balance error:",error);
 
 
 <!-- =========================
-     USER NAME
+     BALANCE SHOW / HIDE
 ========================= -->
 
 <script>
 
-const savedName =
-localStorage.getItem("fullname") ||
-localStorage.getItem("fullName") ||
-localStorage.getItem("name");
-
-
-if(savedName){
-
-document.getElementById("welcomeName").textContent =
-savedName;
-
-document.getElementById("cardHolderName").textContent =
-savedName;
-
-}
-
-
-/* =========================
-   BALANCE SHOW / HIDE
-========================= */
-
 let balanceVisible = true;
+
 
 function toggleBalance(){
 
@@ -643,7 +691,8 @@ if(balanceVisible){
 balance.dataset.realBalance =
 balance.textContent;
 
-balance.textContent = "****";
+balance.textContent =
+"****";
 
 eyeIcon.className =
 "fa-solid fa-eye-slash";
@@ -665,6 +714,7 @@ balanceVisible = true;
 }
 
 </script>
+
 
 </body>
 </html>
