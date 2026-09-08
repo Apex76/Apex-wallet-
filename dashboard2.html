@@ -335,8 +335,11 @@ $<span id="balance" data-real-balance="0.00">0.00</span>
 </div>
 
 <div class="view" onclick="toggleBalance()">
+
 <i id="eyeIcon" class="fa-solid fa-eye"></i>
+
 <span>View Balance Details</span>
+
 </div>
 
 </div>
@@ -362,11 +365,14 @@ VIRTUAL
 
 </div>
 
+
 <div class="chip"></div>
+
 
 <div class="card-number">
 •••• •••• •••• 4821
 </div>
+
 
 <div class="card-bottom">
 
@@ -417,6 +423,7 @@ My Account
 <div class="card">
 
 <h3>Quick Services</h3>
+
 
 <a href="history.html" class="action">
 
@@ -529,7 +536,11 @@ from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import {
 getFirestore,
 doc,
-getDoc
+getDoc,
+collection,
+query,
+where,
+getDocs
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
@@ -540,7 +551,7 @@ from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWQKbFfXgcX4w",
+apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
 
 authDomain: "apex-wallet-2.firebaseapp.com",
 
@@ -558,7 +569,7 @@ measurementId: "G-KEJP4GN5VV"
 
 
 /* =========================
-   INITIALIZE FIREBASE
+   INITIALIZE
 ========================= */
 
 const app = initializeApp(firebaseConfig);
@@ -569,27 +580,14 @@ const db = getFirestore(app);
 
 
 /* =========================
-   WAIT FOR FIREBASE LOGIN
+   AUTH CHECK
 ========================= */
 
 onAuthStateChanged(auth, async (user) => {
 
 if(!user){
 
-/*
-Give Firebase time to restore
-the authentication session.
-*/
-
-setTimeout(() => {
-
-if(!auth.currentUser){
-
 window.location.replace("index.html");
-
-}
-
-},1000);
 
 return;
 
@@ -597,10 +595,13 @@ return;
 
 
 /* =========================
-   USER IS LOGGED IN
+   SAVE LOGIN INFO
 ========================= */
 
-localStorage.setItem("loggedIn","true");
+localStorage.setItem(
+"loggedIn",
+"true"
+);
 
 localStorage.setItem(
 "userEmail",
@@ -608,28 +609,46 @@ user.email || ""
 );
 
 
-/* Get user name */
+/* =========================
+   USER NAME
+========================= */
 
 const userName =
+
 user.displayName ||
+
 localStorage.getItem("fullname") ||
+
 localStorage.getItem("fullName") ||
+
 localStorage.getItem("name") ||
+
 "User";
 
 
-document.getElementById("welcomeName").textContent =
-userName;
+document.getElementById(
+"welcomeName"
+).textContent = userName;
 
-document.getElementById("cardHolderName").textContent =
-userName;
+
+document.getElementById(
+"cardHolderName"
+).textContent = userName;
 
 
 /* =========================
-   GET BALANCE
+   LOAD USER BALANCE
 ========================= */
 
 try{
+
+let userData = null;
+
+
+/*
+First try the Firebase Auth UID
+as the Firestore document ID.
+*/
 
 const userRef =
 doc(db,"users",user.uid);
@@ -640,24 +659,79 @@ await getDoc(userRef);
 
 if(userSnap.exists()){
 
-const data =
-userSnap.data();
-
-const userBalance =
-Number(data.balance || 0);
-
-document.getElementById("balance").textContent =
-userBalance.toFixed(2);
-
-document.getElementById("balance").dataset.realBalance =
-userBalance.toFixed(2);
+userData = userSnap.data();
 
 }
+
+
+/*
+If the UID document isn't found,
+try finding the user by email.
+*/
+
+if(!userData && user.email){
+
+const usersRef =
+collection(db,"users");
+
+const emailQuery =
+query(
+usersRef,
+where("email","==",user.email)
+);
+
+const emailSnap =
+await getDocs(emailQuery);
+
+
+if(!emailSnap.empty){
+
+userData =
+emailSnap.docs[0].data();
+
+}
+
+}
+
+
+/* =========================
+   DISPLAY BALANCE
+========================= */
+
+if(userData){
+
+const userBalance =
+Number(userData.balance || 0);
+
+document.getElementById(
+"balance"
+).textContent =
+userBalance.toFixed(2);
+
+document.getElementById(
+"balance"
+).dataset.realBalance =
+userBalance.toFixed(2);
+
+}else{
+
+document.getElementById(
+"balance"
+).textContent =
+"0.00";
+
+document.getElementById(
+"balance"
+).dataset.realBalance =
+"0.00";
+
+}
+
 
 }catch(error){
 
 console.error(
-"Could not load balance:",
+"Balance loading error:",
 error
 );
 
