@@ -46,6 +46,12 @@ color:#0056d6;
 margin:15px 0 25px;
 }
 
+label{
+display:block;
+font-weight:bold;
+margin-bottom:7px;
+}
+
 input,
 select{
 width:100%;
@@ -83,8 +89,41 @@ margin-top:15px;
 text-align:center;
 font-weight:bold;
 }
-</style>
 
+.receipt{
+display:none;
+margin-top:20px;
+padding:20px;
+border:1px solid #ddd;
+border-radius:15px;
+background:#fafafa;
+}
+
+.receipt h2{
+text-align:center;
+margin-bottom:15px;
+color:#003366;
+}
+
+.receipt-row{
+display:flex;
+justify-content:space-between;
+padding:9px 0;
+border-bottom:1px solid #eee;
+}
+
+.receipt-row:last-child{
+border-bottom:none;
+}
+
+.receipt-label{
+font-weight:bold;
+}
+
+.receipt button{
+margin-top:15px;
+}
+</style>
 </head>
 
 <body>
@@ -103,20 +142,23 @@ ADMIN DASHBOARD
 $999,999,999
 </div>
 
+<label>Sender Name</label>
 <input
 type="text"
 id="senderName"
-placeholder="Sender Name"
+placeholder="Enter sender name"
 required
 >
 
+<label>User Email</label>
 <input
 type="email"
 id="userEmail"
-placeholder="User Email"
+placeholder="Enter user's email"
 required
 >
 
+<label>Amount</label>
 <input
 type="number"
 id="amount"
@@ -126,9 +168,17 @@ step="0.01"
 required
 >
 
+<label>Action</label>
 <select id="action">
 <option value="credit">Credit User</option>
 <option value="debit">Debit User</option>
+</select>
+
+<label>Transaction Status</label>
+<select id="status">
+<option value="Completed">Completed</option>
+<option value="Pending">Pending</option>
+<option value="Declined">Declined</option>
 </select>
 
 <button id="transferBtn">
@@ -136,6 +186,55 @@ Transfer Money
 </button>
 
 <div id="message"></div>
+
+<div class="receipt" id="receipt">
+
+<h2>APEX WALLET</h2>
+
+<p style="text-align:center;margin-bottom:15px;">
+TRANSACTION RECEIPT
+</p>
+
+<div class="receipt-row">
+<span class="receipt-label">Transaction ID</span>
+<span id="receiptId"></span>
+</div>
+
+<div class="receipt-row">
+<span class="receipt-label">From</span>
+<span id="receiptSender"></span>
+</div>
+
+<div class="receipt-row">
+<span class="receipt-label">To</span>
+<span id="receiptReceiver"></span>
+</div>
+
+<div class="receipt-row">
+<span class="receipt-label">Amount</span>
+<span id="receiptAmount"></span>
+</div>
+
+<div class="receipt-row">
+<span class="receipt-label">Type</span>
+<span id="receiptType"></span>
+</div>
+
+<div class="receipt-row">
+<span class="receipt-label">Status</span>
+<span id="receiptStatus"></span>
+</div>
+
+<div class="receipt-row">
+<span class="receipt-label">Date</span>
+<span id="receiptDate"></span>
+</div>
+
+<button onclick="window.print()">
+Print Receipt
+</button>
+
+</div>
 
 </div>
 
@@ -156,24 +255,42 @@ where,
 getDocs,
 doc,
 updateDoc,
-addDoc
+setDoc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
 const firebaseConfig = {
+
 apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+
 authDomain: "apex-wallet-2.firebaseapp.com",
+
 projectId: "apex-wallet-2",
+
 storageBucket: "apex-wallet-2.firebasestorage.app",
+
 messagingSenderId: "660772557652",
+
 appId: "1:660772557652:web:b9535515388134f8802ec1",
+
 measurementId: "G-KEJP4GN5VV"
+
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+const db =
+getFirestore(app);
+
+const auth =
+getAuth(app);
 
 
 const transferBtn =
@@ -182,8 +299,68 @@ document.getElementById("transferBtn");
 const message =
 document.getElementById("message");
 
+let currentAdmin = null;
+
+
+/*
+CHECK FIREBASE LOGIN
+*/
+
+onAuthStateChanged(auth, (user) => {
+
+if(user){
+
+currentAdmin = user;
+
+message.textContent =
+"Admin authenticated.";
+
+message.style.color =
+"green";
+
+}else{
+
+currentAdmin = null;
+
+message.textContent =
+"Please sign in before making a transfer.";
+
+message.style.color =
+"red";
+
+}
+
+});
+
+
+/*
+TRANSFER
+*/
 
 transferBtn.addEventListener("click", async () => {
+
+message.textContent = "";
+
+document.getElementById("receipt").style.display =
+"none";
+
+
+/*
+MAKE SURE ADMIN IS LOGGED IN
+*/
+
+if(!currentAdmin){
+
+message.textContent =
+"Transfer failed: Admin is not signed in.";
+
+message.style.color =
+"red";
+
+return;
+
+}
+
 
 const senderName =
 document.getElementById("senderName").value.trim();
@@ -197,8 +374,8 @@ Number(document.getElementById("amount").value);
 const action =
 document.getElementById("action").value;
 
-
-message.textContent = "";
+const status =
+document.getElementById("status").value;
 
 
 if(!senderName){
@@ -231,7 +408,8 @@ return;
 }
 
 
-transferBtn.disabled = true;
+transferBtn.disabled =
+true;
 
 transferBtn.textContent =
 "Processing...";
@@ -239,16 +417,18 @@ transferBtn.textContent =
 
 try{
 
+/*
+FIND USER
+*/
+
 const usersRef =
 collection(db,"users");
-
 
 const userQuery =
 query(
 usersRef,
 where("email","==",email)
 );
-
 
 const snapshot =
 await getDocs(userQuery);
@@ -258,11 +438,6 @@ if(snapshot.empty){
 
 message.textContent =
 "User not found.";
-
-transferBtn.disabled = false;
-
-transferBtn.textContent =
-"Transfer Money";
 
 return;
 
@@ -275,13 +450,19 @@ snapshot.docs[0];
 const userData =
 userDoc.data();
 
-
 const currentBalance =
 Number(userData.balance || 0);
 
+let newBalance =
+currentBalance;
 
-let newBalance;
 
+/*
+ONLY COMPLETED TRANSACTIONS
+CHANGE THE USER BALANCE
+*/
+
+if(status === "Completed"){
 
 if(action === "credit"){
 
@@ -295,11 +476,6 @@ if(amount > currentBalance){
 message.textContent =
 "User does not have enough balance.";
 
-transferBtn.disabled = false;
-
-transferBtn.textContent =
-"Transfer Money";
-
 return;
 
 }
@@ -309,7 +485,6 @@ currentBalance - amount;
 
 }
 
-
 await updateDoc(
 doc(db,"users",userDoc.id),
 {
@@ -317,37 +492,188 @@ balance:newBalance
 }
 );
 
+}
 
-/* SAVE TRANSACTION */
 
-await addDoc(
-collection(db,"transactions"),
+/*
+CREATE TRANSACTION ID
+*/
+
+const transactionRef =
+doc(collection(db,"transactions"));
+
+const transactionId =
+transactionRef.id;
+
+const date =
+new Date().toISOString();
+
+
+/*
+USER TRANSACTION
+*/
+
+await setDoc(
+transactionRef,
 {
+
+transactionId:transactionId,
+
 userId:userDoc.id,
+
 userEmail:email,
+
+senderId:currentAdmin.uid,
+
+senderEmail:
+currentAdmin.email || "",
+
 senderName:senderName,
+
+receiverName:
+userData.fullName || userData.name || email,
+
 amount:amount,
-type:action === "credit"
+
+type:
+action === "credit"
 ? "Money Received"
 : "Money Sent",
-status:"Completed",
-date:new Date().toISOString()
+
+status:status,
+
+date:date
+
 }
 );
 
 
+/*
+ADMIN/SENDER TRANSACTION
+*/
+
+const adminHistoryRef =
+doc(collection(db,"transactions"));
+
+await setDoc(
+adminHistoryRef,
+{
+
+transactionId:transactionId,
+
+userId:"admin",
+
+adminId:currentAdmin.uid,
+
+userEmail:email,
+
+senderId:currentAdmin.uid,
+
+senderEmail:
+currentAdmin.email || "",
+
+senderName:senderName,
+
+receiverName:
+userData.fullName || userData.name || email,
+
+amount:amount,
+
+type:
+action === "credit"
+? "Money Sent"
+: "Money Received",
+
+status:status,
+
+date:date
+
+}
+);
+
+
+/*
+SUCCESS MESSAGE
+*/
+
+if(status === "Completed"){
+
 message.textContent =
-`Success! User balance is now $${newBalance.toLocaleString(
+`Transfer successful. User balance is now $${newBalance.toLocaleString(
 "en-US",
 {
 minimumFractionDigits:2
 }
 )}`;
 
+message.style.color =
+"green";
 
-document.getElementById("amount").value = "";
+}else if(status === "Pending"){
 
-document.getElementById("senderName").value = "";
+message.textContent =
+"Transaction created as Pending.";
+
+message.style.color =
+"orange";
+
+}else{
+
+message.textContent =
+"Transaction created as Declined.";
+
+message.style.color =
+"red";
+
+}
+
+
+/*
+SHOW RECEIPT
+*/
+
+document.getElementById("receiptId").textContent =
+transactionId;
+
+document.getElementById("receiptSender").textContent =
+senderName;
+
+document.getElementById("receiptReceiver").textContent =
+userData.fullName || userData.name || email;
+
+document.getElementById("receiptAmount").textContent =
+"$" + amount.toLocaleString(
+"en-US",
+{
+minimumFractionDigits:2
+}
+);
+
+document.getElementById("receiptType").textContent =
+action === "credit"
+? "Money Sent"
+: "Money Received";
+
+document.getElementById("receiptStatus").textContent =
+status;
+
+document.getElementById("receiptDate").textContent =
+new Date(date).toLocaleString();
+
+
+document.getElementById("receipt").style.display =
+"block";
+
+
+/*
+CLEAR FORM
+*/
+
+document.getElementById("amount").value =
+"";
+
+document.getElementById("senderName").value =
+"";
 
 
 }catch(error){
@@ -357,13 +683,18 @@ console.error(error);
 message.textContent =
 "Transfer failed: " + error.message;
 
-}
+message.style.color =
+"red";
 
+}finally{
 
-transferBtn.disabled = false;
+transferBtn.disabled =
+false;
 
 transferBtn.textContent =
 "Transfer Money";
+
+}
 
 });
 
