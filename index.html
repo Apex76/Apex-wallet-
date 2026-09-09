@@ -4,275 +4,76 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apex Bank</title>
-
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#f4f7fb;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.container{
-width:90%;
-max-width:400px;
-background:white;
-padding:30px;
-border-radius:18px;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-}
-
-.logo{
-text-align:center;
-font-size:30px;
-font-weight:bold;
-color:#003366;
-margin-bottom:10px;
-}
-
-.subtitle{
-text-align:center;
-color:#666;
-margin-bottom:25px;
-}
-
-input{
-width:100%;
-padding:14px;
-margin-bottom:15px;
-border:1px solid #ccc;
-border-radius:10px;
-font-size:16px;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#0056d6;
-color:white;
-border:none;
-border-radius:10px;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
-}
-
-button:disabled{
-opacity:.6;
-cursor:not-allowed;
-}
-
-.link{
-text-align:center;
-margin-top:15px;
-}
-
-.link a{
-text-decoration:none;
-color:#0056d6;
-font-weight:bold;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f4f7fb;display:flex;justify-content:center;align-items:center;height:100vh}
+.container{width:90%;max-width:400px;background:white;padding:30px;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.logo{text-align:center;font-size:30px;font-weight:bold;color:#003366;margin-bottom:10px}
+.subtitle{text-align:center;color:#666;margin-bottom:25px}
+input{width:100%;padding:14px;margin-bottom:15px;border:1px solid #ccc;border-radius:10px;font-size:16px}
+button{width:100%;padding:15px;background:#0056d6;color:white;border:none;border-radius:10px;font-size:17px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
+.link{text-align:center;margin-top:15px}
+.link a{text-decoration:none;color:#0056d6;font-weight:bold}
 </style>
 </head>
-
 <body>
-
 <div class="container">
-
 <div class="logo">APEX BANK</div>
-
-<div class="subtitle">
-Secure Online Banking
-</div>
-
+<div class="subtitle">Secure Online Banking</div>
 <form id="loginForm">
-
-<input
-type="email"
-id="email"
-placeholder="Email Address"
-required
->
-
-<input
-type="password"
-id="password"
-placeholder="Password"
-required
->
-
-<button type="submit" id="loginButton">
-Sign In
-</button>
-
-<div class="link">
-<a href="signup.html">Create Account</a>
-</div>
-
+<input type="email" id="email" placeholder="Email Address" required>
+<input type="password" id="password" placeholder="Password" required>
+<button type="submit" id="loginButton">Sign In</button>
+<div class="link"><a href="signup.html">Create Account</a></div>
 </form>
-
 </div>
-
-
 <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-import { initializeApp } 
-from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
-import {
-getAuth,
-signInWithEmailAndPassword,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
-
-/* =========================
-   FIREBASE CONFIG
-========================= */
-
-const firebaseConfig = {
-
-apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
-
-authDomain: "apex-wallet-2.firebaseapp.com",
-
-projectId: "apex-wallet-2",
-
-storageBucket: "apex-wallet-2.firebasestorage.app",
-
-messagingSenderId: "660772557652",
-
-appId: "1:660772557652:web:b9535515388134f8802ec1",
-
-measurementId: "G-KEJP4GN5VV"
-
+const firebaseConfig={
+apiKey:"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+authDomain:"apex-wallet-2.firebaseapp.com",
+projectId:"apex-wallet-2",
+storageBucket:"apex-wallet-2.firebasestorage.app",
+messagingSenderId:"660772557652",
+appId:"1:660772557652:web:b9535515388134f8802ec1",
+measurementId:"G-KEJP4GN5VV"
 };
 
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const loginForm=document.getElementById("loginForm");
+const loginButton=document.getElementById("loginButton");
 
-/* =========================
-   START FIREBASE
-========================= */
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-
-/* =========================
-   LOGIN
-========================= */
-
-const loginForm =
-document.getElementById("loginForm");
-
-const loginButton =
-document.getElementById("loginButton");
-
-
-loginForm.addEventListener("submit", async (e) => {
-
+loginForm.addEventListener("submit",async(e)=>{
 e.preventDefault();
 
-const email =
-document.getElementById("email").value.trim();
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
 
-const password =
-document.getElementById("password").value;
-
-loginButton.disabled = true;
-
-loginButton.textContent = "Signing In...";
-
+loginButton.disabled=true;
+loginButton.textContent="Signing In...";
 
 try{
+await setPersistence(auth,browserLocalPersistence);
 
-const userCredential =
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
+const userCredential=await signInWithEmailAndPassword(auth,email,password);
 
-
-/* Save login information */
-
-localStorage.setItem(
-"loggedIn",
-"true"
-);
-
-localStorage.setItem(
-"fullname",
-userCredential.user.displayName || "User"
-);
-
-localStorage.setItem(
-"userEmail",
-userCredential.user.email
-);
-
-
-/* Go to dashboard */
+localStorage.setItem("loggedIn","true");
+localStorage.setItem("fullname",userCredential.user.displayName||"User");
+localStorage.setItem("userEmail",userCredential.user.email||"");
 
 window.location.replace("dashboard2.html");
 
-
 }catch(error){
-
 console.error(error);
-
 alert(error.message);
-
-loginButton.disabled = false;
-
-loginButton.textContent = "Sign In";
-
+loginButton.disabled=false;
+loginButton.textContent="Sign In";
 }
-
 });
-
-
-/* =========================
-   CHECK EXISTING LOGIN
-========================= */
-
-onAuthStateChanged(auth, (user) => {
-
-if(user){
-
-/*
-Only redirect automatically if
-the user is already logged in
-and is currently on the login page.
-*/
-
-if(
-window.location.pathname.endsWith("index.html") ||
-window.location.pathname.endsWith("/")
-){
-
-window.location.replace(
-"dashboard2.html"
-);
-
-}
-
-}
-
-});
-
 </script>
-
 </body>
 </html>
