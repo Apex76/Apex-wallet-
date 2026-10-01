@@ -37,6 +37,7 @@ background:white;
 padding:20px;
 border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
+margin-bottom:20px;
 }
 
 .balance{
@@ -84,10 +85,22 @@ opacity:.6;
 cursor:not-allowed;
 }
 
-#message{
+#message,
+#profileMessage{
 margin-top:15px;
 text-align:center;
 font-weight:bold;
+}
+
+.profile-preview{
+width:100px;
+height:100px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+margin:10px auto 20px;
+border:3px solid #0056d6;
+background:#eee;
 }
 
 .receipt{
@@ -134,6 +147,56 @@ ADMIN DASHBOARD
 
 <div class="container">
 
+
+<!-- =========================
+     PROFILE PICTURE
+========================= -->
+
+<div class="card">
+
+<h3 style="margin-bottom:20px;">
+User Profile Picture
+</h3>
+
+<label>User Email</label>
+
+<input
+type="email"
+id="profileEmail"
+placeholder="Enter user's email"
+required
+>
+
+<img
+id="profilePreview"
+class="profile-preview"
+src="https://i.imgur.com/4Z7bKQp.png"
+>
+
+<label>Choose Profile Picture</label>
+
+<input
+type="file"
+id="profileImage"
+accept="image/*"
+>
+
+<button
+id="saveProfileBtn"
+type="button"
+>
+Save Profile Picture
+</button>
+
+<div id="profileMessage"></div>
+
+</div>
+
+
+<!-- =========================
+     TRANSFER SECTION
+========================= -->
+
 <div class="card">
 
 <h3>Admin Balance</h3>
@@ -143,6 +206,7 @@ $999,999,999
 </div>
 
 <label>Sender Name</label>
+
 <input
 type="text"
 id="senderName"
@@ -151,6 +215,7 @@ required
 >
 
 <label>User Email</label>
+
 <input
 type="email"
 id="userEmail"
@@ -159,6 +224,7 @@ required
 >
 
 <label>Amount</label>
+
 <input
 type="number"
 id="amount"
@@ -169,16 +235,35 @@ required
 >
 
 <label>Action</label>
+
 <select id="action">
-<option value="credit">Credit User</option>
-<option value="debit">Debit User</option>
+
+<option value="credit">
+Credit User
+</option>
+
+<option value="debit">
+Debit User
+</option>
+
 </select>
 
 <label>Transaction Status</label>
+
 <select id="status">
-<option value="Completed">Completed</option>
-<option value="Pending">Pending</option>
-<option value="Declined">Declined</option>
+
+<option value="Completed">
+Completed
+</option>
+
+<option value="Pending">
+Pending
+</option>
+
+<option value="Declined">
+Declined
+</option>
+
 </select>
 
 <button id="transferBtn">
@@ -186,6 +271,11 @@ Transfer Money
 </button>
 
 <div id="message"></div>
+
+
+<!-- =========================
+     RECEIPT
+========================= -->
 
 <div class="receipt" id="receipt">
 
@@ -196,37 +286,58 @@ TRANSACTION RECEIPT
 </p>
 
 <div class="receipt-row">
-<span class="receipt-label">Transaction ID</span>
+<span class="receipt-label">
+Transaction ID
+</span>
+
 <span id="receiptId"></span>
 </div>
 
 <div class="receipt-row">
-<span class="receipt-label">From</span>
+<span class="receipt-label">
+From
+</span>
+
 <span id="receiptSender"></span>
 </div>
 
 <div class="receipt-row">
-<span class="receipt-label">To</span>
+<span class="receipt-label">
+To
+</span>
+
 <span id="receiptReceiver"></span>
 </div>
 
 <div class="receipt-row">
-<span class="receipt-label">Amount</span>
+<span class="receipt-label">
+Amount
+</span>
+
 <span id="receiptAmount"></span>
 </div>
 
 <div class="receipt-row">
-<span class="receipt-label">Type</span>
+<span class="receipt-label">
+Type
+</span>
+
 <span id="receiptType"></span>
 </div>
 
 <div class="receipt-row">
-<span class="receipt-label">Status</span>
+<span class="receipt-label">
+Status
+</span>
+
 <span id="receiptStatus"></span>
 </div>
 
 <div class="receipt-row">
-<span class="receipt-label">Date</span>
+<span class="receipt-label">
+Date
+</span>
+
 <span id="receiptDate"></span>
 </div>
 
@@ -247,6 +358,7 @@ import {
 initializeApp
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
+
 import {
 getFirestore,
 collection,
@@ -258,27 +370,43 @@ updateDoc,
 setDoc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
+
 import {
 getAuth,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
+import {
+getStorage,
+ref,
+uploadBytes,
+getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
+
+
 const firebaseConfig = {
 
-apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+apiKey:
+"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
 
-authDomain: "apex-wallet-2.firebaseapp.com",
+authDomain:
+"apex-wallet-2.firebaseapp.com",
 
-projectId: "apex-wallet-2",
+projectId:
+"apex-wallet-2",
 
-storageBucket: "apex-wallet-2.firebasestorage.app",
+storageBucket:
+"apex-wallet-2.firebasestorage.app",
 
-messagingSenderId: "660772557652",
+messagingSenderId:
+"660772557652",
 
-appId: "1:660772557652:web:b9535515388134f8802ec1",
+appId:
+"1:660772557652:web:b9535515388134f8802ec1",
 
-measurementId: "G-KEJP4GN5VV"
+measurementId:
+"G-KEJP4GN5VV"
 
 };
 
@@ -286,27 +414,90 @@ measurementId: "G-KEJP4GN5VV"
 const app =
 initializeApp(firebaseConfig);
 
+
 const db =
 getFirestore(app);
+
 
 const auth =
 getAuth(app);
 
 
+const storage =
+getStorage(app);
+
+
 const transferBtn =
-document.getElementById("transferBtn");
+document.getElementById(
+"transferBtn"
+);
+
 
 const message =
-document.getElementById("message");
+document.getElementById(
+"message"
+);
+
+
+const saveProfileBtn =
+document.getElementById(
+"saveProfileBtn"
+);
+
+
+const profileMessage =
+document.getElementById(
+"profileMessage"
+);
+
+
+const profileImage =
+document.getElementById(
+"profileImage"
+);
+
+
+const profilePreview =
+document.getElementById(
+"profilePreview"
+);
+
 
 let currentAdmin = null;
 
 
-/*
-CHECK FIREBASE LOGIN
-*/
+/* =========================
+   PROFILE IMAGE PREVIEW
+========================= */
 
-onAuthStateChanged(auth, (user) => {
+profileImage.addEventListener(
+"change",
+() => {
+
+const file =
+profileImage.files[0];
+
+if(!file){
+return;
+}
+
+const imageURL =
+URL.createObjectURL(file);
+
+profilePreview.src =
+imageURL;
+
+}
+);
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+onAuthStateChanged(
+auth,
+(user) => {
 
 if(user){
 
@@ -330,24 +521,223 @@ message.style.color =
 
 }
 
-});
+}
+);
+
+
+/* =========================
+   SAVE PROFILE PICTURE
+========================= */
+
+saveProfileBtn.addEventListener(
+"click",
+async () => {
+
+profileMessage.textContent =
+"";
+
+if(!currentAdmin){
+
+profileMessage.textContent =
+"Admin is not signed in.";
+
+profileMessage.style.color =
+"red";
+
+return;
+
+}
+
+
+const email =
+document.getElementById(
+"profileEmail"
+).value.trim();
+
+
+const file =
+profileImage.files[0];
+
+
+if(!email){
+
+profileMessage.textContent =
+"Enter the user's email.";
+
+profileMessage.style.color =
+"red";
+
+return;
+
+}
+
+
+if(!file){
+
+profileMessage.textContent =
+"Choose a picture first.";
+
+profileMessage.style.color =
+"red";
+
+return;
+
+}
+
+
+saveProfileBtn.disabled =
+true;
+
+saveProfileBtn.textContent =
+"Uploading...";
+
+
+try{
+
+/*
+FIND USER
+*/
+
+const usersRef =
+collection(db,"users");
+
+
+const userQuery =
+query(
+usersRef,
+where(
+"email",
+"==",
+email
+)
+);
+
+
+const snapshot =
+await getDocs(
+userQuery
+);
+
+
+if(snapshot.empty){
+
+profileMessage.textContent =
+"User not found.";
+
+profileMessage.style.color =
+"red";
+
+return;
+
+}
+
+
+const userDoc =
+snapshot.docs[0];
 
 
 /*
-TRANSFER
+CREATE STORAGE LOCATION
+FOR THIS USER
 */
 
-transferBtn.addEventListener("click", async () => {
+const imageRef =
+ref(
+storage,
+"profilePictures/" +
+userDoc.id +
+"/profile.jpg"
+);
+
+
+/*
+UPLOAD IMAGE
+*/
+
+await uploadBytes(
+imageRef,
+file
+);
+
+
+/*
+GET IMAGE URL
+*/
+
+const imageURL =
+await getDownloadURL(
+imageRef
+);
+
+
+/*
+SAVE IMAGE URL
+TO USER ACCOUNT
+*/
+
+await updateDoc(
+doc(
+db,
+"users",
+userDoc.id
+),
+{
+profileImage:imageURL
+}
+);
+
+
+profileMessage.textContent =
+"Profile picture saved successfully.";
+
+profileMessage.style.color =
+"green";
+
+
+profileImage.value =
+"";
+
+
+}catch(error){
+
+console.error(error);
+
+profileMessage.textContent =
+"Failed to save picture: " +
+error.message;
+
+profileMessage.style.color =
+"red";
+
+}finally{
+
+saveProfileBtn.disabled =
+false;
+
+saveProfileBtn.textContent =
+"Save Profile Picture";
+
+}
+
+}
+);
+
+
+/* =========================
+   TRANSFER
+========================= */
+
+transferBtn.addEventListener(
+"click",
+async () => {
 
 message.textContent = "";
 
-document.getElementById("receipt").style.display =
+document.getElementById(
+"receipt"
+).style.display =
 "none";
 
-
-/*
-MAKE SURE ADMIN IS LOGGED IN
-*/
 
 if(!currentAdmin){
 
@@ -363,19 +753,35 @@ return;
 
 
 const senderName =
-document.getElementById("senderName").value.trim();
+document.getElementById(
+"senderName"
+).value.trim();
+
 
 const email =
-document.getElementById("userEmail").value.trim();
+document.getElementById(
+"userEmail"
+).value.trim();
+
 
 const amount =
-Number(document.getElementById("amount").value);
+Number(
+document.getElementById(
+"amount"
+).value
+);
+
 
 const action =
-document.getElementById("action").value;
+document.getElementById(
+"action"
+).value;
+
 
 const status =
-document.getElementById("status").value;
+document.getElementById(
+"status"
+).value;
 
 
 if(!senderName){
@@ -417,21 +823,25 @@ transferBtn.textContent =
 
 try{
 
-/*
-FIND USER
-*/
-
 const usersRef =
 collection(db,"users");
+
 
 const userQuery =
 query(
 usersRef,
-where("email","==",email)
+where(
+"email",
+"==",
+email
+)
 );
 
+
 const snapshot =
-await getDocs(userQuery);
+await getDocs(
+userQuery
+);
 
 
 if(snapshot.empty){
@@ -447,19 +857,24 @@ return;
 const userDoc =
 snapshot.docs[0];
 
+
 const userData =
 userDoc.data();
 
+
 const currentBalance =
-Number(userData.balance || 0);
+Number(
+userData.balance || 0
+);
+
 
 let newBalance =
 currentBalance;
 
 
 /*
-ONLY COMPLETED TRANSACTIONS
-CHANGE THE USER BALANCE
+ONLY COMPLETED
+TRANSACTIONS CHANGE BALANCE
 */
 
 if(status === "Completed"){
@@ -485,8 +900,13 @@ currentBalance - amount;
 
 }
 
+
 await updateDoc(
-doc(db,"users",userDoc.id),
+doc(
+db,
+"users",
+userDoc.id
+),
 {
 balance:newBalance
 }
@@ -496,14 +916,21 @@ balance:newBalance
 
 
 /*
-CREATE TRANSACTION ID
+CREATE TRANSACTION
 */
 
 const transactionRef =
-doc(collection(db,"transactions"));
+doc(
+collection(
+db,
+"transactions"
+)
+);
+
 
 const transactionId =
 transactionRef.id;
+
 
 const date =
 new Date().toISOString();
@@ -517,76 +944,103 @@ await setDoc(
 transactionRef,
 {
 
-transactionId:transactionId,
+transactionId:
+transactionId,
 
-userId:userDoc.id,
+userId:
+userDoc.id,
 
-userEmail:email,
+userEmail:
+email,
 
-senderId:currentAdmin.uid,
+senderId:
+currentAdmin.uid,
 
 senderEmail:
 currentAdmin.email || "",
 
-senderName:senderName,
+senderName:
+senderName,
 
 receiverName:
-userData.fullName || userData.name || email,
+userData.fullName ||
+userData.name ||
+email,
 
-amount:amount,
+amount:
+amount,
 
 type:
 action === "credit"
 ? "Money Received"
 : "Money Sent",
 
-status:status,
+status:
+status,
 
-date:date
+date:
+date
 
 }
 );
 
 
 /*
-ADMIN/SENDER TRANSACTION
+ADMIN TRANSACTION
 */
 
 const adminHistoryRef =
-doc(collection(db,"transactions"));
+doc(
+collection(
+db,
+"transactions"
+)
+);
+
 
 await setDoc(
 adminHistoryRef,
 {
 
-transactionId:transactionId,
+transactionId:
+transactionId,
 
-userId:"admin",
+userId:
+"admin",
 
-adminId:currentAdmin.uid,
+adminId:
+currentAdmin.uid,
 
-userEmail:email,
+userEmail:
+email,
 
-senderId:currentAdmin.uid,
+senderId:
+currentAdmin.uid,
 
 senderEmail:
 currentAdmin.email || "",
 
-senderName:senderName,
+senderName:
+senderName,
 
 receiverName:
-userData.fullName || userData.name || email,
+userData.fullName ||
+userData.name ||
+email,
 
-amount:amount,
+amount:
+amount,
 
 type:
 action === "credit"
 ? "Money Sent"
 : "Money Received",
 
-status:status,
+status:
+status,
 
-date:date
+date:
+date
 
 }
 );
@@ -632,36 +1086,61 @@ message.style.color =
 SHOW RECEIPT
 */
 
-document.getElementById("receiptId").textContent =
+document.getElementById(
+"receiptId"
+).textContent =
 transactionId;
 
-document.getElementById("receiptSender").textContent =
+
+document.getElementById(
+"receiptSender"
+).textContent =
 senderName;
 
-document.getElementById("receiptReceiver").textContent =
-userData.fullName || userData.name || email;
 
-document.getElementById("receiptAmount").textContent =
-"$" + amount.toLocaleString(
+document.getElementById(
+"receiptReceiver"
+).textContent =
+userData.fullName ||
+userData.name ||
+email;
+
+
+document.getElementById(
+"receiptAmount"
+).textContent =
+"$" +
+amount.toLocaleString(
 "en-US",
 {
 minimumFractionDigits:2
 }
 );
 
-document.getElementById("receiptType").textContent =
+
+document.getElementById(
+"receiptType"
+).textContent =
 action === "credit"
 ? "Money Sent"
 : "Money Received";
 
-document.getElementById("receiptStatus").textContent =
+
+document.getElementById(
+"receiptStatus"
+).textContent =
 status;
 
-document.getElementById("receiptDate").textContent =
+
+document.getElementById(
+"receiptDate"
+).textContent =
 new Date(date).toLocaleString();
 
 
-document.getElementById("receipt").style.display =
+document.getElementById(
+"receipt"
+).style.display =
 "block";
 
 
@@ -669,10 +1148,15 @@ document.getElementById("receipt").style.display =
 CLEAR FORM
 */
 
-document.getElementById("amount").value =
+document.getElementById(
+"amount"
+).value =
 "";
 
-document.getElementById("senderName").value =
+
+document.getElementById(
+"senderName"
+).value =
 "";
 
 
@@ -681,7 +1165,8 @@ document.getElementById("senderName").value =
 console.error(error);
 
 message.textContent =
-"Transfer failed: " + error.message;
+"Transfer failed: " +
+error.message;
 
 message.style.color =
 "red";
