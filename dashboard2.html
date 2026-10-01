@@ -67,7 +67,7 @@ font-size:14px;
 }
 
 .balance{
-font-size:40px;
+font-size:30px;
 font-weight:bold;
 margin-top:8px;
 }
@@ -298,11 +298,6 @@ font-weight:bold;
 
 <body>
 
-
-<!-- =========================
-     HEADER
-========================= -->
-
 <div class="header">
 
 <div class="top">
@@ -325,7 +320,6 @@ User
 
 </div>
 
-
 <div class="account">
 
 <small>APEX CHECKING ACCOUNT</small>
@@ -347,10 +341,6 @@ $<span id="balance" data-real-balance="0.00">0.00</span>
 </div>
 
 
-<!-- =========================
-     VIRTUAL CARD
-========================= -->
-
 <div class="virtual-card">
 
 <div class="card-top">
@@ -365,14 +355,11 @@ VIRTUAL
 
 </div>
 
-
 <div class="chip"></div>
-
 
 <div class="card-number">
 •••• •••• •••• 4821
 </div>
-
 
 <div class="card-bottom">
 
@@ -397,10 +384,6 @@ VIRTUAL
 </div>
 
 
-<!-- =========================
-     QUICK ACCESS
-========================= -->
-
 <div class="quick">
 
 <a href="#">
@@ -416,14 +399,9 @@ My Account
 </div>
 
 
-<!-- =========================
-     QUICK SERVICES
-========================= -->
-
 <div class="card">
 
 <h3>Quick Services</h3>
-
 
 <a href="history.html" class="action">
 
@@ -436,7 +414,6 @@ Transaction History
 
 </a>
 
-
 <a href="transfer.html" class="action">
 
 <span>
@@ -447,7 +424,6 @@ Transfer Money
 <i class="fa-solid fa-chevron-right"></i>
 
 </a>
-
 
 <a href="settings.html" class="action">
 
@@ -463,10 +439,6 @@ Settings
 </div>
 
 
-<!-- =========================
-     RECENT ACTIVITY
-========================= -->
-
 <div class="card">
 
 <h3>Recent Activity</h3>
@@ -478,10 +450,6 @@ No recent transactions.
 </div>
 
 
-<!-- =========================
-     BOTTOM NAVIGATION
-========================= -->
-
 <div class="bottom">
 
 <a href="dashboard2.html" class="active">
@@ -491,7 +459,6 @@ Home
 
 </a>
 
-
 <a href="transfer.html">
 
 <i class="fa-solid fa-paper-plane"></i>
@@ -499,14 +466,12 @@ Transfer
 
 </a>
 
-
 <a href="history.html">
 
 <i class="fa-solid fa-file-lines"></i>
 History
 
 </a>
-
 
 <a href="settings.html">
 
@@ -517,10 +482,6 @@ Settings
 
 </div>
 
-
-<!-- =========================
-     FIREBASE
-========================= -->
 
 <script type="module">
 
@@ -545,10 +506,6 @@ getDocs
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
-/* =========================
-   FIREBASE CONFIG
-========================= */
-
 const firebaseConfig = {
 
 apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
@@ -568,20 +525,12 @@ measurementId: "G-KEJP4GN5VV"
 };
 
 
-/* =========================
-   INITIALIZE
-========================= */
-
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-
-/* =========================
-   AUTH CHECK
-========================= */
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -593,11 +542,6 @@ return;
 
 }
 
-
-/* =========================
-   SAVE LOGIN INFO
-========================= */
-
 localStorage.setItem(
 "loggedIn",
 "true"
@@ -608,10 +552,6 @@ localStorage.setItem(
 user.email || ""
 );
 
-
-/* =========================
-   USER NAME
-========================= */
 
 const userName =
 
@@ -636,19 +576,9 @@ document.getElementById(
 ).textContent = userName;
 
 
-/* =========================
-   LOAD USER BALANCE
-========================= */
-
 try{
 
 let userData = null;
-
-
-/*
-First try the Firebase Auth UID
-as the Firestore document ID.
-*/
 
 const userRef =
 doc(db,"users",user.uid);
@@ -663,11 +593,6 @@ userData = userSnap.data();
 
 }
 
-
-/*
-If the UID document isn't found,
-try finding the user by email.
-*/
 
 if(!userData && user.email){
 
@@ -693,10 +618,6 @@ emailSnap.docs[0].data();
 
 }
 
-
-/* =========================
-   DISPLAY BALANCE
-========================= */
 
 if(userData){
 
@@ -741,10 +662,6 @@ error
 
 </script>
 
-
-<!-- =========================
-     BALANCE SHOW / HIDE
-========================= -->
 
 <script>
 
