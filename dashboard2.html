@@ -302,9 +302,12 @@ font-weight:bold;
 
 <div class="top">
 
-<img id="profilePic"
+<img
+id="profilePic"
 class="profile"
-src="https://i.imgur.com/4Z7bKQp.png">
+src="https://i.imgur.com/4Z7bKQp.png"
+alt="Profile Picture"
+>
 
 <div>
 
@@ -542,6 +545,7 @@ return;
 
 }
 
+
 localStorage.setItem(
 "loggedIn",
 "true"
@@ -552,6 +556,10 @@ localStorage.setItem(
 user.email || ""
 );
 
+
+/* =========================
+   USER NAME
+========================= */
 
 const userName =
 
@@ -576,9 +584,19 @@ document.getElementById(
 ).textContent = userName;
 
 
+/* =========================
+   LOAD USER DATA
+========================= */
+
 try{
 
 let userData = null;
+
+
+/*
+FIRST:
+Find account using Firebase Auth UID
+*/
 
 const userRef =
 doc(db,"users",user.uid);
@@ -593,6 +611,12 @@ userData = userSnap.data();
 
 }
 
+
+/*
+SECOND:
+If UID document was not found,
+find account using email
+*/
 
 if(!userData && user.email){
 
@@ -619,15 +643,55 @@ emailSnap.docs[0].data();
 }
 
 
+/* =========================
+   LOAD PROFILE PICTURE
+========================= */
+
+if(
+userData &&
+userData.profileImage
+){
+
+const profilePic =
+document.getElementById("profilePic");
+
+
+profilePic.src =
+userData.profileImage;
+
+
+/*
+If the saved image cannot load,
+use the default image.
+*/
+
+profilePic.onerror = function(){
+
+this.onerror = null;
+
+this.src =
+"https://i.imgur.com/4Z7bKQp.png";
+
+};
+
+}
+
+
+/* =========================
+   DISPLAY BALANCE
+========================= */
+
 if(userData){
 
 const userBalance =
 Number(userData.balance || 0);
 
+
 document.getElementById(
 "balance"
 ).textContent =
 userBalance.toFixed(2);
+
 
 document.getElementById(
 "balance"
@@ -641,6 +705,7 @@ document.getElementById(
 ).textContent =
 "0.00";
 
+
 document.getElementById(
 "balance"
 ).dataset.realBalance =
@@ -652,7 +717,7 @@ document.getElementById(
 }catch(error){
 
 console.error(
-"Balance loading error:",
+"User data loading error:",
 error
 );
 
