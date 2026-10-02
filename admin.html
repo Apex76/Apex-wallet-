@@ -171,6 +171,7 @@ required
 id="profilePreview"
 class="profile-preview"
 src="https://i.imgur.com/4Z7bKQp.png"
+alt="Profile Preview"
 >
 
 <label>Choose Profile Picture</label>
@@ -414,14 +415,11 @@ measurementId:
 const app =
 initializeApp(firebaseConfig);
 
-
 const db =
 getFirestore(app);
 
-
 const auth =
 getAuth(app);
-
 
 const storage =
 getStorage(app);
@@ -432,30 +430,25 @@ document.getElementById(
 "transferBtn"
 );
 
-
 const message =
 document.getElementById(
 "message"
 );
-
 
 const saveProfileBtn =
 document.getElementById(
 "saveProfileBtn"
 );
 
-
 const profileMessage =
 document.getElementById(
 "profileMessage"
 );
 
-
 const profileImage =
 document.getElementById(
 "profileImage"
 );
-
 
 const profilePreview =
 document.getElementById(
@@ -481,11 +474,31 @@ if(!file){
 return;
 }
 
+if(!file.type.startsWith("image/")){
+
+profileMessage.textContent =
+"Please choose an image file.";
+
+profileMessage.style.color =
+"red";
+
+profileImage.value = "";
+
+return;
+
+}
+
 const imageURL =
 URL.createObjectURL(file);
 
 profilePreview.src =
 imageURL;
+
+profileMessage.textContent =
+"Picture selected. Tap Save Profile Picture.";
+
+profileMessage.style.color =
+"#0056d6";
 
 }
 );
@@ -533,8 +546,7 @@ saveProfileBtn.addEventListener(
 "click",
 async () => {
 
-profileMessage.textContent =
-"";
+profileMessage.textContent = "";
 
 if(!currentAdmin){
 
@@ -594,9 +606,16 @@ saveProfileBtn.textContent =
 
 try{
 
-/*
-FIND USER
-*/
+/* =========================
+   FIND USER
+========================= */
+
+profileMessage.textContent =
+"Finding user account...";
+
+profileMessage.style.color =
+"#0056d6";
+
 
 const usersRef =
 collection(db,"users");
@@ -636,10 +655,13 @@ const userDoc =
 snapshot.docs[0];
 
 
-/*
-CREATE STORAGE LOCATION
-FOR THIS USER
-*/
+/* =========================
+   STORAGE LOCATION
+========================= */
+
+profileMessage.textContent =
+"Uploading picture...";
+
 
 const imageRef =
 ref(
@@ -650,19 +672,26 @@ userDoc.id +
 );
 
 
-/*
-UPLOAD IMAGE
-*/
+/* =========================
+   UPLOAD
+========================= */
 
 await uploadBytes(
 imageRef,
-file
+file,
+{
+contentType:file.type
+}
 );
 
 
-/*
-GET IMAGE URL
-*/
+/* =========================
+   GET IMAGE URL
+========================= */
+
+profileMessage.textContent =
+"Saving profile picture...";
+
 
 const imageURL =
 await getDownloadURL(
@@ -670,10 +699,9 @@ imageRef
 );
 
 
-/*
-SAVE IMAGE URL
-TO USER ACCOUNT
-*/
+/* =========================
+   SAVE URL TO FIRESTORE
+========================= */
 
 await updateDoc(
 doc(
@@ -687,8 +715,15 @@ profileImage:imageURL
 );
 
 
+/* =========================
+   SUCCESS
+========================= */
+
+profilePreview.src =
+imageURL;
+
 profileMessage.textContent =
-"Profile picture saved successfully.";
+"✓ Profile picture saved successfully.";
 
 profileMessage.style.color =
 "green";
@@ -700,14 +735,52 @@ profileImage.value =
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Profile picture error:",
+error
+);
+
+
+let errorMessage =
+"Failed to save picture.";
+
+
+if(
+error &&
+error.code ===
+"storage/unauthorized"
+){
+
+errorMessage =
+"Upload blocked by Firebase Storage rules.";
+
+}else if(
+error &&
+error.code ===
+"storage/unknown"
+){
+
+errorMessage =
+"Firebase Storage error. Please try again.";
+
+}else if(
+error &&
+error.message
+){
+
+errorMessage =
+"Failed: " +
+error.message;
+
+}
+
 
 profileMessage.textContent =
-"Failed to save picture: " +
-error.message;
+errorMessage;
 
 profileMessage.style.color =
 "red";
+
 
 }finally{
 
@@ -789,6 +862,9 @@ if(!senderName){
 message.textContent =
 "Enter the sender name.";
 
+message.style.color =
+"red";
+
 return;
 
 }
@@ -799,6 +875,9 @@ if(!email){
 message.textContent =
 "Enter the user's email.";
 
+message.style.color =
+"red";
+
 return;
 
 }
@@ -808,6 +887,9 @@ if(!amount || amount <= 0){
 
 message.textContent =
 "Enter a valid amount.";
+
+message.style.color =
+"red";
 
 return;
 
@@ -849,6 +931,9 @@ if(snapshot.empty){
 message.textContent =
 "User not found.";
 
+message.style.color =
+"red";
+
 return;
 
 }
@@ -856,7 +941,6 @@ return;
 
 const userDoc =
 snapshot.docs[0];
-
 
 const userData =
 userDoc.data();
@@ -890,6 +974,9 @@ if(amount > currentBalance){
 
 message.textContent =
 "User does not have enough balance.";
+
+message.style.color =
+"red";
 
 return;
 
