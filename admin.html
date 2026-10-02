@@ -85,22 +85,10 @@ opacity:.6;
 cursor:not-allowed;
 }
 
-#message,
-#profileMessage{
+#message{
 margin-top:15px;
 text-align:center;
 font-weight:bold;
-}
-
-.profile-preview{
-width:100px;
-height:100px;
-border-radius:50%;
-object-fit:cover;
-display:block;
-margin:10px auto 20px;
-border:3px solid #0056d6;
-background:#eee;
 }
 
 .receipt{
@@ -146,57 +134,6 @@ ADMIN DASHBOARD
 </div>
 
 <div class="container">
-
-
-<!-- =========================
-     PROFILE PICTURE
-========================= -->
-
-<div class="card">
-
-<h3 style="margin-bottom:20px;">
-User Profile Picture
-</h3>
-
-<label>User Email</label>
-
-<input
-type="email"
-id="profileEmail"
-placeholder="Enter user's email"
-required
->
-
-<img
-id="profilePreview"
-class="profile-preview"
-src="https://i.imgur.com/4Z7bKQp.png"
-alt="Profile Preview"
->
-
-<label>Choose Profile Picture</label>
-
-<input
-type="file"
-id="profileImage"
-accept="image/*"
->
-
-<button
-id="saveProfileBtn"
-type="button"
->
-Save Profile Picture
-</button>
-
-<div id="profileMessage"></div>
-
-</div>
-
-
-<!-- =========================
-     TRANSFER SECTION
-========================= -->
 
 <div class="card">
 
@@ -378,14 +315,6 @@ onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
-import {
-getStorage,
-ref,
-uploadBytes,
-getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
-
-
 const firebaseConfig = {
 
 apiKey:
@@ -415,14 +344,13 @@ measurementId:
 const app =
 initializeApp(firebaseConfig);
 
+
 const db =
 getFirestore(app);
 
+
 const auth =
 getAuth(app);
-
-const storage =
-getStorage(app);
 
 
 const transferBtn =
@@ -430,78 +358,14 @@ document.getElementById(
 "transferBtn"
 );
 
+
 const message =
 document.getElementById(
 "message"
 );
 
-const saveProfileBtn =
-document.getElementById(
-"saveProfileBtn"
-);
-
-const profileMessage =
-document.getElementById(
-"profileMessage"
-);
-
-const profileImage =
-document.getElementById(
-"profileImage"
-);
-
-const profilePreview =
-document.getElementById(
-"profilePreview"
-);
-
 
 let currentAdmin = null;
-
-
-/* =========================
-   PROFILE IMAGE PREVIEW
-========================= */
-
-profileImage.addEventListener(
-"change",
-() => {
-
-const file =
-profileImage.files[0];
-
-if(!file){
-return;
-}
-
-if(!file.type.startsWith("image/")){
-
-profileMessage.textContent =
-"Please choose an image file.";
-
-profileMessage.style.color =
-"red";
-
-profileImage.value = "";
-
-return;
-
-}
-
-const imageURL =
-URL.createObjectURL(file);
-
-profilePreview.src =
-imageURL;
-
-profileMessage.textContent =
-"Picture selected. Tap Save Profile Picture.";
-
-profileMessage.style.color =
-"#0056d6";
-
-}
-);
 
 
 /* =========================
@@ -531,264 +395,6 @@ message.textContent =
 
 message.style.color =
 "red";
-
-}
-
-}
-);
-
-
-/* =========================
-   SAVE PROFILE PICTURE
-========================= */
-
-saveProfileBtn.addEventListener(
-"click",
-async () => {
-
-profileMessage.textContent = "";
-
-if(!currentAdmin){
-
-profileMessage.textContent =
-"Admin is not signed in.";
-
-profileMessage.style.color =
-"red";
-
-return;
-
-}
-
-
-const email =
-document.getElementById(
-"profileEmail"
-).value.trim();
-
-
-const file =
-profileImage.files[0];
-
-
-if(!email){
-
-profileMessage.textContent =
-"Enter the user's email.";
-
-profileMessage.style.color =
-"red";
-
-return;
-
-}
-
-
-if(!file){
-
-profileMessage.textContent =
-"Choose a picture first.";
-
-profileMessage.style.color =
-"red";
-
-return;
-
-}
-
-
-saveProfileBtn.disabled =
-true;
-
-saveProfileBtn.textContent =
-"Uploading...";
-
-
-try{
-
-/* =========================
-   FIND USER
-========================= */
-
-profileMessage.textContent =
-"Finding user account...";
-
-profileMessage.style.color =
-"#0056d6";
-
-
-const usersRef =
-collection(db,"users");
-
-
-const userQuery =
-query(
-usersRef,
-where(
-"email",
-"==",
-email
-)
-);
-
-
-const snapshot =
-await getDocs(
-userQuery
-);
-
-
-if(snapshot.empty){
-
-profileMessage.textContent =
-"User not found.";
-
-profileMessage.style.color =
-"red";
-
-return;
-
-}
-
-
-const userDoc =
-snapshot.docs[0];
-
-
-/* =========================
-   STORAGE LOCATION
-========================= */
-
-profileMessage.textContent =
-"Uploading picture...";
-
-
-const imageRef =
-ref(
-storage,
-"profilePictures/" +
-userDoc.id +
-"/profile.jpg"
-);
-
-
-/* =========================
-   UPLOAD
-========================= */
-
-await uploadBytes(
-imageRef,
-file,
-{
-contentType:file.type
-}
-);
-
-
-/* =========================
-   GET IMAGE URL
-========================= */
-
-profileMessage.textContent =
-"Saving profile picture...";
-
-
-const imageURL =
-await getDownloadURL(
-imageRef
-);
-
-
-/* =========================
-   SAVE URL TO FIRESTORE
-========================= */
-
-await updateDoc(
-doc(
-db,
-"users",
-userDoc.id
-),
-{
-profileImage:imageURL
-}
-);
-
-
-/* =========================
-   SUCCESS
-========================= */
-
-profilePreview.src =
-imageURL;
-
-profileMessage.textContent =
-"✓ Profile picture saved successfully.";
-
-profileMessage.style.color =
-"green";
-
-
-profileImage.value =
-"";
-
-
-}catch(error){
-
-console.error(
-"Profile picture error:",
-error
-);
-
-
-let errorMessage =
-"Failed to save picture.";
-
-
-if(
-error &&
-error.code ===
-"storage/unauthorized"
-){
-
-errorMessage =
-"Upload blocked by Firebase Storage rules.";
-
-}else if(
-error &&
-error.code ===
-"storage/unknown"
-){
-
-errorMessage =
-"Firebase Storage error. Please try again.";
-
-}else if(
-error &&
-error.message
-){
-
-errorMessage =
-"Failed: " +
-error.message;
-
-}
-
-
-profileMessage.textContent =
-errorMessage;
-
-profileMessage.style.color =
-"red";
-
-
-}finally{
-
-saveProfileBtn.disabled =
-false;
-
-saveProfileBtn.textContent =
-"Save Profile Picture";
 
 }
 
@@ -941,6 +547,7 @@ return;
 
 const userDoc =
 snapshot.docs[0];
+
 
 const userData =
 userDoc.data();
