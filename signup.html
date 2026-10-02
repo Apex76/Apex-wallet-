@@ -3,33 +3,322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Create Account - Apex Bank</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#001f3f,#003f7f,#0066cc);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:25px;
+}
+
+.container{
+    width:100%;
+    max-width:450px;
+}
+
+.logo{
+    text-align:center;
+    color:white;
+    margin-bottom:20px;
+}
+
+.logo h1{
+    font-size:32px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.logo p{
+    margin-top:6px;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.card{
+    background:white;
+    border-radius:22px;
+    padding:30px 25px;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+.card h2{
+    text-align:center;
+    color:#003366;
+    font-size:27px;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#666;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:25px;
+}
+
+label{
+    display:block;
+    color:#003366;
+    font-size:15px;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border:2px solid #d9e2ec;
+    border-radius:12px;
+    font-size:16px;
+    outline:none;
+    margin-bottom:18px;
+    background:#f9fbfd;
+}
+
+input:focus{
+    border-color:#0066cc;
+    background:white;
+}
+
+.photo-section{
+    text-align:center;
+    margin-bottom:22px;
+}
+
+.photo-preview{
+    width:105px;
+    height:105px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid #0066cc;
+    background:#e9f2ff;
+    display:block;
+    margin:0 auto 12px;
+}
+
+.photo-label{
+    display:inline-block;
+    background:#0066cc;
+    color:white;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+#profileImage{
+    display:none;
+}
+
+.photo-text{
+    margin-top:8px;
+    color:#777;
+    font-size:12px;
+    font-weight:bold;
+}
+
+button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    background:#0056d6;
+    color:white;
+    font-size:18px;
+    font-weight:900;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+button:hover{
+    background:#003fa5;
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+#message{
+    text-align:center;
+    margin-top:15px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.login{
+    text-align:center;
+    margin-top:22px;
+    color:#555;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.login a{
+    color:#0056d6;
+    font-weight:900;
+    text-decoration:none;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>Create Your Apex Bank Account</h1>
+<div class="container">
 
-<form id="signupForm">
+    <div class="logo">
+        <h1>APEX BANK</h1>
+        <p>Secure Banking. Simple. Reliable.</p>
+    </div>
 
-  <input type="text" id="fullname" placeholder="Full Name" required><br><br>
+    <div class="card">
 
-  <input type="email" id="email" placeholder="Email Address" required><br><br>
+        <h2>CREATE YOUR ACCOUNT</h2>
 
-  <input type="password" id="password" placeholder="Create Password" required><br><br>
+        <p class="subtitle">
+            Enter your details to open your Apex Bank account
+        </p>
 
-  <input type="password" id="confirmPassword" placeholder="Confirm Password" required><br><br>
+        <form id="signupForm">
 
-  <button type="submit">Create Account</button>
+            <label for="fullname">FULL NAME</label>
 
-</form>
+            <input
+                type="text"
+                id="fullname"
+                placeholder="Enter your full name"
+                required
+            >
 
-<p>
-Already have an account?
-<a href="index.html">Login</a>
-</p>
+            <label for="email">EMAIL ADDRESS</label>
 
-<script type="module" src="signup.js"></script>
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email address"
+                required
+            >
+
+            <label for="password">PASSWORD</label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Create your password"
+                required
+            >
+
+            <label for="confirmPassword">CONFIRM PASSWORD</label>
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm your password"
+                required
+            >
+
+            <div class="photo-section">
+
+                <label>PROFILE PICTURE</label>
+
+                <img
+                    id="photoPreview"
+                    class="photo-preview"
+                    src="https://i.imgur.com/4Z7bKQp.png"
+                    alt="Profile Preview"
+                >
+
+                <label
+                    for="profileImage"
+                    class="photo-label"
+                >
+                    📷 Upload Picture
+                </label>
+
+                <input
+                    type="file"
+                    id="profileImage"
+                    accept="image/*"
+                    required
+                >
+
+                <p class="photo-text">
+                    Choose the picture you want to use on your account
+                </p>
+
+            </div>
+
+            <button
+                type="submit"
+                id="signupBtn"
+            >
+                CREATE ACCOUNT
+            </button>
+
+            <div id="message"></div>
+
+        </form>
+
+        <div class="login">
+            Already have an account?
+            <a href="index.html">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const profileImage =
+document.getElementById("profileImage");
+
+const photoPreview =
+document.getElementById("photoPreview");
+
+profileImage.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(!file){
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        photoPreview.src =
+        e.target.result;
+
+    };
+
+    reader.readAsDataURL(file);
+
+});
+
+</script>
+
+<script
+type="module"
+src="signup.js">
+</script>
 
 </body>
 </html>
