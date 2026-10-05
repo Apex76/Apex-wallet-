@@ -24,10 +24,6 @@ color:#172033;
 padding-bottom:90px;
 }
 
-/* =========================
-   HEADER
-========================= */
-
 .header{
 background:#123b78;
 color:white;
@@ -90,10 +86,6 @@ font-weight:bold;
 margin-top:4px;
 }
 
-/* =========================
-   BALANCE
-========================= */
-
 .account{
 margin-top:18px;
 background:linear-gradient(135deg,#2463dc,#1648b5);
@@ -134,10 +126,6 @@ font-size:13px;
 opacity:.9;
 cursor:pointer;
 }
-
-/* =========================
-   RECENT TRANSACTIONS
-========================= */
 
 .transactions{
 background:white;
@@ -225,10 +213,6 @@ padding:20px 5px;
 color:#888;
 font-size:13px;
 }
-
-/* =========================
-   VIRTUAL CARD
-========================= */
 
 .virtual-card{
 margin:18px 15px;
@@ -355,10 +339,6 @@ font-weight:bold;
 font-style:italic;
 }
 
-/* =========================
-   QUICK ACCESS
-========================= */
-
 .quick{
 display:flex;
 justify-content:space-around;
@@ -386,10 +366,6 @@ box-shadow:0 4px 12px rgba(0,0,0,.12);
 margin:auto;
 margin-bottom:7px;
 }
-
-/* =========================
-   QUICK SERVICES
-========================= */
 
 .card{
 background:white;
@@ -424,10 +400,6 @@ border-bottom:none;
 margin-right:7px;
 color:#1f4ed8;
 }
-
-/* =========================
-   BOTTOM NAVIGATION
-========================= */
 
 .bottom{
 position:fixed;
@@ -465,11 +437,6 @@ font-weight:bold;
 
 <body>
 
-
-<!-- =========================
-     HEADER
-========================= -->
-
 <div class="header">
 
 <div class="top">
@@ -491,7 +458,6 @@ alt="Profile Picture"
 
 </div>
 
-
 <div class="welcome">
 Welcome
 </div>
@@ -499,11 +465,6 @@ Welcome
 <div id="welcomeName" class="name">
 User
 </div>
-
-
-<!-- =========================
-     BALANCE
-========================= -->
 
 <div class="account">
 
@@ -519,11 +480,9 @@ VIRTUAL FUNDS
 
 </div>
 
-
 <div class="balance">
 $<span id="balance" data-real-balance="0.00">0.00</span>
 </div>
-
 
 <div class="view" onclick="toggleBalance()">
 
@@ -536,11 +495,6 @@ $<span id="balance" data-real-balance="0.00">0.00</span>
 </div>
 
 </div>
-
-
-<!-- =========================
-     RECENT TRANSACTIONS
-========================= -->
 
 <div class="transactions">
 
@@ -556,7 +510,6 @@ View all
 
 </div>
 
-
 <div class="transaction-head">
 
 <div>Type</div>
@@ -565,7 +518,6 @@ View all
 <div>Date</div>
 
 </div>
-
 
 <div id="recentTransactions">
 
@@ -576,11 +528,6 @@ No recent transactions.
 </div>
 
 </div>
-
-
-<!-- =========================
-     VIRTUAL CARD
-========================= -->
 
 <div class="virtual-card">
 
@@ -596,14 +543,11 @@ VIRTUAL
 
 </div>
 
-
 <div class="chip"></div>
-
 
 <div class="card-number">
 •••• •••• •••• 4821
 </div>
-
 
 <div class="card-bottom">
 
@@ -619,7 +563,6 @@ USER
 
 </div>
 
-
 <div class="card-type">
 VIRTUAL
 </div>
@@ -627,11 +570,6 @@ VIRTUAL
 </div>
 
 </div>
-
-
-<!-- =========================
-     QUICK ACCESS
-========================= -->
 
 <div class="quick">
 
@@ -647,17 +585,11 @@ My Account
 
 </div>
 
-
-<!-- =========================
-     QUICK SERVICES
-========================= -->
-
 <div class="card">
 
 <h3>
 Quick Services
 </h3>
-
 
 <a href="history.html" class="action">
 
@@ -670,7 +602,6 @@ Transaction History
 
 </a>
 
-
 <a href="transfer.html" class="action">
 
 <span>
@@ -681,7 +612,6 @@ Transfer Money
 <i class="fa-solid fa-chevron-right"></i>
 
 </a>
-
 
 <a href="settings.html" class="action">
 
@@ -696,11 +626,6 @@ Settings
 
 </div>
 
-
-<!-- =========================
-     BOTTOM NAVIGATION
-========================= -->
-
 <div class="bottom">
 
 <a href="dashboard2.html" class="active">
@@ -710,7 +635,6 @@ Home
 
 </a>
 
-
 <a href="transfer.html">
 
 <i class="fa-solid fa-paper-plane"></i>
@@ -718,14 +642,12 @@ Transfer
 
 </a>
 
-
 <a href="history.html">
 
 <i class="fa-solid fa-file-lines"></i>
 History
 
 </a>
-
 
 <a href="settings.html">
 
@@ -737,10 +659,6 @@ Settings
 </div>
 
 
-<!-- =========================
-     FIREBASE
-========================= -->
-
 <script type="module">
 
 import {
@@ -748,13 +666,11 @@ initializeApp
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
-
 import {
 getAuth,
 onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
 
 import {
 getFirestore,
@@ -768,14 +684,10 @@ getDocs
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
-/* =========================
-   FIREBASE CONFIG
-========================= */
-
 const firebaseConfig = {
 
 apiKey:
-"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWQKBfXgcX4w",
+"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
 
 authDomain:
 "apex-wallet-2.firebaseapp.com",
@@ -798,10 +710,6 @@ measurementId:
 };
 
 
-/* =========================
-   INITIALIZE
-========================= */
-
 const app =
 initializeApp(firebaseConfig);
 
@@ -812,19 +720,29 @@ const db =
 getFirestore(app);
 
 
-/* =========================
-   AUTH CHECK
-========================= */
+/*
+========================================
+AUTH CHECK
+========================================
+*/
+
+let authChecked = false;
 
 onAuthStateChanged(
 auth,
 async (user) => {
 
+authChecked = true;
+
 if(!user){
 
-window.location.replace(
-"index.html"
-);
+/*
+Firebase has now finished checking.
+Only redirect if there is genuinely
+no signed-in user.
+*/
+
+window.location.replace("index.html");
 
 return;
 
@@ -842,25 +760,21 @@ user.email || ""
 );
 
 
-/* =========================
-   USER NAME
-========================= */
+/*
+========================================
+USER NAME
+========================================
+*/
 
 const userName =
 
 user.displayName ||
 
-localStorage.getItem(
-"fullname"
-) ||
+localStorage.getItem("fullname") ||
 
-localStorage.getItem(
-"fullName"
-) ||
+localStorage.getItem("fullName") ||
 
-localStorage.getItem(
-"name"
-) ||
+localStorage.getItem("name") ||
 
 "User";
 
@@ -877,16 +791,16 @@ document.getElementById(
 userName;
 
 
-/* =========================
-   LOAD USER DATA
-========================= */
+/*
+========================================
+LOAD USER DATA
+========================================
+*/
 
 try{
 
 let userData = null;
 
-
-/* UID */
 
 const userRef =
 doc(
@@ -894,6 +808,7 @@ db,
 "users",
 user.uid
 );
+
 
 const userSnap =
 await getDoc(userRef);
@@ -907,8 +822,6 @@ userSnap.data();
 }
 
 
-/* EMAIL */
-
 if(
 !userData &&
 user.email
@@ -920,6 +833,7 @@ db,
 "users"
 );
 
+
 const emailQuery =
 query(
 usersRef,
@@ -930,15 +844,14 @@ user.email
 )
 );
 
+
 const emailSnap =
 await getDocs(
 emailQuery
 );
 
 
-if(
-!emailSnap.empty
-){
+if(!emailSnap.empty){
 
 userData =
 emailSnap.docs[0].data();
@@ -948,9 +861,11 @@ emailSnap.docs[0].data();
 }
 
 
-/* =========================
-   PROFILE IMAGE
-========================= */
+/*
+========================================
+PROFILE IMAGE
+========================================
+*/
 
 if(
 userData &&
@@ -961,6 +876,7 @@ const profilePic =
 document.getElementById(
 "profilePic"
 );
+
 
 profilePic.src =
 userData.profileImage;
@@ -979,9 +895,11 @@ this.src =
 }
 
 
-/* =========================
-   BALANCE
-========================= */
+/*
+========================================
+BALANCE
+========================================
+*/
 
 if(userData){
 
@@ -1018,22 +936,17 @@ document.getElementById(
 }
 
 
-/* =========================
-   TRANSACTIONS
-========================= */
-
 /*
-Your current user document does not
-show a transaction-list structure,
-so the dashboard safely keeps the
-section empty until transaction data
-exists.
+========================================
+TRANSACTIONS
+========================================
 */
 
 const transactionBox =
 document.getElementById(
 "recentTransactions"
 );
+
 
 transactionBox.innerHTML = `
 <div class="no-transactions">
@@ -1056,10 +969,6 @@ error
 </script>
 
 
-<!-- =========================
-     BALANCE SHOW / HIDE
-========================= -->
-
 <script>
 
 let balanceVisible = true;
@@ -1071,6 +980,7 @@ const balance =
 document.getElementById(
 "balance"
 );
+
 
 const eyeIcon =
 document.getElementById(
@@ -1107,7 +1017,6 @@ balanceVisible = true;
 }
 
 </script>
-
 
 </body>
 </html>
