@@ -18,7 +18,7 @@ import {
 const firebaseConfig = {
 
   apiKey:
-  "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+  "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWQKBfXgcX4w",
 
   authDomain:
   "apex-wallet-2.firebaseapp.com",
