@@ -18,7 +18,7 @@ import {
 const firebaseConfig = {
 
   apiKey:
-  "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWQKBfXgcX4w",
+  "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
 
   authDomain:
   "apex-wallet-2.firebaseapp.com",
@@ -41,14 +41,11 @@ const firebaseConfig = {
 };
 
 
-const app =
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const auth =
-getAuth(app);
+const auth = getAuth(app);
 
-const db =
-getFirestore(app);
+const db = getFirestore(app);
 
 
 const signupForm =
@@ -61,23 +58,15 @@ const message =
 document.getElementById("message");
 
 
-/*
-================================
-COMPRESS PROFILE PICTURE
-================================
-*/
-
 function compressImage(file){
 
   return new Promise((resolve,reject)=>{
 
-    const reader =
-    new FileReader();
+    const reader = new FileReader();
 
     reader.onload = function(event){
 
-      const image =
-      new Image();
+      const image = new Image();
 
       image.onload = function(){
 
@@ -86,11 +75,8 @@ function compressImage(file){
 
         const maxSize = 400;
 
-        let width =
-        image.width;
-
-        let height =
-        image.height;
+        let width = image.width;
+        let height = image.height;
 
 
         if(width > height){
@@ -100,8 +86,7 @@ function compressImage(file){
             height =
             height * maxSize / width;
 
-            width =
-            maxSize;
+            width = maxSize;
 
           }
 
@@ -112,19 +97,15 @@ function compressImage(file){
             width =
             width * maxSize / height;
 
-            height =
-            maxSize;
+            height = maxSize;
 
           }
 
         }
 
 
-        canvas.width =
-        width;
-
-        canvas.height =
-        height;
+        canvas.width = width;
+        canvas.height = height;
 
 
         const ctx =
@@ -145,23 +126,19 @@ function compressImage(file){
           0.7
         );
 
-
         resolve(compressed);
 
       };
 
 
-      image.onerror =
-      reject;
+      image.onerror = reject;
 
-      image.src =
-      event.target.result;
+      image.src = event.target.result;
 
     };
 
 
-    reader.onerror =
-    reject;
+    reader.onerror = reject;
 
     reader.readAsDataURL(file);
 
@@ -169,12 +146,6 @@ function compressImage(file){
 
 }
 
-
-/*
-================================
-CREATE ACCOUNT
-================================
-*/
 
 signupForm.addEventListener(
   "submit",
@@ -216,12 +187,9 @@ signupForm.addEventListener(
 
 
     message.textContent = "";
+
     message.style.color = "red";
 
-
-    /*
-    CHECK PASSWORD
-    */
 
     if(password !== confirmPassword){
 
@@ -233,10 +201,6 @@ signupForm.addEventListener(
     }
 
 
-    /*
-    CHECK PICTURE
-    */
-
     if(!profileFile){
 
       message.textContent =
@@ -246,10 +210,6 @@ signupForm.addEventListener(
 
     }
 
-
-    /*
-    CHECK IMAGE TYPE
-    */
 
     if(!profileFile.type.startsWith("image/")){
 
@@ -261,12 +221,7 @@ signupForm.addEventListener(
     }
 
 
-    /*
-    BUTTON
-    */
-
-    signupBtn.disabled =
-    true;
+    signupBtn.disabled = true;
 
     signupBtn.textContent =
     "CREATING ACCOUNT...";
@@ -274,18 +229,9 @@ signupForm.addEventListener(
 
     try{
 
-
-      /*
-      COMPRESS PICTURE
-      */
-
       const profileImage =
       await compressImage(profileFile);
 
-
-      /*
-      CREATE FIREBASE ACCOUNT
-      */
 
       const userCredential =
       await createUserWithEmailAndPassword(
@@ -299,10 +245,6 @@ signupForm.addEventListener(
       userCredential.user;
 
 
-      /*
-      SAVE NAME TO FIREBASE AUTH
-      */
-
       await updateProfile(
         user,
         {
@@ -311,37 +253,16 @@ signupForm.addEventListener(
       );
 
 
-      /*
-      SAVE USER INFORMATION
-      */
-
       await setDoc(
-        doc(
-          db,
-          "users",
-          user.uid
-        ),
+        doc(db, "users", user.uid),
         {
-
-          fullname:
-          fullname,
-
-          email:
-          email,
-
-          balance:
-          0,
-
-          profileImage:
-          profileImage
-
+          fullname: fullname,
+          email: email,
+          balance: 0,
+          profileImage: profileImage
         }
       );
 
-
-      /*
-      SAVE NAME LOCALLY
-      */
 
       localStorage.setItem(
         "fullname",
@@ -349,20 +270,11 @@ signupForm.addEventListener(
       );
 
 
-      /*
-      SUCCESS
-      */
-
-      message.style.color =
-      "green";
+      message.style.color = "green";
 
       message.textContent =
       "Account created successfully!";
 
-
-      /*
-      GO TO LOGIN
-      */
 
       setTimeout(() => {
 
@@ -376,9 +288,7 @@ signupForm.addEventListener(
 
       console.error(error);
 
-
-      message.style.color =
-      "red";
+      message.style.color = "red";
 
 
       if(
@@ -404,11 +314,9 @@ signupForm.addEventListener(
 
       }
 
-
     }finally{
 
-      signupBtn.disabled =
-      false;
+      signupBtn.disabled = false;
 
       signupBtn.textContent =
       "CREATE ACCOUNT";
