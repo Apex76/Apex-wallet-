@@ -26,7 +26,6 @@ body{
     color:white;
 }
 
-/* MAIN LOGIN BOX */
 .container{
     width:100%;
     max-width:390px;
@@ -36,7 +35,6 @@ body{
     box-shadow:0 20px 50px rgba(0,0,0,.45);
 }
 
-/* LOGO */
 .logo-area{
     text-align:center;
     margin-bottom:25px;
@@ -90,7 +88,6 @@ body{
     margin-bottom:27px;
 }
 
-/* TITLE */
 .welcome{
     text-align:center;
     color:#142d50;
@@ -106,7 +103,6 @@ body{
     margin-bottom:22px;
 }
 
-/* INPUTS */
 .input-group{
     position:relative;
     margin-bottom:15px;
@@ -147,7 +143,6 @@ input:focus{
     font-size:14px;
 }
 
-/* REMEMBER */
 .options{
     display:flex;
     justify-content:space-between;
@@ -174,7 +169,6 @@ input:focus{
     font-weight:bold;
 }
 
-/* LOGIN BUTTON */
 button{
     width:100%;
     padding:14px;
@@ -188,16 +182,11 @@ button{
     box-shadow:0 5px 12px rgba(31,94,219,.25);
 }
 
-button:hover{
-    background:#174db8;
-}
-
 button:disabled{
     opacity:.6;
     cursor:not-allowed;
 }
 
-/* SIGN UP */
 .link{
     text-align:center;
     margin-top:20px;
@@ -211,7 +200,6 @@ button:disabled{
     font-weight:bold;
 }
 
-/* DEMO NOTE */
 .note{
     text-align:center;
     margin-top:22px;
@@ -220,7 +208,6 @@ button:disabled{
     line-height:1.5;
 }
 </style>
-
 </head>
 
 <body>
@@ -244,7 +231,6 @@ button:disabled{
 
     </div>
 
-
     <div class="welcome">
         Welcome Back!
     </div>
@@ -252,7 +238,6 @@ button:disabled{
     <div class="login-text">
         Login to your account
     </div>
-
 
     <form id="loginForm">
 
@@ -264,11 +249,11 @@ button:disabled{
                 type="email"
                 id="email"
                 placeholder="Enter your email"
+                autocomplete="email"
                 required
             >
 
         </div>
-
 
         <div class="input-group">
 
@@ -278,6 +263,7 @@ button:disabled{
                 type="password"
                 id="password"
                 placeholder="Enter your password"
+                autocomplete="current-password"
                 required
             >
 
@@ -285,12 +271,9 @@ button:disabled{
                 class="password-eye"
                 id="passwordEye"
                 onclick="togglePassword()"
-            >
-                👁
-            </span>
+            >👁</span>
 
         </div>
-
 
         <div class="options">
 
@@ -305,7 +288,6 @@ button:disabled{
 
         </div>
 
-
         <button
             type="submit"
             id="loginButton"
@@ -313,18 +295,12 @@ button:disabled{
             Login
         </button>
 
-
         <div class="link">
-
             Don't have an account?
-            <a href="signup.html">
-                Sign up
-            </a>
-
+            <a href="signup.html">Sign up</a>
         </div>
 
     </form>
-
 
     <div class="note">
         Note: This is a virtual wallet simulation.
@@ -332,7 +308,6 @@ button:disabled{
     </div>
 
 </div>
-
 
 <script>
 
@@ -359,7 +334,6 @@ function togglePassword(){
 }
 
 </script>
-
 
 <script type="module">
 
@@ -401,12 +375,9 @@ const firebaseConfig = {
 };
 
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const auth =
-    getAuth(app);
-
+const auth = getAuth(app);
 
 const loginForm =
     document.getElementById("loginForm");
@@ -417,27 +388,21 @@ const loginButton =
 
 loginForm.addEventListener(
     "submit",
-    async (e) => {
+    async function(e){
 
         e.preventDefault();
-
 
         const email =
             document.getElementById("email")
             .value
             .trim();
 
-
         const password =
             document.getElementById("password")
             .value;
 
-
         loginButton.disabled = true;
-
-        loginButton.textContent =
-            "Signing In...";
-
+        loginButton.textContent = "Signing In...";
 
         try{
 
@@ -446,50 +411,45 @@ loginForm.addEventListener(
                 browserLocalPersistence
             );
 
-
-            const userCredential =
+            const result =
                 await signInWithEmailAndPassword(
                     auth,
                     email,
                     password
                 );
 
-
             localStorage.setItem(
                 "loggedIn",
                 "true"
             );
 
+            localStorage.setItem(
+                "userEmail",
+                result.user.email || ""
+            );
 
             localStorage.setItem(
                 "fullname",
-                userCredential.user.displayName ||
-                "User"
+                result.user.displayName || "User"
             );
 
-
-            localStorage.setItem(
-                "userEmail",
-                userCredential.user.email ||
-                ""
-            );
-
-
-            window.location.replace(
-                "dashboard2.html"
-            );
-
+            window.location.href =
+                "dashboard2.html";
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "LOGIN ERROR:",
+                error
+            );
 
-            alert(error.message);
+            alert(
+                "Login failed: " +
+                error.message
+            );
 
             loginButton.disabled = false;
-
-            loginButton.textContent =
-                "Login";
+            loginButton.textContent = "Login";
 
         }
 
