@@ -496,6 +496,7 @@ $<span id="balance" data-real-balance="0.00">0.00</span>
 
 </div>
 
+
 <div class="transactions">
 
 <div class="transactions-header">
@@ -528,6 +529,7 @@ No recent transactions.
 </div>
 
 </div>
+
 
 <div class="virtual-card">
 
@@ -571,6 +573,7 @@ VIRTUAL
 
 </div>
 
+
 <div class="quick">
 
 <a href="#">
@@ -584,6 +587,7 @@ My Account
 </a>
 
 </div>
+
 
 <div class="card">
 
@@ -626,6 +630,7 @@ Settings
 
 </div>
 
+
 <div class="bottom">
 
 <a href="dashboard2.html" class="active">
@@ -666,11 +671,13 @@ initializeApp
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
+
 import {
 getAuth,
 onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
 
 import {
 getFirestore,
@@ -720,29 +727,27 @@ const db =
 getFirestore(app);
 
 
-/*
-========================================
-AUTH CHECK
-========================================
-*/
-
-let authChecked = false;
-
 onAuthStateChanged(
 auth,
 async (user) => {
 
-authChecked = true;
 
 if(!user){
 
-/*
-Firebase has now finished checking.
-Only redirect if there is genuinely
-no signed-in user.
-*/
-
-window.location.replace("index.html");
+document.body.innerHTML = `
+<div style="
+padding:40px;
+font-family:Arial,sans-serif;
+text-align:center;
+color:#222;
+">
+<h2>Firebase says NO USER</h2>
+<p style="margin-top:10px;">
+The login page opened the dashboard,
+but Firebase says there is no signed-in user here.
+</p>
+</div>
+`;
 
 return;
 
@@ -759,12 +764,6 @@ localStorage.setItem(
 user.email || ""
 );
 
-
-/*
-========================================
-USER NAME
-========================================
-*/
 
 const userName =
 
@@ -790,12 +789,6 @@ document.getElementById(
 ).textContent =
 userName;
 
-
-/*
-========================================
-LOAD USER DATA
-========================================
-*/
 
 try{
 
@@ -861,12 +854,6 @@ emailSnap.docs[0].data();
 }
 
 
-/*
-========================================
-PROFILE IMAGE
-========================================
-*/
-
 if(
 userData &&
 userData.profileImage
@@ -894,12 +881,6 @@ this.src =
 
 }
 
-
-/*
-========================================
-BALANCE
-========================================
-*/
 
 if(userData){
 
@@ -935,12 +916,6 @@ document.getElementById(
 
 }
 
-
-/*
-========================================
-TRANSACTIONS
-========================================
-*/
 
 const transactionBox =
 document.getElementById(
