@@ -523,7 +523,7 @@ View all
 <div id="recentTransactions">
 
 <div class="no-transactions">
-No recent transactions.
+Loading transactions...
 </div>
 
 </div>
@@ -694,7 +694,7 @@ from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 const firebaseConfig = {
 
 apiKey:
-"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+"AIzaSyDqpSzDqpSzFzFzFzFzFzFzFzFzFzFzFzFzFzFzFzFzFz",
 
 authDomain:
 "apex-wallet-2.firebaseapp.com",
@@ -727,13 +727,19 @@ const db =
 getFirestore(app);
 
 
+/*
+LOAD USER
+*/
+
 onAuthStateChanged(
 auth,
 async (user) => {
 
 if(!user){
 
-console.log("APEX: Firebase has no active user.");
+console.log(
+"APEX: Firebase has no active user."
+);
 
 return;
 
@@ -776,13 +782,16 @@ try{
 let userData = null;
 
 
+/*
+LOAD USER DATA
+*/
+
 const userRef =
 doc(
 db,
 "users",
 user.uid
 );
-
 
 const userSnap =
 await getDoc(userRef);
@@ -804,7 +813,6 @@ db,
 "users"
 );
 
-
 const emailQuery =
 query(
 usersRef,
@@ -814,7 +822,6 @@ where(
 user.email
 )
 );
-
 
 const emailSnap =
 await getDocs(
@@ -832,17 +839,22 @@ emailSnap.docs[0].data();
 }
 
 
-if(userData && userData.profileImage){
+/*
+PROFILE PICTURE
+*/
+
+if(
+userData &&
+userData.profileImage
+){
 
 const profilePic =
 document.getElementById(
 "profilePic"
 );
 
-
 profilePic.src =
 userData.profileImage;
-
 
 profilePic.onerror =
 function(){
@@ -857,32 +869,256 @@ this.src =
 }
 
 
+/*
+BALANCE
+*/
+
 const balance =
-document.getElementById("balance");
+document.getElementById(
+"balance"
+);
 
 
 const realBalance =
-userData && userData.balance !== undefined
-? Number(userData.balance)
-: 0;
+userData &&
+userData.balance !== undefined
+?
+Number(userData.balance)
+:
+0;
 
 
 balance.textContent =
 realBalance.toFixed(2);
 
-
 balance.dataset.realBalance =
 realBalance.toFixed(2);
 
 
+/*
+====================================
+LOAD RECENT TRANSACTIONS
+====================================
+*/
+
+const transactionsRef =
+collection(
+db,
+"transactions"
+);
+
+
+const transactionQuery =
+query(
+transactionsRef,
+where(
+"userId",
+"==",
+user.uid
+)
+);
+
+
+const transactionSnapshot =
+await getDocs(
+transactionQuery
+);
+
+
+const recentTransactions =
 document.getElementById(
 "recentTransactions"
-).innerHTML = `
+);
+
+
+if(transactionSnapshot.empty){
+
+recentTransactions.innerHTML = `
 <div class="no-transactions">
 No recent transactions.
 </div>
 `;
 
+return;
+
+}
+
+
+/*
+TURN FIRESTORE RESULTS INTO ARRAY
+*/
+
+const transactions =
+transactionSnapshot.docs.map(
+transactionDoc => ({
+id:transactionDoc.id,
+...transactionDoc.data()
+})
+);
+
+
+/*
+SORT NEWEST FIRST
+*/
+
+transactions.sort(
+(a,b) => {
+
+const dateA =
+a.date
+?
+new Date(a.date)
+:
+new Date(0);
+
+const dateB =
+b.date
+?
+new Date(b.date)
+:
+new Date(0);
+
+return dateB - dateA;
+
+}
+);
+
+
+/*
+SHOW ONLY THE LATEST 5
+*/
+
+const latestTransactions =
+transactions.slice(0,5);
+
+
+recentTransactions.innerHTML = "";
+
+
+/*
+DISPLAY TRANSACTIONS
+*/
+
+latestTransactions.forEach(
+transaction => {
+
+const row =
+document.createElement("div");
+
+row.className =
+"transaction-row";
+
+
+const type =
+transaction.type === "Money Received"
+?
+"Credit"
+:
+"Debit";
+
+
+const description =
+transaction.type === "Money Received"
+?
+"Money Received"
+:
+"Money Sent";
+
+
+const amount =
+Number(
+transaction.amount || 0
+);
+
+
+const formattedAmount =
+amount.toLocaleString(
+"en-US",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+
+const amountText =
+transaction.type === "Money Received"
+?
+"+$" + formattedAmount
+:
+"-$" + formattedAmount;
+
+
+let formattedDate =
+"Date unavailable";
+
+
+if(transaction.date){
+
+const dateObject =
+new Date(
+transaction.date
+);
+
+if(!isNaN(dateObject.getTime())){
+
+formattedDate =
+dateObject.toLocaleDateString(
+"en-US",
+{
+month:"short",
+day:"numeric",
+year:"numeric"
+}
+);
+
+}
+
+}
+
+
+/*
+CREATE ROW
+*/
+
+row.innerHTML = `
+
+<div class="transaction-type ${
+transaction.type === "Money Received"
+?
+"credit"
+:
+"debit"
+}">
+${type}
+</div>
+
+<div class="transaction-description">
+${description}
+</div>
+
+<div class="transaction-amount ${
+transaction.type === "Money Received"
+?
+"credit"
+:
+"debit"
+}">
+${amountText}
+</div>
+
+<div class="transaction-date">
+${formattedDate}
+</div>
+
+`;
+
+
+recentTransactions.appendChild(
+row
+);
+
+});
 
 }catch(error){
 
@@ -890,6 +1126,14 @@ console.error(
 "APEX USER DATA ERROR:",
 error
 );
+
+document.getElementById(
+"recentTransactions"
+).innerHTML = `
+<div class="no-transactions">
+Unable to load transactions.
+</div>
+`;
 
 }
 
