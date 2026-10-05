@@ -691,10 +691,16 @@ getDocs
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
+/*
+====================================
+FIREBASE CONFIG
+====================================
+*/
+
 const firebaseConfig = {
 
 apiKey:
-"AIzaSyDqpSzDqpSzFzFzFzFzFzFzFzFzFzFzFzFzFzFzFzFzFz",
+"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
 
 authDomain:
 "apex-wallet-2.firebaseapp.com",
@@ -728,7 +734,74 @@ getFirestore(app);
 
 
 /*
-LOAD USER
+====================================
+HELPER: FIRESTORE DATE
+====================================
+*/
+
+function getTransactionDate(value){
+
+if(!value){
+
+return null;
+
+}
+
+
+/*
+Firestore Timestamp
+*/
+
+if(
+typeof value === "object" &&
+typeof value.toDate === "function"
+){
+
+return value.toDate();
+
+}
+
+
+/*
+Firestore timestamp object
+*/
+
+if(
+typeof value === "object" &&
+value.seconds !== undefined
+){
+
+return new Date(
+Number(value.seconds) * 1000
+);
+
+}
+
+
+/*
+Normal date/string
+*/
+
+const date =
+new Date(value);
+
+
+if(!isNaN(date.getTime())){
+
+return date;
+
+}
+
+
+return null;
+
+}
+
+
+/*
+====================================
+WAIT FOR USER
+====================================
 */
 
 onAuthStateChanged(
@@ -738,13 +811,25 @@ async (user) => {
 if(!user){
 
 console.log(
-"APEX: Firebase has no active user."
+"APEX: No Firebase user is signed in."
 );
+
+document.getElementById(
+"recentTransactions"
+).innerHTML = `
+<div class="no-transactions">
+Please sign in again.
+</div>
+`;
 
 return;
 
 }
 
+
+/*
+SAVE LOGIN INFO
+*/
 
 localStorage.setItem(
 "loggedIn",
@@ -756,6 +841,12 @@ localStorage.setItem(
 user.email || ""
 );
 
+
+/*
+====================================
+USER NAME
+====================================
+*/
 
 const userName =
 user.displayName ||
@@ -777,13 +868,19 @@ document.getElementById(
 userName;
 
 
-try{
+/*
+====================================
+LOAD USER ACCOUNT
+====================================
+*/
 
 let userData = null;
 
+try{
 
 /*
-LOAD USER DATA
+FIRST:
+LOOK FOR USER BY FIREBASE UID
 */
 
 const userRef =
@@ -804,6 +901,12 @@ userSnap.data();
 
 }
 
+
+/*
+SECOND:
+IF UID DOCUMENT DOES NOT EXIST,
+LOOK FOR USER BY EMAIL
+*/
 
 if(!userData && user.email){
 
@@ -840,7 +943,9 @@ emailSnap.docs[0].data();
 
 
 /*
+====================================
 PROFILE PICTURE
+====================================
 */
 
 if(
@@ -870,29 +975,44 @@ this.src =
 
 
 /*
+====================================
 BALANCE
+====================================
 */
 
-const balance =
+const balanceElement =
 document.getElementById(
 "balance"
 );
 
 
-const realBalance =
+/*
+IMPORTANT:
+DO NOT TURN THE BALANCE INTO ZERO
+IF FIREBASE DATA IS MISSING.
+*/
+
+if(
 userData &&
-userData.balance !== undefined
-?
-Number(userData.balance)
-:
-0;
+userData.balance !== undefined &&
+userData.balance !== null
+){
+
+const realBalance =
+Number(userData.balance);
 
 
-balance.textContent =
+if(!isNaN(realBalance)){
+
+balanceElement.textContent =
 realBalance.toFixed(2);
 
-balance.dataset.realBalance =
+balanceElement.dataset.realBalance =
 realBalance.toFixed(2);
+
+}
+
+}
 
 
 /*
@@ -900,6 +1020,13 @@ realBalance.toFixed(2);
 LOAD RECENT TRANSACTIONS
 ====================================
 */
+
+const recentTransactions =
+document.getElementById(
+"recentTransactions"
+);
+
+try{
 
 const transactionsRef =
 collection(
@@ -925,12 +1052,6 @@ transactionQuery
 );
 
 
-const recentTransactions =
-document.getElementById(
-"recentTransactions"
-);
-
-
 if(transactionSnapshot.empty){
 
 recentTransactions.innerHTML = `
@@ -945,47 +1066,66 @@ return;
 
 
 /*
-TURN FIRESTORE RESULTS INTO ARRAY
+CONVERT FIRESTORE DOCUMENTS
 */
 
 const transactions =
 transactionSnapshot.docs.map(
-transactionDoc => ({
+transactionDoc => {
+
+const data =
+transactionDoc.data();
+
+return {
+
 id:transactionDoc.id,
-...transactionDoc.data()
-})
-);
+
+...data
+
+};
+
+});
 
 
 /*
+====================================
 SORT NEWEST FIRST
+====================================
 */
 
 transactions.sort(
 (a,b) => {
 
 const dateA =
-a.date
-?
-new Date(a.date)
-:
-new Date(0);
+getTransactionDate(a.date);
 
 const dateB =
-b.date
-?
-new Date(b.date)
-:
-new Date(0);
+getTransactionDate(b.date);
 
-return dateB - dateA;
+
+const timeA =
+dateA
+?
+dateA.getTime()
+:
+0;
+
+const timeB =
+dateB
+?
+dateB.getTime()
+:
+0;
+
+
+return timeB - timeA;
 
 }
 );
 
 
 /*
-SHOW ONLY THE LATEST 5
+ONLY SHOW LATEST 5
 */
 
 const latestTransactions =
@@ -996,7 +1136,9 @@ recentTransactions.innerHTML = "";
 
 
 /*
+====================================
 DISPLAY TRANSACTIONS
+====================================
 */
 
 latestTransactions.forEach(
@@ -1009,8 +1151,13 @@ row.className =
 "transaction-row";
 
 
+const isReceived =
+transaction.type ===
+"Money Received";
+
+
 const type =
-transaction.type === "Money Received"
+isReceived
 ?
 "Credit"
 :
@@ -1018,7 +1165,7 @@ transaction.type === "Money Received"
 
 
 const description =
-transaction.type === "Money Received"
+isReceived
 ?
 "Money Received"
 :
@@ -1042,25 +1189,24 @@ maximumFractionDigits:2
 
 
 const amountText =
-transaction.type === "Money Received"
+isReceived
 ?
 "+$" + formattedAmount
 :
 "-$" + formattedAmount;
 
 
+const dateObject =
+getTransactionDate(
+transaction.date
+);
+
+
 let formattedDate =
 "Date unavailable";
 
 
-if(transaction.date){
-
-const dateObject =
-new Date(
-transaction.date
-);
-
-if(!isNaN(dateObject.getTime())){
+if(dateObject){
 
 formattedDate =
 dateObject.toLocaleDateString(
@@ -1074,8 +1220,6 @@ year:"numeric"
 
 }
 
-}
-
 
 /*
 CREATE ROW
@@ -1084,7 +1228,7 @@ CREATE ROW
 row.innerHTML = `
 
 <div class="transaction-type ${
-transaction.type === "Money Received"
+isReceived
 ?
 "credit"
 :
@@ -1098,7 +1242,7 @@ ${description}
 </div>
 
 <div class="transaction-amount ${
-transaction.type === "Money Received"
+isReceived
 ?
 "credit"
 :
@@ -1120,18 +1264,41 @@ row
 
 });
 
-}catch(error){
+
+}catch(transactionError){
 
 console.error(
-"APEX USER DATA ERROR:",
-error
+"APEX TRANSACTION ERROR:",
+transactionError
 );
+
+recentTransactions.innerHTML = `
+<div class="no-transactions">
+Unable to load recent transactions.
+</div>
+`;
+
+}
+
+
+}catch(userError){
+
+console.error(
+"APEX ACCOUNT ERROR:",
+userError
+);
+
+
+/*
+IMPORTANT:
+DO NOT CHANGE THE BALANCE TO ZERO HERE.
+*/
 
 document.getElementById(
 "recentTransactions"
 ).innerHTML = `
 <div class="no-transactions">
-Unable to load transactions.
+Unable to load account information.
 </div>
 `;
 
