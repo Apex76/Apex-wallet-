@@ -270,7 +270,6 @@ button:disabled{
             <span
                 class="password-eye"
                 id="passwordEye"
-                onclick="togglePassword()"
             >👁</span>
 
         </div>
@@ -309,6 +308,7 @@ button:disabled{
 
 </div>
 
+
 <script>
 
 function togglePassword(){
@@ -333,7 +333,12 @@ function togglePassword(){
 
 }
 
+document
+.getElementById("passwordEye")
+.addEventListener("click", togglePassword);
+
 </script>
+
 
 <script type="module">
 
@@ -343,9 +348,7 @@ import {
 
 import {
     getAuth,
-    signInWithEmailAndPassword,
-    setPersistence,
-    browserLocalPersistence
+    signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
@@ -375,15 +378,18 @@ const firebaseConfig = {
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+getAuth(app);
+
 
 const loginForm =
-    document.getElementById("loginForm");
+document.getElementById("loginForm");
 
 const loginButton =
-    document.getElementById("loginButton");
+document.getElementById("loginButton");
 
 
 loginForm.addEventListener(
@@ -392,49 +398,57 @@ loginForm.addEventListener(
 
         e.preventDefault();
 
+
         const email =
-            document.getElementById("email")
-            .value
-            .trim();
+        document
+        .getElementById("email")
+        .value
+        .trim();
+
 
         const password =
-            document.getElementById("password")
-            .value;
+        document
+        .getElementById("password")
+        .value;
+
 
         loginButton.disabled = true;
-        loginButton.textContent = "Signing In...";
+
+        loginButton.textContent =
+        "Signing In...";
+
 
         try{
 
-            await setPersistence(
+            const result =
+            await signInWithEmailAndPassword(
                 auth,
-                browserLocalPersistence
+                email,
+                password
             );
 
-            const result =
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
 
             localStorage.setItem(
                 "loggedIn",
                 "true"
             );
 
+
             localStorage.setItem(
                 "userEmail",
                 result.user.email || ""
             );
+
 
             localStorage.setItem(
                 "fullname",
                 result.user.displayName || "User"
             );
 
+
             window.location.href =
-                "dashboard2.html";
+            "dashboard2.html";
+
 
         }catch(error){
 
@@ -443,13 +457,17 @@ loginForm.addEventListener(
                 error
             );
 
+
             alert(
                 "Login failed: " +
                 error.message
             );
 
+
             loginButton.disabled = false;
-            loginButton.textContent = "Login";
+
+            loginButton.textContent =
+            "Login";
 
         }
 
