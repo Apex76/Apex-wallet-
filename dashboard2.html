@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>APEX BANK Dashboard</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 <style>
 
@@ -18,14 +20,19 @@ font-family:Arial,sans-serif;
 
 body{
 background:#eef3ff;
+color:#172033;
 padding-bottom:90px;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .header{
-background:#1f4ed8;
+background:#123b78;
 color:white;
-padding:25px;
-border-radius:0 0 30px 30px;
+padding:22px 20px 25px;
+border-radius:0 0 28px 28px;
 }
 
 .top{
@@ -33,65 +40,204 @@ display:flex;
 align-items:center;
 }
 
+.logo-box{
+width:48px;
+height:48px;
+background:white;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-right:12px;
+}
+
+.logo-mark{
+font-size:27px;
+font-weight:900;
+font-style:italic;
+color:#1f5edb;
+}
+
+.brand{
+font-size:18px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+.brand span{
+color:#8db5ff;
+}
+
 .profile{
-width:70px;
-height:70px;
+width:52px;
+height:52px;
 border-radius:50%;
-border:3px solid white;
+border:2px solid white;
 object-fit:cover;
-margin-right:15px;
+margin-left:auto;
 background:white;
 }
 
 .welcome{
-font-size:15px;
-opacity:.9;
+font-size:13px;
+opacity:.8;
+margin-top:20px;
 }
 
 .name{
-font-size:24px;
+font-size:22px;
 font-weight:bold;
 margin-top:4px;
 }
 
+/* =========================
+   BALANCE
+========================= */
+
 .account{
-margin-top:25px;
-background:rgba(255,255,255,.15);
-padding:18px;
-border-radius:15px;
+margin-top:18px;
+background:linear-gradient(135deg,#2463dc,#1648b5);
+padding:20px;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+
+.account-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
 .account small{
+font-size:12px;
 opacity:.8;
-font-size:14px;
+letter-spacing:.4px;
+}
+
+.virtual-text{
+font-size:10px;
+padding:5px 8px;
+border:1px solid rgba(255,255,255,.4);
+border-radius:12px;
 }
 
 .balance{
-font-size:30px;
+font-size:28px;
 font-weight:bold;
-margin-top:8px;
+margin-top:10px;
+letter-spacing:.3px;
 }
 
 .view{
-margin-top:10px;
-font-size:15px;
+margin-top:9px;
+font-size:13px;
 opacity:.9;
 cursor:pointer;
 }
 
+/* =========================
+   RECENT TRANSACTIONS
+========================= */
+
+.transactions{
+background:white;
+margin:18px 15px;
+border-radius:17px;
+padding:18px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.transactions-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.transactions-header h3{
+font-size:18px;
+color:#172033;
+}
+
+.view-all{
+font-size:12px;
+color:#1f5edb;
+text-decoration:none;
+font-weight:bold;
+}
+
+.transaction-head{
+display:grid;
+grid-template-columns:1.1fr 1.6fr 1fr .9fr;
+gap:5px;
+padding-bottom:9px;
+border-bottom:1px solid #eee;
+font-size:9px;
+font-weight:bold;
+color:#8a93a3;
+text-transform:uppercase;
+}
+
+.transaction-row{
+display:grid;
+grid-template-columns:1.1fr 1.6fr 1fr .9fr;
+gap:5px;
+align-items:center;
+padding:13px 0;
+border-bottom:1px solid #f0f0f0;
+font-size:10px;
+}
+
+.transaction-row:last-child{
+border-bottom:none;
+}
+
+.transaction-type{
+font-weight:bold;
+}
+
+.credit{
+color:#238636;
+}
+
+.debit{
+color:#d93025;
+}
+
+.transaction-description{
+font-weight:bold;
+color:#222;
+}
+
+.transaction-amount{
+font-weight:bold;
+}
+
+.transaction-date{
+font-size:9px;
+color:#777;
+text-align:right;
+}
+
+.no-transactions{
+text-align:center;
+padding:20px 5px;
+color:#888;
+font-size:13px;
+}
 
 /* =========================
    VIRTUAL CARD
 ========================= */
 
 .virtual-card{
-margin:20px 15px;
-height:205px;
-border-radius:22px;
-padding:22px;
+margin:18px 15px;
+height:195px;
+border-radius:21px;
+padding:21px;
 color:white;
 background:linear-gradient(135deg,#111827,#1f4ed8);
-box-shadow:0 8px 20px rgba(0,0,0,.25);
+box-shadow:0 8px 20px rgba(0,0,0,.22);
 position:relative;
 overflow:hidden;
 }
@@ -127,24 +273,24 @@ z-index:2;
 }
 
 .card-brand{
-font-size:19px;
+font-size:18px;
 font-weight:bold;
 letter-spacing:1px;
 }
 
 .virtual-label{
-font-size:11px;
-padding:6px 9px;
+font-size:10px;
+padding:5px 8px;
 border:1px solid rgba(255,255,255,.5);
 border-radius:20px;
 }
 
 .chip{
-width:45px;
-height:32px;
+width:43px;
+height:30px;
 background:#d6d6d6;
 border-radius:7px;
-margin-top:25px;
+margin-top:22px;
 position:relative;
 z-index:2;
 }
@@ -155,7 +301,7 @@ position:absolute;
 left:20px;
 top:0;
 width:2px;
-height:32px;
+height:30px;
 background:#999;
 }
 
@@ -163,16 +309,16 @@ background:#999;
 content:"";
 position:absolute;
 left:0;
-top:15px;
-width:45px;
+top:14px;
+width:43px;
 height:2px;
 background:#999;
 }
 
 .card-number{
-font-size:22px;
+font-size:19px;
 letter-spacing:3px;
-margin-top:15px;
+margin-top:13px;
 position:relative;
 z-index:2;
 font-weight:bold;
@@ -182,86 +328,106 @@ font-weight:bold;
 display:flex;
 justify-content:space-between;
 align-items:flex-end;
-margin-top:13px;
+margin-top:12px;
 position:relative;
 z-index:2;
 }
 
 .card-holder-label{
-font-size:9px;
+font-size:8px;
 opacity:.7;
-margin-bottom:4px;
+margin-bottom:3px;
 }
 
 .card-holder{
-font-size:15px;
+font-size:13px;
 font-weight:bold;
 text-transform:uppercase;
-max-width:220px;
+max-width:200px;
 overflow:hidden;
 white-space:nowrap;
 text-overflow:ellipsis;
 }
 
 .card-type{
-font-size:17px;
+font-size:15px;
 font-weight:bold;
 font-style:italic;
 }
 
+/* =========================
+   QUICK ACCESS
+========================= */
+
 .quick{
 display:flex;
 justify-content:space-around;
-margin:25px 15px;
+margin:22px 15px;
 }
 
 .quick a{
 text-decoration:none;
 color:#222;
 text-align:center;
+font-size:13px;
 }
 
 .circle{
-width:70px;
-height:70px;
+width:62px;
+height:62px;
 border-radius:50%;
 background:white;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:28px;
+font-size:25px;
 color:#1f4ed8;
-box-shadow:0 4px 12px rgba(0,0,0,.15);
+box-shadow:0 4px 12px rgba(0,0,0,.12);
 margin:auto;
-margin-bottom:8px;
+margin-bottom:7px;
 }
+
+/* =========================
+   QUICK SERVICES
+========================= */
 
 .card{
 background:white;
 margin:15px;
 padding:18px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+border-radius:16px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
 .card h3{
-margin-bottom:15px;
+margin-bottom:12px;
 color:#1f4ed8;
+font-size:18px;
 }
 
 .action{
 display:flex;
 justify-content:space-between;
-padding:15px 0;
+align-items:center;
+padding:14px 0;
 border-bottom:1px solid #eee;
 text-decoration:none;
 color:#222;
-font-size:18px;
+font-size:15px;
 }
 
 .action:last-child{
 border-bottom:none;
 }
+
+.action i{
+margin-right:7px;
+color:#1f4ed8;
+}
+
+/* =========================
+   BOTTOM NAVIGATION
+========================= */
 
 .bottom{
 position:fixed;
@@ -271,21 +437,22 @@ width:100%;
 background:white;
 display:flex;
 justify-content:space-around;
-padding:14px 0;
-box-shadow:0 -3px 15px rgba(0,0,0,.15);
+padding:12px 0;
+box-shadow:0 -3px 15px rgba(0,0,0,.13);
+z-index:20;
 }
 
 .bottom a{
 text-decoration:none;
-color:#666;
+color:#777;
 text-align:center;
-font-size:13px;
+font-size:11px;
 }
 
 .bottom i{
 display:block;
-font-size:22px;
-margin-bottom:5px;
+font-size:20px;
+margin-bottom:4px;
 }
 
 .active{
@@ -298,9 +465,22 @@ font-weight:bold;
 
 <body>
 
+
+<!-- =========================
+     HEADER
+========================= -->
+
 <div class="header">
 
 <div class="top">
+
+<div class="logo-box">
+<div class="logo-mark">A</div>
+</div>
+
+<div class="brand">
+APEX <span>BANK</span>
+</div>
 
 <img
 id="profilePic"
@@ -309,7 +489,8 @@ src="https://i.imgur.com/4Z7bKQp.png"
 alt="Profile Picture"
 >
 
-<div>
+</div>
+
 
 <div class="welcome">
 Welcome
@@ -319,23 +500,36 @@ Welcome
 User
 </div>
 
-</div>
 
-</div>
+<!-- =========================
+     BALANCE
+========================= -->
 
 <div class="account">
 
-<small>APEX CHECKING ACCOUNT</small>
+<div class="account-top">
+
+<small>
+APEX CHECKING ACCOUNT
+</small>
+
+<div class="virtual-text">
+VIRTUAL FUNDS
+</div>
+
+</div>
+
 
 <div class="balance">
 $<span id="balance" data-real-balance="0.00">0.00</span>
 </div>
 
+
 <div class="view" onclick="toggleBalance()">
 
 <i id="eyeIcon" class="fa-solid fa-eye"></i>
 
-<span>View Balance Details</span>
+&nbsp; View Balance Details
 
 </div>
 
@@ -343,6 +537,50 @@ $<span id="balance" data-real-balance="0.00">0.00</span>
 
 </div>
 
+
+<!-- =========================
+     RECENT TRANSACTIONS
+========================= -->
+
+<div class="transactions">
+
+<div class="transactions-header">
+
+<h3>
+Recent Transactions
+</h3>
+
+<a href="history.html" class="view-all">
+View all
+</a>
+
+</div>
+
+
+<div class="transaction-head">
+
+<div>Type</div>
+<div>Description</div>
+<div>Amount</div>
+<div>Date</div>
+
+</div>
+
+
+<div id="recentTransactions">
+
+<div class="no-transactions">
+No recent transactions.
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     VIRTUAL CARD
+========================= -->
 
 <div class="virtual-card">
 
@@ -358,11 +596,14 @@ VIRTUAL
 
 </div>
 
+
 <div class="chip"></div>
+
 
 <div class="card-number">
 •••• •••• •••• 4821
 </div>
+
 
 <div class="card-bottom">
 
@@ -378,6 +619,7 @@ USER
 
 </div>
 
+
 <div class="card-type">
 VIRTUAL
 </div>
@@ -386,6 +628,10 @@ VIRTUAL
 
 </div>
 
+
+<!-- =========================
+     QUICK ACCESS
+========================= -->
 
 <div class="quick">
 
@@ -402,9 +648,16 @@ My Account
 </div>
 
 
+<!-- =========================
+     QUICK SERVICES
+========================= -->
+
 <div class="card">
 
-<h3>Quick Services</h3>
+<h3>
+Quick Services
+</h3>
+
 
 <a href="history.html" class="action">
 
@@ -417,6 +670,7 @@ Transaction History
 
 </a>
 
+
 <a href="transfer.html" class="action">
 
 <span>
@@ -427,6 +681,7 @@ Transfer Money
 <i class="fa-solid fa-chevron-right"></i>
 
 </a>
+
 
 <a href="settings.html" class="action">
 
@@ -442,16 +697,9 @@ Settings
 </div>
 
 
-<div class="card">
-
-<h3>Recent Activity</h3>
-
-<p style="color:#777;text-align:center;padding:20px;">
-No recent transactions.
-</p>
-
-</div>
-
+<!-- =========================
+     BOTTOM NAVIGATION
+========================= -->
 
 <div class="bottom">
 
@@ -462,6 +710,7 @@ Home
 
 </a>
 
+
 <a href="transfer.html">
 
 <i class="fa-solid fa-paper-plane"></i>
@@ -469,12 +718,14 @@ Transfer
 
 </a>
 
+
 <a href="history.html">
 
 <i class="fa-solid fa-file-lines"></i>
 History
 
 </a>
+
 
 <a href="settings.html">
 
@@ -486,16 +737,24 @@ Settings
 </div>
 
 
+<!-- =========================
+     FIREBASE
+========================= -->
+
 <script type="module">
 
-import { initializeApp }
+import {
+initializeApp
+}
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
 
 import {
 getAuth,
 onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
 
 import {
 getFirestore,
@@ -509,37 +768,63 @@ getDocs
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
 const firebaseConfig = {
 
-apiKey: "AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
+apiKey:
+"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWQKBfXgcX4w",
 
-authDomain: "apex-wallet-2.firebaseapp.com",
+authDomain:
+"apex-wallet-2.firebaseapp.com",
 
-projectId: "apex-wallet-2",
+projectId:
+"apex-wallet-2",
 
-storageBucket: "apex-wallet-2.firebasestorage.app",
+storageBucket:
+"apex-wallet-2.firebasestorage.app",
 
-messagingSenderId: "660772557652",
+messagingSenderId:
+"660772557652",
 
-appId: "1:660772557652:web:b9535515388134f8802ec1",
+appId:
+"1:660772557652:web:b9535515388134f8802ec1",
 
-measurementId: "G-KEJP4GN5VV"
+measurementId:
+"G-KEJP4GN5VV"
 
 };
 
 
-const app = initializeApp(firebaseConfig);
+/* =========================
+   INITIALIZE
+========================= */
 
-const auth = getAuth(app);
+const app =
+initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
 
 
-onAuthStateChanged(auth, async (user) => {
+/* =========================
+   AUTH CHECK
+========================= */
+
+onAuthStateChanged(
+auth,
+async (user) => {
 
 if(!user){
 
-window.location.replace("index.html");
+window.location.replace(
+"index.html"
+);
 
 return;
 
@@ -565,23 +850,31 @@ const userName =
 
 user.displayName ||
 
-localStorage.getItem("fullname") ||
+localStorage.getItem(
+"fullname"
+) ||
 
-localStorage.getItem("fullName") ||
+localStorage.getItem(
+"fullName"
+) ||
 
-localStorage.getItem("name") ||
+localStorage.getItem(
+"name"
+) ||
 
 "User";
 
 
 document.getElementById(
 "welcomeName"
-).textContent = userName;
+).textContent =
+userName;
 
 
 document.getElementById(
 "cardHolderName"
-).textContent = userName;
+).textContent =
+userName;
 
 
 /* =========================
@@ -593,13 +886,14 @@ try{
 let userData = null;
 
 
-/*
-FIRST:
-Find account using Firebase Auth UID
-*/
+/* UID */
 
 const userRef =
-doc(db,"users",user.uid);
+doc(
+db,
+"users",
+user.uid
+);
 
 const userSnap =
 await getDoc(userRef);
@@ -607,33 +901,44 @@ await getDoc(userRef);
 
 if(userSnap.exists()){
 
-userData = userSnap.data();
+userData =
+userSnap.data();
 
 }
 
 
-/*
-SECOND:
-If UID document was not found,
-find account using email
-*/
+/* EMAIL */
 
-if(!userData && user.email){
+if(
+!userData &&
+user.email
+){
 
 const usersRef =
-collection(db,"users");
+collection(
+db,
+"users"
+);
 
 const emailQuery =
 query(
 usersRef,
-where("email","==",user.email)
+where(
+"email",
+"==",
+user.email
+)
 );
 
 const emailSnap =
-await getDocs(emailQuery);
+await getDocs(
+emailQuery
+);
 
 
-if(!emailSnap.empty){
+if(
+!emailSnap.empty
+){
 
 userData =
 emailSnap.docs[0].data();
@@ -644,7 +949,7 @@ emailSnap.docs[0].data();
 
 
 /* =========================
-   LOAD PROFILE PICTURE
+   PROFILE IMAGE
 ========================= */
 
 if(
@@ -653,19 +958,16 @@ userData.profileImage
 ){
 
 const profilePic =
-document.getElementById("profilePic");
-
+document.getElementById(
+"profilePic"
+);
 
 profilePic.src =
 userData.profileImage;
 
 
-/*
-If the saved image cannot load,
-use the default image.
-*/
-
-profilePic.onerror = function(){
+profilePic.onerror =
+function(){
 
 this.onerror = null;
 
@@ -678,13 +980,15 @@ this.src =
 
 
 /* =========================
-   DISPLAY BALANCE
+   BALANCE
 ========================= */
 
 if(userData){
 
 const userBalance =
-Number(userData.balance || 0);
+Number(
+userData.balance || 0
+);
 
 
 document.getElementById(
@@ -714,6 +1018,30 @@ document.getElementById(
 }
 
 
+/* =========================
+   TRANSACTIONS
+========================= */
+
+/*
+Your current user document does not
+show a transaction-list structure,
+so the dashboard safely keeps the
+section empty until transaction data
+exists.
+*/
+
+const transactionBox =
+document.getElementById(
+"recentTransactions"
+);
+
+transactionBox.innerHTML = `
+<div class="no-transactions">
+No recent transactions.
+</div>
+`;
+
+
 }catch(error){
 
 console.error(
@@ -728,6 +1056,10 @@ error
 </script>
 
 
+<!-- =========================
+     BALANCE SHOW / HIDE
+========================= -->
+
 <script>
 
 let balanceVisible = true;
@@ -736,10 +1068,14 @@ let balanceVisible = true;
 function toggleBalance(){
 
 const balance =
-document.getElementById("balance");
+document.getElementById(
+"balance"
+);
 
 const eyeIcon =
-document.getElementById("eyeIcon");
+document.getElementById(
+"eyeIcon"
+);
 
 
 if(balanceVisible){
@@ -758,7 +1094,8 @@ balanceVisible = false;
 }else{
 
 balance.textContent =
-balance.dataset.realBalance || "0.00";
+balance.dataset.realBalance ||
+"0.00";
 
 eyeIcon.className =
 "fa-solid fa-eye";
