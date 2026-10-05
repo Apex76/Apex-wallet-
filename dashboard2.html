@@ -731,23 +731,9 @@ onAuthStateChanged(
 auth,
 async (user) => {
 
-
 if(!user){
 
-document.body.innerHTML = `
-<div style="
-padding:40px;
-font-family:Arial,sans-serif;
-text-align:center;
-color:#222;
-">
-<h2>Firebase says NO USER</h2>
-<p style="margin-top:10px;">
-The login page opened the dashboard,
-but Firebase says there is no signed-in user here.
-</p>
-</div>
-`;
+console.log("APEX: Firebase has no active user.");
 
 return;
 
@@ -766,15 +752,10 @@ user.email || ""
 
 
 const userName =
-
 user.displayName ||
-
 localStorage.getItem("fullname") ||
-
 localStorage.getItem("fullName") ||
-
 localStorage.getItem("name") ||
-
 "User";
 
 
@@ -815,10 +796,7 @@ userSnap.data();
 }
 
 
-if(
-!userData &&
-user.email
-){
+if(!userData && user.email){
 
 const usersRef =
 collection(
@@ -854,10 +832,7 @@ emailSnap.docs[0].data();
 }
 
 
-if(
-userData &&
-userData.profileImage
-){
+if(userData && userData.profileImage){
 
 const profilePic =
 document.getElementById(
@@ -882,48 +857,27 @@ this.src =
 }
 
 
-if(userData){
-
-const userBalance =
-Number(
-userData.balance || 0
-);
+const balance =
+document.getElementById("balance");
 
 
-document.getElementById(
-"balance"
-).textContent =
-userBalance.toFixed(2);
+const realBalance =
+userData && userData.balance !== undefined
+? Number(userData.balance)
+: 0;
 
 
-document.getElementById(
-"balance"
-).dataset.realBalance =
-userBalance.toFixed(2);
-
-}else{
-
-document.getElementById(
-"balance"
-).textContent =
-"0.00";
+balance.textContent =
+realBalance.toFixed(2);
 
 
-document.getElementById(
-"balance"
-).dataset.realBalance =
-"0.00";
-
-}
+balance.dataset.realBalance =
+realBalance.toFixed(2);
 
 
-const transactionBox =
 document.getElementById(
 "recentTransactions"
-);
-
-
-transactionBox.innerHTML = `
+).innerHTML = `
 <div class="no-transactions">
 No recent transactions.
 </div>
@@ -933,7 +887,7 @@ No recent transactions.
 }catch(error){
 
 console.error(
-"User data loading error:",
+"APEX USER DATA ERROR:",
 error
 );
 
