@@ -804,10 +804,17 @@ user.email || ""
 
 
 /* ================================
-   FIND USER
+   FIND THE REAL USER DOCUMENT
 ================================ */
 
 let userData = null;
+let userDocumentId = null;
+
+
+/*
+FIRST:
+Try Firebase Auth UID as Firestore document ID.
+*/
 
 try{
 
@@ -826,6 +833,9 @@ if(uidSnap.exists()){
 userData =
 uidSnap.data();
 
+userDocumentId =
+uidSnap.id;
+
 }
 
 }catch(error){
@@ -837,6 +847,12 @@ error
 
 }
 
+
+/*
+SECOND:
+If UID document was not found,
+find the user's document by email.
+*/
 
 if(!userData && user.email){
 
@@ -860,8 +876,14 @@ await getDocs(emailQuery);
 
 if(!emailSnap.empty){
 
+const userDoc =
+emailSnap.docs[0];
+
 userData =
-emailSnap.docs[0].data();
+userDoc.data();
+
+userDocumentId =
+userDoc.id;
 
 }
 
@@ -877,25 +899,43 @@ error
 }
 
 
+/*
+If the user document cannot be found,
+stop safely.
+*/
+
+if(!userData || !userDocumentId){
+
+document.getElementById(
+"balance"
+).textContent =
+"0.00";
+
+document.getElementById(
+"recentTransactions"
+).innerHTML = `
+<div class="no-transactions">
+Unable to load account information.
+</div>
+`;
+
+return;
+
+}
+
+
 /* ================================
    NAME
 ================================ */
 
 const userName =
-(userData && (
 userData.fullname ||
 userData.fullName ||
-userData.name
-))
-||
-user.displayName
-||
-localStorage.getItem("fullname")
-||
-localStorage.getItem("fullName")
-||
-localStorage.getItem("name")
-||
+userData.name ||
+user.displayName ||
+localStorage.getItem("fullname") ||
+localStorage.getItem("fullName") ||
+localStorage.getItem("name") ||
 "User";
 
 
@@ -916,7 +956,6 @@ userName;
 ================================ */
 
 if(
-userData &&
 userData.profileImage
 ){
 
@@ -942,7 +981,52 @@ this.src =
 
 
 /* ================================
-   LOAD ALL TRANSACTIONS
+   LOAD REAL ACCOUNT BALANCE
+================================ */
+
+/*
+IMPORTANT:
+
+admin.html already updates:
+
+users/{userDocumentId}.balance
+
+So we use that value directly.
+
+We DO NOT calculate the balance
+from transactions.
+*/
+
+let realBalance = Number(
+userData.balance ??
+userData.currentBalance ??
+userData.accountBalance ??
+0
+);
+
+if(
+isNaN(realBalance)
+){
+
+realBalance = 0;
+
+}
+
+
+const balanceElement =
+document.getElementById("balance");
+
+
+balanceElement.textContent =
+realBalance.toFixed(2);
+
+
+balanceElement.dataset.realBalance =
+realBalance.toFixed(2);
+
+
+/* ================================
+   LOAD USER TRANSACTIONS
 ================================ */
 
 const recentTransactions =
@@ -959,22 +1043,41 @@ const transactionsRef =
 collection(db,"transactions");
 
 
-const uidQuery =
+/*
+CRITICAL FIX:
+
+Use the actual Firestore USER
+DOCUMENT ID.
+
+NOT user.email.
+
+NOT receiverEmail.
+
+NOT the admin transaction.
+
+This means the user's dashboard
+only receives the transaction
+created for that user.
+*/
+
+const userTransactionQuery =
 query(
 transactionsRef,
 where(
 "userId",
 "==",
-user.uid
+userDocumentId
 )
 );
 
 
-const uidSnapshot =
-await getDocs(uidQuery);
+const snapshot =
+await getDocs(
+userTransactionQuery
+);
 
 
-uidSnapshot.forEach(
+snapshot.forEach(
 transactionDoc => {
 
 transactions.push({
@@ -991,288 +1094,23 @@ id:transactionDoc.id,
 }catch(error){
 
 console.error(
-"UID TRANSACTIONS ERROR:",
+"TRANSACTIONS ERROR:",
 error
 );
 
-}
-
-
-/* ================================
-   EMAIL FALLBACK
-================================ */
-
-if(
-transactions.length === 0 &&
-user.email
-){
-
-try{
-
-const transactionsRef =
-collection(db,"transactions");
-
-const emailQuery =
-query(
-transactionsRef,
-where(
-"userEmail",
-"==",
-user.email
-)
-);
-
-const emailSnapshot =
-await getDocs(emailQuery);
-
-emailSnapshot.forEach(
-transactionDoc => {
-
-transactions.push({
-
-id:transactionDoc.id,
-
-...transactionDoc.data()
-
-});
-
-});
-
-}catch(error){
-
-console.error(
-"EMAIL TRANSACTIONS ERROR:",
-error
-);
-
-}
-
-}
-
-
-/* ================================
-   RECEIVER EMAIL FALLBACK
-================================ */
-
-if(
-transactions.length === 0 &&
-user.email
-){
-
-try{
-
-const transactionsRef =
-collection(db,"transactions");
-
-const receiverQuery =
-query(
-transactionsRef,
-where(
-"receiverEmail",
-"==",
-user.email
-)
-);
-
-const receiverSnapshot =
-await getDocs(receiverQuery);
-
-receiverSnapshot.forEach(
-transactionDoc => {
-
-transactions.push({
-
-id:transactionDoc.id,
-
-...transactionDoc.data()
-
-});
-
-});
-
-}catch(error){
-
-console.error(
-"RECEIVER TRANSACTIONS ERROR:",
-error
-);
-
-}
-
-}
-
-
-/* ================================
-   REMOVE DUPLICATES
-================================ */
-
-const uniqueTransactions = [];
-
-const seenIds = new Set();
-
-transactions.forEach(
-transaction => {
-
-if(
-!seenIds.has(transaction.id)
-){
-
-seenIds.add(transaction.id);
-
-uniqueTransactions.push(
-transaction
-);
-
-}
-
-});
-
-transactions =
-uniqueTransactions;
-
-
-/* ================================
-   CALCULATE REAL BALANCE
-================================ */
-
-let calculatedBalance = 0;
-
-
-/*
-A transaction is RECEIVED when:
-- type is Money Received
-- type is Credit
-- receiverEmail belongs to this user
-*/
-
-transactions.forEach(
-transaction => {
-
-const type =
-String(
-transaction.type ||
-transaction.transactionType ||
-""
-).toLowerCase();
-
-
-const senderEmail =
-String(
-transaction.senderEmail ||
-""
-).toLowerCase();
-
-
-const receiverEmail =
-String(
-transaction.receiverEmail ||
-""
-).toLowerCase();
-
-
-const currentEmail =
-String(
-user.email ||
-""
-).toLowerCase();
-
-
-const amount =
-Number(
-transaction.amount || 0
-);
-
-
-if(
-isNaN(amount) ||
-amount <= 0
-){
+recentTransactions.innerHTML = `
+<div class="no-transactions">
+Unable to load transactions.
+</div>
+`;
 
 return;
 
 }
 
 
-/*
-RECEIVED
-*/
-
-const isReceived =
-type === "money received" ||
-type === "credit" ||
-receiverEmail === currentEmail;
-
-
-/*
-GENUINE MONEY SENT
-*/
-
-const isGenuineSent =
-(
-type === "money sent" ||
-type === "debit" ||
-type === "transfer"
-)
-&&
-(
-!senderEmail ||
-senderEmail === currentEmail
-);
-
-
-/*
-ADD RECEIVED MONEY
-*/
-
-if(isReceived){
-
-calculatedBalance += amount;
-
-}
-
-
-/*
-ONLY SUBTRACT REAL MONEY SENT
-*/
-
-else if(isGenuineSent){
-
-calculatedBalance -= amount;
-
-}
-
-});
-
-
-/*
-NEVER ALLOW NEGATIVE BALANCE
-*/
-
-if(calculatedBalance < 0){
-
-calculatedBalance = 0;
-
-}
-
-
 /* ================================
-   DISPLAY REAL BALANCE
-================================ */
-
-const balanceElement =
-document.getElementById("balance");
-
-
-balanceElement.textContent =
-calculatedBalance.toFixed(2);
-
-
-balanceElement.dataset.realBalance =
-calculatedBalance.toFixed(2);
-
-
-/* ================================
-   SORT TRANSACTIONS
+   SORT NEWEST FIRST
 ================================ */
 
 transactions.sort(
@@ -1305,7 +1143,7 @@ return timeB - timeA;
 
 
 /* ================================
-   DISPLAY TRANSACTIONS
+   NO TRANSACTIONS
 ================================ */
 
 if(
@@ -1323,76 +1161,14 @@ return;
 }
 
 
+/* ================================
+   DISPLAY TRANSACTIONS
+================================ */
+
 recentTransactions.innerHTML = "";
 
 
-/*
-ONLY SHOW REAL USER TRANSACTIONS
-*/
-
-const visibleTransactions =
-transactions.filter(
-transaction => {
-
-const type =
-String(
-transaction.type ||
-transaction.transactionType ||
-""
-).toLowerCase();
-
-
-const senderEmail =
-String(
-transaction.senderEmail ||
-""
-).toLowerCase();
-
-
-const receiverEmail =
-String(
-transaction.receiverEmail ||
-""
-).toLowerCase();
-
-
-const currentEmail =
-String(
-user.email ||
-""
-).toLowerCase();
-
-
-const received =
-type === "money received" ||
-type === "credit" ||
-receiverEmail === currentEmail;
-
-
-const sent =
-(
-type === "money sent" ||
-type === "debit" ||
-type === "transfer"
-)
-&&
-(
-!senderEmail ||
-senderEmail === currentEmail
-);
-
-
-/*
-SHOW RECEIVED OR REAL SENT.
-IGNORE ADMIN'S MATCHING FAKE DEBIT.
-*/
-
-return received || sent;
-
-});
-
-
-visibleTransactions
+transactions
 .slice(0,5)
 .forEach(
 transaction => {
@@ -1404,39 +1180,46 @@ row.className =
 "transaction-row";
 
 
-const type =
+const rawType =
 String(
 transaction.type ||
 transaction.transactionType ||
 ""
-).toLowerCase();
+).toLowerCase()
+.trim();
 
 
-const senderEmail =
-String(
-transaction.senderEmail ||
-""
-).toLowerCase();
+/*
+USER TRANSACTION RECORDS:
 
-
-const receiverEmail =
-String(
-transaction.receiverEmail ||
-""
-).toLowerCase();
-
-
-const currentEmail =
-String(
-user.email ||
-""
-).toLowerCase();
-
+Money Received = CREDIT
+Money Sent = DEBIT
+*/
 
 const received =
-type === "money received" ||
-type === "credit" ||
-receiverEmail === currentEmail;
+rawType === "money received" ||
+rawType === "credit";
+
+
+const sent =
+rawType === "money sent" ||
+rawType === "debit" ||
+rawType === "transfer";
+
+
+/*
+If it is not a known transaction,
+skip it.
+*/
+
+if(
+!received &&
+!sent
+){
+
+return;
+
+}
 
 
 const displayType =
@@ -1456,8 +1239,10 @@ received
 
 
 const amount =
+Math.abs(
 Number(
 transaction.amount || 0
+)
 );
 
 
@@ -1542,6 +1327,23 @@ row
 );
 
 });
+
+
+/*
+If all records were unknown types.
+*/
+
+if(
+recentTransactions.children.length === 0
+){
+
+recentTransactions.innerHTML = `
+<div class="no-transactions">
+No recent transactions.
+</div>
+`;
+
+}
 
 });
 
