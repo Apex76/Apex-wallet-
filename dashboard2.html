@@ -634,31 +634,23 @@ Settings
 <div class="bottom">
 
 <a href="dashboard2.html" class="active">
-
 <i class="fa-solid fa-house"></i>
 Home
-
 </a>
 
 <a href="transfer.html">
-
 <i class="fa-solid fa-paper-plane"></i>
 Transfer
-
 </a>
 
 <a href="history.html">
-
 <i class="fa-solid fa-file-lines"></i>
 History
-
 </a>
 
 <a href="settings.html">
-
 <i class="fa-solid fa-gear"></i>
 Settings
-
 </a>
 
 </div>
@@ -671,13 +663,11 @@ initializeApp
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
-
 import {
 getAuth,
 onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
 
 import {
 getFirestore,
@@ -690,12 +680,6 @@ getDocs
 }
 from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-
-/*
-====================================
-FIREBASE CONFIG
-====================================
-*/
 
 const firebaseConfig = {
 
@@ -733,86 +717,67 @@ const db =
 getFirestore(app);
 
 
-/*
-====================================
-HELPER: FIRESTORE DATE
-====================================
-*/
+/* ================================
+   DATE HELPER
+================================ */
 
 function getTransactionDate(value){
 
 if(!value){
-
 return null;
-
 }
-
-
-/*
-Firestore Timestamp
-*/
 
 if(
 typeof value === "object" &&
 typeof value.toDate === "function"
 ){
-
 return value.toDate();
-
 }
-
-
-/*
-Firestore timestamp object
-*/
 
 if(
 typeof value === "object" &&
 value.seconds !== undefined
 ){
-
 return new Date(
 Number(value.seconds) * 1000
 );
-
 }
 
-
-/*
-Normal date/string
-*/
-
-const date =
-new Date(value);
-
+const date = new Date(value);
 
 if(!isNaN(date.getTime())){
-
 return date;
-
 }
-
 
 return null;
+}
+
+
+/* ================================
+   ESCAPE HTML
+================================ */
+
+function escapeHTML(value){
+
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
 
 
-/*
-====================================
-WAIT FOR USER
-====================================
-*/
+/* ================================
+   LOAD USER
+================================ */
 
 onAuthStateChanged(
 auth,
 async (user) => {
 
 if(!user){
-
-console.log(
-"APEX: No Firebase user is signed in."
-);
 
 document.getElementById(
 "recentTransactions"
@@ -826,11 +791,6 @@ return;
 
 }
 
-
-/*
-SAVE LOGIN INFO
-*/
-
 localStorage.setItem(
 "loggedIn",
 "true"
@@ -842,17 +802,112 @@ user.email || ""
 );
 
 
+/* ================================
+   FIND USER ACCOUNT
+================================ */
+
+let userData = null;
+let userDocumentId = null;
+
+
 /*
-====================================
-USER NAME
-====================================
+FIRST: UID DOCUMENT
 */
 
+try{
+
+const uidRef =
+doc(
+db,
+"users",
+user.uid
+);
+
+const uidSnap =
+await getDoc(uidRef);
+
+if(uidSnap.exists()){
+
+userData = uidSnap.data();
+userDocumentId = uidSnap.id;
+
+}
+
+}catch(error){
+
+console.error(
+"UID USER LOOKUP ERROR:",
+error
+);
+
+}
+
+
+/*
+SECOND: EMAIL
+*/
+
+if(!userData && user.email){
+
+try{
+
+const usersRef =
+collection(db,"users");
+
+const emailQuery =
+query(
+usersRef,
+where(
+"email",
+"==",
+user.email
+)
+);
+
+const emailSnap =
+await getDocs(emailQuery);
+
+if(!emailSnap.empty){
+
+userData =
+emailSnap.docs[0].data();
+
+userDocumentId =
+emailSnap.docs[0].id;
+
+}
+
+}catch(error){
+
+console.error(
+"EMAIL USER LOOKUP ERROR:",
+error
+);
+
+}
+
+}
+
+
+/* ================================
+   USER NAME
+================================ */
+
 const userName =
-user.displayName ||
-localStorage.getItem("fullname") ||
-localStorage.getItem("fullName") ||
-localStorage.getItem("name") ||
+(userData && (
+userData.fullname ||
+userData.fullName ||
+userData.name
+))
+||
+user.displayName
+||
+localStorage.getItem("fullname")
+||
+localStorage.getItem("fullName")
+||
+localStorage.getItem("name")
+||
 "User";
 
 
@@ -868,85 +923,9 @@ document.getElementById(
 userName;
 
 
-/*
-====================================
-LOAD USER ACCOUNT
-====================================
-*/
-
-let userData = null;
-
-try{
-
-/*
-FIRST:
-LOOK FOR USER BY FIREBASE UID
-*/
-
-const userRef =
-doc(
-db,
-"users",
-user.uid
-);
-
-const userSnap =
-await getDoc(userRef);
-
-
-if(userSnap.exists()){
-
-userData =
-userSnap.data();
-
-}
-
-
-/*
-SECOND:
-IF UID DOCUMENT DOES NOT EXIST,
-LOOK FOR USER BY EMAIL
-*/
-
-if(!userData && user.email){
-
-const usersRef =
-collection(
-db,
-"users"
-);
-
-const emailQuery =
-query(
-usersRef,
-where(
-"email",
-"==",
-user.email
-)
-);
-
-const emailSnap =
-await getDocs(
-emailQuery
-);
-
-
-if(!emailSnap.empty){
-
-userData =
-emailSnap.docs[0].data();
-
-}
-
-}
-
-
-/*
-====================================
-PROFILE PICTURE
-====================================
-*/
+/* ================================
+   PROFILE PICTURE
+================================ */
 
 if(
 userData &&
@@ -974,41 +953,50 @@ this.src =
 }
 
 
-/*
-====================================
-BALANCE
-====================================
-*/
+/* ================================
+   BALANCE
+================================ */
 
 const balanceElement =
-document.getElementById(
-"balance"
-);
+document.getElementById("balance");
+
+
+let balanceValue = null;
 
 
 /*
-IMPORTANT:
-DO NOT TURN THE BALANCE INTO ZERO
-IF FIREBASE DATA IS MISSING.
+CHECK COMMON BALANCE FIELD NAMES
 */
 
+if(userData){
+
 if(
-userData &&
 userData.balance !== undefined &&
 userData.balance !== null
 ){
 
-const realBalance =
+balanceValue =
 Number(userData.balance);
 
+}
 
-if(!isNaN(realBalance)){
+else if(
+userData.currentBalance !== undefined &&
+userData.currentBalance !== null
+){
 
-balanceElement.textContent =
-realBalance.toFixed(2);
+balanceValue =
+Number(userData.currentBalance);
 
-balanceElement.dataset.realBalance =
-realBalance.toFixed(2);
+}
+
+else if(
+userData.accountBalance !== undefined &&
+userData.accountBalance !== null
+){
+
+balanceValue =
+Number(userData.accountBalance);
 
 }
 
@@ -1016,26 +1004,45 @@ realBalance.toFixed(2);
 
 
 /*
-====================================
-LOAD RECENT TRANSACTIONS
-====================================
+DISPLAY BALANCE
 */
+
+if(
+balanceValue !== null &&
+!isNaN(balanceValue)
+){
+
+balanceElement.textContent =
+balanceValue.toFixed(2);
+
+balanceElement.dataset.realBalance =
+balanceValue.toFixed(2);
+
+}
+
+
+/* ================================
+   LOAD TRANSACTIONS
+================================ */
 
 const recentTransactions =
 document.getElementById(
 "recentTransactions"
 );
 
+let transactions = [];
+
+
+/*
+1. FIND BY FIREBASE UID
+*/
+
 try{
 
 const transactionsRef =
-collection(
-db,
-"transactions"
-);
+collection(db,"transactions");
 
-
-const transactionQuery =
+const uidQuery =
 query(
 transactionsRef,
 where(
@@ -1045,14 +1052,174 @@ user.uid
 )
 );
 
+const uidSnapshot =
+await getDocs(uidQuery);
 
-const transactionSnapshot =
-await getDocs(
-transactionQuery
+uidSnapshot.forEach(
+transactionDoc => {
+
+transactions.push({
+
+id:transactionDoc.id,
+
+...transactionDoc.data()
+
+});
+
+});
+
+}catch(error){
+
+console.error(
+"UID TRANSACTION LOOKUP ERROR:",
+error
 );
 
+}
 
-if(transactionSnapshot.empty){
+
+/*
+2. IF NOTHING FOUND,
+   FIND BY USER EMAIL
+*/
+
+if(
+transactions.length === 0 &&
+user.email
+){
+
+try{
+
+const transactionsRef =
+collection(db,"transactions");
+
+const emailQuery =
+query(
+transactionsRef,
+where(
+"userEmail",
+"==",
+user.email
+)
+);
+
+const emailSnapshot =
+await getDocs(emailQuery);
+
+emailSnapshot.forEach(
+transactionDoc => {
+
+transactions.push({
+
+id:transactionDoc.id,
+
+...transactionDoc.data()
+
+});
+
+});
+
+}catch(error){
+
+console.error(
+"EMAIL TRANSACTION LOOKUP ERROR:",
+error
+);
+
+}
+
+}
+
+
+/*
+3. IF STILL NOTHING,
+   TRY RECEIVER EMAIL
+*/
+
+if(
+transactions.length === 0 &&
+user.email
+){
+
+try{
+
+const transactionsRef =
+collection(db,"transactions");
+
+const receiverQuery =
+query(
+transactionsRef,
+where(
+"receiverEmail",
+"==",
+user.email
+)
+);
+
+const receiverSnapshot =
+await getDocs(receiverQuery);
+
+receiverSnapshot.forEach(
+transactionDoc => {
+
+transactions.push({
+
+id:transactionDoc.id,
+
+...transactionDoc.data()
+
+});
+
+});
+
+}catch(error){
+
+console.error(
+"RECEIVER TRANSACTION LOOKUP ERROR:",
+error
+);
+
+}
+
+}
+
+
+/*
+REMOVE DUPLICATES
+*/
+
+const uniqueTransactions = [];
+
+const seenIds = new Set();
+
+transactions.forEach(
+transaction => {
+
+if(
+!seenIds.has(transaction.id)
+){
+
+seenIds.add(transaction.id);
+
+uniqueTransactions.push(
+transaction
+);
+
+}
+
+});
+
+transactions =
+uniqueTransactions;
+
+
+/* ================================
+   NO TRANSACTIONS
+================================ */
+
+if(
+transactions.length === 0
+){
 
 recentTransactions.innerHTML = `
 <div class="no-transactions">
@@ -1065,33 +1232,9 @@ return;
 }
 
 
-/*
-CONVERT FIRESTORE DOCUMENTS
-*/
-
-const transactions =
-transactionSnapshot.docs.map(
-transactionDoc => {
-
-const data =
-transactionDoc.data();
-
-return {
-
-id:transactionDoc.id,
-
-...data
-
-};
-
-});
-
-
-/*
-====================================
-SORT NEWEST FIRST
-====================================
-*/
+/* ================================
+   SORT NEWEST FIRST
+================================ */
 
 transactions.sort(
 (a,b) => {
@@ -1101,7 +1244,6 @@ getTransactionDate(a.date);
 
 const dateB =
 getTransactionDate(b.date);
-
 
 const timeA =
 dateA
@@ -1117,31 +1259,22 @@ dateB.getTime()
 :
 0;
 
-
 return timeB - timeA;
 
 }
 );
 
 
-/*
-ONLY SHOW LATEST 5
-*/
-
-const latestTransactions =
-transactions.slice(0,5);
-
+/* ================================
+   SHOW LATEST 5
+================================ */
 
 recentTransactions.innerHTML = "";
 
 
-/*
-====================================
-DISPLAY TRANSACTIONS
-====================================
-*/
-
-latestTransactions.forEach(
+transactions
+.slice(0,5)
+.forEach(
 transaction => {
 
 const row =
@@ -1151,13 +1284,15 @@ row.className =
 "transaction-row";
 
 
-const isReceived =
-transaction.type ===
-"Money Received";
+const received =
+transaction.type === "Money Received" ||
+transaction.type === "Credit" ||
+transaction.type === "credit" ||
+transaction.transactionType === "Money Received";
 
 
 const type =
-isReceived
+received
 ?
 "Credit"
 :
@@ -1165,7 +1300,7 @@ isReceived
 
 
 const description =
-isReceived
+received
 ?
 "Money Received"
 :
@@ -1189,7 +1324,7 @@ maximumFractionDigits:2
 
 
 const amountText =
-isReceived
+received
 ?
 "+$" + formattedAmount
 :
@@ -1221,14 +1356,10 @@ year:"numeric"
 }
 
 
-/*
-CREATE ROW
-*/
-
 row.innerHTML = `
 
 <div class="transaction-type ${
-isReceived
+received
 ?
 "credit"
 :
@@ -1242,7 +1373,7 @@ ${description}
 </div>
 
 <div class="transaction-amount ${
-isReceived
+received
 ?
 "credit"
 :
@@ -1252,7 +1383,7 @@ ${amountText}
 </div>
 
 <div class="transaction-date">
-${formattedDate}
+${escapeHTML(formattedDate)}
 </div>
 
 `;
@@ -1264,52 +1395,12 @@ row
 
 });
 
-
-}catch(transactionError){
-
-console.error(
-"APEX TRANSACTION ERROR:",
-transactionError
-);
-
-recentTransactions.innerHTML = `
-<div class="no-transactions">
-Unable to load recent transactions.
-</div>
-`;
-
-}
-
-
-}catch(userError){
-
-console.error(
-"APEX ACCOUNT ERROR:",
-userError
-);
-
-
-/*
-IMPORTANT:
-DO NOT CHANGE THE BALANCE TO ZERO HERE.
-*/
-
-document.getElementById(
-"recentTransactions"
-).innerHTML = `
-<div class="no-transactions">
-Unable to load account information.
-</div>
-`;
-
-}
-
 });
 
-</script>
 
-
-<script>
+/* ================================
+   BALANCE EYE
+================================ */
 
 let balanceVisible = true;
 
@@ -1317,15 +1408,10 @@ let balanceVisible = true;
 function toggleBalance(){
 
 const balance =
-document.getElementById(
-"balance"
-);
-
+document.getElementById("balance");
 
 const eyeIcon =
-document.getElementById(
-"eyeIcon"
-);
+document.getElementById("eyeIcon");
 
 
 if(balanceVisible){
@@ -1355,6 +1441,9 @@ balanceVisible = true;
 }
 
 }
+
+window.toggleBalance =
+toggleBalance;
 
 </script>
 
