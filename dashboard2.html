@@ -671,8 +671,6 @@ from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 import {
 getFirestore,
-doc,
-getDoc,
 collection,
 query,
 where,
@@ -717,9 +715,9 @@ const db =
 getFirestore(app);
 
 
-/* ================================
+/* =========================
    DATE
-================================ */
+========================= */
 
 function getTransactionDate(value){
 
@@ -747,9 +745,12 @@ Number(value.seconds) * 1000
 
 }
 
-const date = new Date(value);
+const date =
+new Date(value);
 
-if(!isNaN(date.getTime())){
+if(
+!isNaN(date.getTime())
+){
 
 return date;
 
@@ -760,9 +761,9 @@ return null;
 }
 
 
-/* ================================
-   ESCAPE
-================================ */
+/* =========================
+   ESCAPE HTML
+========================= */
 
 function escapeHTML(value){
 
@@ -776,19 +777,19 @@ return String(value ?? "")
 }
 
 
-/* ================================
-   LOAD DASHBOARD
-================================ */
+/* =========================
+   DASHBOARD
+========================= */
 
 onAuthStateChanged(
 auth,
-async (user) => {
+async(user)=>{
 
 if(!user){
 
 document.getElementById(
 "recentTransactions"
-).innerHTML = `
+).innerHTML=`
 <div class="no-transactions">
 Please sign in again.
 </div>
@@ -798,6 +799,10 @@ return;
 
 }
 
+
+/* =========================
+   SAVE LOGIN
+========================= */
 
 localStorage.setItem(
 "loggedIn",
@@ -810,73 +815,38 @@ user.email || ""
 );
 
 
-/* ================================
-   FIND USER DOCUMENT
-================================ */
+/* =========================
+   FIND USER
+   EMAIL FIRST
+========================= */
 
-let userData = null;
-let userDocumentId = null;
-
-
-/*
-FIRST TRY:
-users/{AUTH UID}
-*/
-
-try{
-
-const uidDocument =
-doc(
-db,
-"users",
-user.uid
-);
-
-const uidSnapshot =
-await getDoc(uidDocument);
-
-if(uidSnapshot.exists()){
-
-userData =
-uidSnapshot.data();
-
-userDocumentId =
-uidSnapshot.id;
-
-}
-
-}catch(error){
-
-console.error(
-"UID USER LOOKUP ERROR:",
-error
-);
-
-}
+let userData=null;
+let userDocumentId=null;
 
 
 /*
-SECOND TRY:
-Find user by email.
+IMPORTANT:
 
-This gives us the actual Firestore
-document ID used by admin.html.
+ADMIN.HTML FINDS USERS BY EMAIL.
+
+SO WE ALSO FIND THE USER BY EMAIL
+FIRST.
+
+THIS MAKES SURE DASHBOARD AND ADMIN
+USE THE SAME FIRESTORE DOCUMENT.
 */
 
-if(
-!userData &&
-user.email
-){
+if(user.email){
 
 try{
 
-const usersRef =
+const usersRef=
 collection(
 db,
 "users"
 );
 
-const emailQuery =
+const emailQuery=
 query(
 usersRef,
 where(
@@ -886,7 +856,7 @@ user.email
 )
 );
 
-const emailSnapshot =
+const emailSnapshot=
 await getDocs(
 emailQuery
 );
@@ -895,13 +865,13 @@ if(
 !emailSnapshot.empty
 ){
 
-const userDocument =
+const userDocument=
 emailSnapshot.docs[0];
 
-userData =
+userData=
 userDocument.data();
 
-userDocumentId =
+userDocumentId=
 userDocument.id;
 
 }
@@ -909,7 +879,7 @@ userDocument.id;
 }catch(error){
 
 console.error(
-"EMAIL USER LOOKUP ERROR:",
+"EMAIL USER SEARCH ERROR:",
 error
 );
 
@@ -919,10 +889,127 @@ error
 
 
 /*
-If user still cannot be found,
-show an actual error instead of
-silently pretending the balance is 0.
+ONLY IF EMAIL SEARCH FINDS NOTHING,
+TRY THE AUTH UID.
 */
+
+if(
+!userData
+){
+
+try{
+
+const usersRef=
+collection(
+db,
+"users"
+);
+
+const uidQuery=
+query(
+usersRef,
+where(
+"uid",
+"==",
+user.uid
+)
+);
+
+const uidSnapshot=
+await getDocs(
+uidQuery
+);
+
+if(
+!uidSnapshot.empty
+){
+
+const userDocument=
+uidSnapshot.docs[0];
+
+userData=
+userDocument.data();
+
+userDocumentId=
+userDocument.id;
+
+}
+
+}catch(error){
+
+console.error(
+"UID FIELD SEARCH ERROR:",
+error
+);
+
+}
+
+}
+
+
+/*
+FINAL FALLBACK:
+
+Check users/{AUTH UID}
+*/
+
+if(
+!userData
+){
+
+try{
+
+const usersRef=
+collection(
+db,
+"users"
+);
+
+const directQuery=
+query(
+usersRef,
+where(
+"email",
+"==",
+user.email || ""
+)
+);
+
+const directSnapshot=
+await getDocs(
+directQuery
+);
+
+if(
+!directSnapshot.empty
+){
+
+const userDocument=
+directSnapshot.docs[0];
+
+userData=
+userDocument.data();
+
+userDocumentId=
+userDocument.id;
+
+}
+
+}catch(error){
+
+console.error(
+"FINAL USER SEARCH ERROR:",
+error
+);
+
+}
+
+}
+
+
+/* =========================
+   USER NOT FOUND
+========================= */
 
 if(
 !userData ||
@@ -931,12 +1018,11 @@ if(
 
 document.getElementById(
 "balance"
-).textContent =
-"0.00";
+).textContent="0.00";
 
 document.getElementById(
 "recentTransactions"
-).innerHTML = `
+).innerHTML=`
 <div class="no-transactions">
 Account information could not be found.
 </div>
@@ -947,11 +1033,11 @@ return;
 }
 
 
-/* ================================
+/* =========================
    NAME
-================================ */
+========================= */
 
-const userName =
+const userName=
 userData.fullname ||
 userData.fullName ||
 userData.name ||
@@ -961,38 +1047,38 @@ user.displayName ||
 
 document.getElementById(
 "welcomeName"
-).textContent =
+).textContent=
 userName;
 
 
 document.getElementById(
 "cardHolderName"
-).textContent =
+).textContent=
 userName;
 
 
-/* ================================
+/* =========================
    PROFILE PICTURE
-================================ */
+========================= */
 
 if(
 userData.profileImage
 ){
 
-const profilePic =
+const profilePic=
 document.getElementById(
 "profilePic"
 );
 
-profilePic.src =
+profilePic.src=
 userData.profileImage;
 
-profilePic.onerror =
+profilePic.onerror=
 function(){
 
-this.onerror = null;
+this.onerror=null;
 
-this.src =
+this.src=
 "https://i.imgur.com/4Z7bKQp.png";
 
 };
@@ -1000,77 +1086,69 @@ this.src =
 }
 
 
-/* ================================
+/* =========================
    BALANCE
-================================ */
+========================= */
 
 /*
-IMPORTANT:
-
-The balance is NOT calculated
-from transactions.
-
-We read the balance stored
-inside this exact user's
-Firestore document.
+READ THE BALANCE FROM THE SAME
+USER DOCUMENT THAT ADMIN UPDATES.
 */
 
-let realBalance =
+let realBalance=
 Number(
 userData.balance
 );
-
 
 if(
 isNaN(realBalance)
 ){
 
-realBalance = 0;
+realBalance=0;
 
 }
 
-
-const balanceElement =
+const balanceElement=
 document.getElementById(
 "balance"
 );
 
+balanceElement.dataset.realBalance=
+realBalance.toFixed(2);
 
-balanceElement.textContent =
+balanceElement.textContent=
 realBalance.toFixed(2);
 
 
-balanceElement.dataset.realBalance =
-realBalance.toFixed(2);
+/* =========================
+   TRANSACTIONS
+========================= */
 
-
-/* ================================
-   LOAD TRANSACTIONS
-================================ */
-
-const recentTransactions =
+const recentTransactions=
 document.getElementById(
 "recentTransactions"
 );
 
-let transactions = [];
-
-
-/*
-FIRST:
-Use the exact Firestore user
-document ID.
-*/
-
-try{
-
-const transactionsRef =
+const transactionsRef=
 collection(
 db,
 "transactions"
 );
 
-const userQuery =
+let transactions=[];
+let transactionIds=new Set();
+
+
+/*
+FIRST:
+
+GET TRANSACTIONS USING THE SAME
+USER DOCUMENT ID THAT ADMIN USES.
+*/
+
+try{
+
+const userQuery=
 query(
 transactionsRef,
 where(
@@ -1080,30 +1158,39 @@ userDocumentId
 )
 );
 
-const userSnapshot =
+const userSnapshot=
 await getDocs(
 userQuery
 );
 
-
 userSnapshot.forEach(
-transactionDoc => {
+transactionDoc=>{
+
+if(
+!transactionIds.has(
+transactionDoc.id
+)
+){
+
+transactionIds.add(
+transactionDoc.id
+);
 
 transactions.push({
 
-id:
-transactionDoc.id,
-
+id:transactionDoc.id,
 ...transactionDoc.data()
 
 });
+
+}
 
 });
 
 }catch(error){
 
 console.error(
-"USER TRANSACTION ERROR:",
+"DOCUMENT ID TRANSACTION ERROR:",
 error
 );
 
@@ -1111,30 +1198,25 @@ error
 
 
 /*
-If no records were found and the
-Firestore document ID is different
-from the Auth UID, try the Auth UID
-as a second identifier.
+SECOND:
 
-This does NOT use email, so the
-admin's duplicate record cannot
-be pulled into the user's list.
+SOME OLD TRANSACTIONS MAY HAVE BEEN
+SAVED USING THE AUTH UID.
+
+CHECK THAT TOO.
+
+IMPORTANT:
+WE DO NOT SEARCH BY EMAIL, SO ADMIN'S
+DUPLICATE TRANSACTION IS NOT INCLUDED.
 */
 
 if(
-transactions.length === 0 &&
-userDocumentId !== user.uid
+user.uid !== userDocumentId
 ){
 
 try{
 
-const transactionsRef =
-collection(
-db,
-"transactions"
-);
-
-const uidQuery =
+const uidQuery=
 query(
 transactionsRef,
 where(
@@ -1144,23 +1226,32 @@ user.uid
 )
 );
 
-const uidSnapshot =
+const uidSnapshot=
 await getDocs(
 uidQuery
 );
 
-
 uidSnapshot.forEach(
-transactionDoc => {
+transactionDoc=>{
+
+if(
+!transactionIds.has(
+transactionDoc.id
+)
+){
+
+transactionIds.add(
+transactionDoc.id
+);
 
 transactions.push({
 
-id:
-transactionDoc.id,
-
+id:transactionDoc.id,
 ...transactionDoc.data()
 
 });
+
+}
 
 });
 
@@ -1176,104 +1267,75 @@ error
 }
 
 
-/* ================================
-   REMOVE DUPLICATE DOCUMENTS
-================================ */
-
-const uniqueTransactions = [];
-
-const seenIds = new Set();
-
-
-transactions.forEach(
-transaction => {
-
-if(
-!seenIds.has(transaction.id)
-){
-
-seenIds.add(
-transaction.id
-);
-
-uniqueTransactions.push(
-transaction
-);
-
-}
-
-});
-
-
-transactions =
-uniqueTransactions;
-
-
-/* ================================
-   SORT NEWEST FIRST
-================================ */
+/* =========================
+   SORT TRANSACTIONS
+========================= */
 
 transactions.sort(
-(a,b) => {
+(a,b)=>{
 
-const dateA =
+const dateA=
 getTransactionDate(
 a.date
 );
 
-const dateB =
+const dateB=
 getTransactionDate(
 b.date
 );
 
-const timeA =
+const timeA=
 dateA
 ?
 dateA.getTime()
 :
 0;
 
-const timeB =
+const timeB=
 dateB
 ?
 dateB.getTime()
 :
 0;
 
-return timeB - timeA;
+return timeB-timeA;
 
 }
 );
 
 
-/* ================================
-   DISPLAY TRANSACTIONS
-================================ */
+/* =========================
+   DISPLAY
+========================= */
 
 if(
-transactions.length === 0
+transactions.length===0
 ){
 
-recentTransactions.innerHTML = `
+recentTransactions.innerHTML=`
 <div class="no-transactions">
 No recent transactions.
 </div>
 `;
 
-return;
+}else{
 
+recentTransactions.innerHTML="";
+
+let displayed=0;
+
+for(
+const transaction of transactions
+){
+
+if(
+displayed>=5
+){
+break;
 }
 
 
-recentTransactions.innerHTML = "";
-
-
-transactions
-.slice(0,5)
-.forEach(
-transaction => {
-
-const rawType =
+const rawType=
 String(
 transaction.type ||
 transaction.transactionType ||
@@ -1283,32 +1345,29 @@ transaction.transactionType ||
 .trim();
 
 
-/*
-Money Received = CREDIT
-Money Sent = DEBIT
-*/
-
-let received = false;
-let sent = false;
+let received=false;
+let sent=false;
 
 
 if(
-rawType === "money received" ||
-rawType === "credit"
+rawType==="money received" ||
+rawType==="credit" ||
+rawType==="received"
 ){
 
-received = true;
+received=true;
 
 }
 
 
 if(
-rawType === "money sent" ||
-rawType === "debit" ||
-rawType === "transfer"
+rawType==="money sent" ||
+rawType==="debit" ||
+rawType==="transfer" ||
+rawType==="sent"
 ){
 
-sent = true;
+sent=true;
 
 }
 
@@ -1318,37 +1377,12 @@ if(
 !sent
 ){
 
-return;
+continue;
 
 }
 
 
-const row =
-document.createElement(
-"div"
-);
-
-row.className =
-"transaction-row";
-
-
-const displayType =
-received
-?
-"Credit"
-:
-"Debit";
-
-
-const description =
-received
-?
-"Money Received"
-:
-"Money Sent";
-
-
-const amount =
+const amount=
 Math.abs(
 Number(
 transaction.amount || 0
@@ -1356,7 +1390,7 @@ transaction.amount || 0
 );
 
 
-const formattedAmount =
+const formattedAmount=
 amount.toLocaleString(
 "en-US",
 {
@@ -1366,27 +1400,21 @@ maximumFractionDigits:2
 );
 
 
-const amountText =
-received
-?
-"+$" + formattedAmount
-:
-"-$" + formattedAmount;
-
-
-const dateObject =
+const dateObject=
 getTransactionDate(
 transaction.date
 );
 
 
-let formattedDate =
+let formattedDate=
 "Date unavailable";
 
 
-if(dateObject){
+if(
+dateObject
+){
 
-formattedDate =
+formattedDate=
 dateObject.toLocaleDateString(
 "en-US",
 {
@@ -1399,7 +1427,16 @@ year:"numeric"
 }
 
 
-row.innerHTML = `
+const row=
+document.createElement(
+"div"
+);
+
+row.className=
+"transaction-row";
+
+
+row.innerHTML=`
 
 <div class="transaction-type ${
 received
@@ -1408,11 +1445,11 @@ received
 :
 "debit"
 }">
-${displayType}
+${received ? "Credit" : "Debit"}
 </div>
 
 <div class="transaction-description">
-${description}
+${received ? "Money Received" : "Money Sent"}
 </div>
 
 <div class="transaction-amount ${
@@ -1422,13 +1459,11 @@ received
 :
 "debit"
 }">
-${amountText}
+${received ? "+" : "-"}$${formattedAmount}
 </div>
 
 <div class="transaction-date">
-${escapeHTML(
-formattedDate
-)}
+${escapeHTML(formattedDate)}
 </div>
 
 `;
@@ -1438,19 +1473,16 @@ recentTransactions.appendChild(
 row
 );
 
-});
+displayed++;
 
+}
 
-/*
-If records existed but none had
-a recognized type.
-*/
 
 if(
-recentTransactions.children.length === 0
+displayed===0
 ){
 
-recentTransactions.innerHTML = `
+recentTransactions.innerHTML=`
 <div class="no-transactions">
 No recent transactions.
 </div>
@@ -1458,59 +1490,63 @@ No recent transactions.
 
 }
 
+}
+
 });
 
 
-/* ================================
+/* =========================
    BALANCE EYE
-================================ */
+========================= */
 
-let balanceVisible = true;
+let balanceVisible=true;
 
 
 function toggleBalance(){
 
-const balance =
+const balance=
 document.getElementById(
 "balance"
 );
 
-const eyeIcon =
+const eyeIcon=
 document.getElementById(
 "eyeIcon"
 );
 
 
-if(balanceVisible){
+if(
+balanceVisible
+){
 
-balance.dataset.realBalance =
+balance.dataset.realBalance=
 balance.textContent;
 
-balance.textContent =
+balance.textContent=
 "****";
 
-eyeIcon.className =
+eyeIcon.className=
 "fa-solid fa-eye-slash";
 
-balanceVisible = false;
+balanceVisible=false;
 
 }else{
 
-balance.textContent =
+balance.textContent=
 balance.dataset.realBalance ||
 "0.00";
 
-eyeIcon.className =
+eyeIcon.className=
 "fa-solid fa-eye";
 
-balanceVisible = true;
+balanceVisible=true;
 
 }
 
 }
 
 
-window.toggleBalance =
+window.toggleBalance=
 toggleBalance;
 
 </script>
