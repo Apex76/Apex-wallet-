@@ -750,6 +750,7 @@ return date;
 }
 
 return null;
+
 }
 
 
@@ -770,7 +771,7 @@ return String(value ?? "")
 
 
 /* ================================
-   LOAD USER
+   LOAD DASHBOARD
 ================================ */
 
 onAuthStateChanged(
@@ -803,16 +804,10 @@ user.email || ""
 
 
 /* ================================
-   FIND USER ACCOUNT
+   FIND USER
 ================================ */
 
 let userData = null;
-let userDocumentId = null;
-
-
-/*
-FIRST: UID DOCUMENT
-*/
 
 try{
 
@@ -828,24 +823,20 @@ await getDoc(uidRef);
 
 if(uidSnap.exists()){
 
-userData = uidSnap.data();
-userDocumentId = uidSnap.id;
+userData =
+uidSnap.data();
 
 }
 
 }catch(error){
 
 console.error(
-"UID USER LOOKUP ERROR:",
+"USER UID ERROR:",
 error
 );
 
 }
 
-
-/*
-SECOND: EMAIL
-*/
 
 if(!userData && user.email){
 
@@ -872,15 +863,12 @@ if(!emailSnap.empty){
 userData =
 emailSnap.docs[0].data();
 
-userDocumentId =
-emailSnap.docs[0].id;
-
 }
 
 }catch(error){
 
 console.error(
-"EMAIL USER LOOKUP ERROR:",
+"USER EMAIL ERROR:",
 error
 );
 
@@ -890,7 +878,7 @@ error
 
 
 /* ================================
-   USER NAME
+   NAME
 ================================ */
 
 const userName =
@@ -954,75 +942,7 @@ this.src =
 
 
 /* ================================
-   BALANCE
-================================ */
-
-const balanceElement =
-document.getElementById("balance");
-
-
-let balanceValue = null;
-
-
-/*
-CHECK COMMON BALANCE FIELD NAMES
-*/
-
-if(userData){
-
-if(
-userData.balance !== undefined &&
-userData.balance !== null
-){
-
-balanceValue =
-Number(userData.balance);
-
-}
-
-else if(
-userData.currentBalance !== undefined &&
-userData.currentBalance !== null
-){
-
-balanceValue =
-Number(userData.currentBalance);
-
-}
-
-else if(
-userData.accountBalance !== undefined &&
-userData.accountBalance !== null
-){
-
-balanceValue =
-Number(userData.accountBalance);
-
-}
-
-}
-
-
-/*
-DISPLAY BALANCE
-*/
-
-if(
-balanceValue !== null &&
-!isNaN(balanceValue)
-){
-
-balanceElement.textContent =
-balanceValue.toFixed(2);
-
-balanceElement.dataset.realBalance =
-balanceValue.toFixed(2);
-
-}
-
-
-/* ================================
-   LOAD TRANSACTIONS
+   LOAD ALL TRANSACTIONS
 ================================ */
 
 const recentTransactions =
@@ -1033,14 +953,11 @@ document.getElementById(
 let transactions = [];
 
 
-/*
-1. FIND BY FIREBASE UID
-*/
-
 try{
 
 const transactionsRef =
 collection(db,"transactions");
+
 
 const uidQuery =
 query(
@@ -1052,8 +969,10 @@ user.uid
 )
 );
 
+
 const uidSnapshot =
 await getDocs(uidQuery);
+
 
 uidSnapshot.forEach(
 transactionDoc => {
@@ -1068,20 +987,20 @@ id:transactionDoc.id,
 
 });
 
+
 }catch(error){
 
 console.error(
-"UID TRANSACTION LOOKUP ERROR:",
+"UID TRANSACTIONS ERROR:",
 error
 );
 
 }
 
 
-/*
-2. IF NOTHING FOUND,
-   FIND BY USER EMAIL
-*/
+/* ================================
+   EMAIL FALLBACK
+================================ */
 
 if(
 transactions.length === 0 &&
@@ -1122,7 +1041,7 @@ id:transactionDoc.id,
 }catch(error){
 
 console.error(
-"EMAIL TRANSACTION LOOKUP ERROR:",
+"EMAIL TRANSACTIONS ERROR:",
 error
 );
 
@@ -1131,10 +1050,9 @@ error
 }
 
 
-/*
-3. IF STILL NOTHING,
-   TRY RECEIVER EMAIL
-*/
+/* ================================
+   RECEIVER EMAIL FALLBACK
+================================ */
 
 if(
 transactions.length === 0 &&
@@ -1175,7 +1093,7 @@ id:transactionDoc.id,
 }catch(error){
 
 console.error(
-"RECEIVER TRANSACTION LOOKUP ERROR:",
+"RECEIVER TRANSACTIONS ERROR:",
 error
 );
 
@@ -1184,9 +1102,9 @@ error
 }
 
 
-/*
-REMOVE DUPLICATES
-*/
+/* ================================
+   REMOVE DUPLICATES
+================================ */
 
 const uniqueTransactions = [];
 
@@ -1214,26 +1132,147 @@ uniqueTransactions;
 
 
 /* ================================
-   NO TRANSACTIONS
+   CALCULATE REAL BALANCE
 ================================ */
 
-if(
-transactions.length === 0
-){
+let calculatedBalance = 0;
 
-recentTransactions.innerHTML = `
-<div class="no-transactions">
-No recent transactions.
-</div>
-`;
+
+/*
+A transaction is RECEIVED when:
+- type is Money Received
+- type is Credit
+- receiverEmail belongs to this user
+*/
+
+transactions.forEach(
+transaction => {
+
+const type =
+String(
+transaction.type ||
+transaction.transactionType ||
+""
+).toLowerCase();
+
+
+const senderEmail =
+String(
+transaction.senderEmail ||
+""
+).toLowerCase();
+
+
+const receiverEmail =
+String(
+transaction.receiverEmail ||
+""
+).toLowerCase();
+
+
+const currentEmail =
+String(
+user.email ||
+""
+).toLowerCase();
+
+
+const amount =
+Number(
+transaction.amount || 0
+);
+
+
+if(
+isNaN(amount) ||
+amount <= 0
+){
 
 return;
 
 }
 
 
+/*
+RECEIVED
+*/
+
+const isReceived =
+type === "money received" ||
+type === "credit" ||
+receiverEmail === currentEmail;
+
+
+/*
+GENUINE MONEY SENT
+*/
+
+const isGenuineSent =
+(
+type === "money sent" ||
+type === "debit" ||
+type === "transfer"
+)
+&&
+(
+!senderEmail ||
+senderEmail === currentEmail
+);
+
+
+/*
+ADD RECEIVED MONEY
+*/
+
+if(isReceived){
+
+calculatedBalance += amount;
+
+}
+
+
+/*
+ONLY SUBTRACT REAL MONEY SENT
+*/
+
+else if(isGenuineSent){
+
+calculatedBalance -= amount;
+
+}
+
+});
+
+
+/*
+NEVER ALLOW NEGATIVE BALANCE
+*/
+
+if(calculatedBalance < 0){
+
+calculatedBalance = 0;
+
+}
+
+
 /* ================================
-   SORT NEWEST FIRST
+   DISPLAY REAL BALANCE
+================================ */
+
+const balanceElement =
+document.getElementById("balance");
+
+
+balanceElement.textContent =
+calculatedBalance.toFixed(2);
+
+
+balanceElement.dataset.realBalance =
+calculatedBalance.toFixed(2);
+
+
+/* ================================
+   SORT TRANSACTIONS
 ================================ */
 
 transactions.sort(
@@ -1266,13 +1305,94 @@ return timeB - timeA;
 
 
 /* ================================
-   SHOW LATEST 5
+   DISPLAY TRANSACTIONS
 ================================ */
+
+if(
+transactions.length === 0
+){
+
+recentTransactions.innerHTML = `
+<div class="no-transactions">
+No recent transactions.
+</div>
+`;
+
+return;
+
+}
+
 
 recentTransactions.innerHTML = "";
 
 
-transactions
+/*
+ONLY SHOW REAL USER TRANSACTIONS
+*/
+
+const visibleTransactions =
+transactions.filter(
+transaction => {
+
+const type =
+String(
+transaction.type ||
+transaction.transactionType ||
+""
+).toLowerCase();
+
+
+const senderEmail =
+String(
+transaction.senderEmail ||
+""
+).toLowerCase();
+
+
+const receiverEmail =
+String(
+transaction.receiverEmail ||
+""
+).toLowerCase();
+
+
+const currentEmail =
+String(
+user.email ||
+""
+).toLowerCase();
+
+
+const received =
+type === "money received" ||
+type === "credit" ||
+receiverEmail === currentEmail;
+
+
+const sent =
+(
+type === "money sent" ||
+type === "debit" ||
+type === "transfer"
+)
+&&
+(
+!senderEmail ||
+senderEmail === currentEmail
+);
+
+
+/*
+SHOW RECEIVED OR REAL SENT.
+IGNORE ADMIN'S MATCHING FAKE DEBIT.
+*/
+
+return received || sent;
+
+});
+
+
+visibleTransactions
 .slice(0,5)
 .forEach(
 transaction => {
@@ -1284,14 +1404,42 @@ row.className =
 "transaction-row";
 
 
-const received =
-transaction.type === "Money Received" ||
-transaction.type === "Credit" ||
-transaction.type === "credit" ||
-transaction.transactionType === "Money Received";
-
-
 const type =
+String(
+transaction.type ||
+transaction.transactionType ||
+""
+).toLowerCase();
+
+
+const senderEmail =
+String(
+transaction.senderEmail ||
+""
+).toLowerCase();
+
+
+const receiverEmail =
+String(
+transaction.receiverEmail ||
+""
+).toLowerCase();
+
+
+const currentEmail =
+String(
+user.email ||
+""
+).toLowerCase();
+
+
+const received =
+type === "money received" ||
+type === "credit" ||
+receiverEmail === currentEmail;
+
+
+const displayType =
 received
 ?
 "Credit"
@@ -1365,7 +1513,7 @@ received
 :
 "debit"
 }">
-${type}
+${displayType}
 </div>
 
 <div class="transaction-description">
