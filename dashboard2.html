@@ -3,1551 +3,1324 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>APEX BANK Dashboard</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<title>Transfer Money</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
-background:#eef3ff;
-color:#172033;
-padding-bottom:90px;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
 }
 
 .header{
-background:#123b78;
-color:white;
-padding:22px 20px 25px;
-border-radius:0 0 28px 28px;
+    background:#1f4ed8;
+    color:white;
+    padding:20px;
+    text-align:center;
 }
 
-.top{
-display:flex;
-align-items:center;
+.container{
+    background:white;
+    width:90%;
+    max-width:500px;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-.logo-box{
-width:48px;
-height:48px;
-background:white;
-border-radius:12px;
-display:flex;
-align-items:center;
-justify-content:center;
-margin-right:12px;
+label{
+    display:block;
+    margin-top:14px;
+    font-weight:bold;
+    color:#333;
 }
 
-.logo-mark{
-font-size:27px;
-font-weight:900;
-font-style:italic;
-color:#1f5edb;
+input, select{
+    width:100%;
+    padding:14px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    box-sizing:border-box;
+    font-size:16px;
+    background:white;
 }
 
-.brand{
-font-size:18px;
-font-weight:bold;
-letter-spacing:1px;
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    background:#1f4ed8;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:17px;
+    cursor:pointer;
 }
 
-.brand span{
-color:#8db5ff;
+button:hover{
+    background:#153ba7;
 }
 
-.profile{
-width:52px;
-height:52px;
-border-radius:50%;
-border:2px solid white;
-object-fit:cover;
-margin-left:auto;
-background:white;
+.conversion{
+    margin-top:15px;
+    padding:15px;
+    background:#eef4ff;
+    border-radius:10px;
+    text-align:center;
 }
 
-.welcome{
-font-size:13px;
-opacity:.8;
-margin-top:20px;
+.rate{
+    color:#555;
+    font-size:14px;
 }
 
-.name{
-font-size:22px;
-font-weight:bold;
-margin-top:4px;
+.receive{
+    margin-top:8px;
+    font-size:21px;
+    font-weight:bold;
+    color:#1f4ed8;
 }
 
-.account{
-margin-top:18px;
-background:linear-gradient(135deg,#2463dc,#1648b5);
-padding:20px;
-border-radius:18px;
-box-shadow:0 8px 20px rgba(0,0,0,.18);
+.note{
+    margin-top:8px;
+    font-size:12px;
+    color:#777;
 }
 
-.account-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
+.back{
+    display:block;
+    text-align:center;
+    margin-top:20px;
+    color:#1f4ed8;
+    text-decoration:none;
+    font-weight:bold;
 }
-
-.account small{
-font-size:12px;
-opacity:.8;
-letter-spacing:.4px;
-}
-
-.virtual-text{
-font-size:10px;
-padding:5px 8px;
-border:1px solid rgba(255,255,255,.4);
-border-radius:12px;
-}
-
-.balance{
-font-size:28px;
-font-weight:bold;
-margin-top:10px;
-letter-spacing:.3px;
-}
-
-.view{
-margin-top:9px;
-font-size:13px;
-opacity:.9;
-cursor:pointer;
-}
-
-.transactions{
-background:white;
-margin:18px 15px;
-border-radius:17px;
-padding:18px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.transactions-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;
-}
-
-.transactions-header h3{
-font-size:18px;
-color:#172033;
-}
-
-.view-all{
-font-size:12px;
-color:#1f5edb;
-text-decoration:none;
-font-weight:bold;
-}
-
-.transaction-head{
-display:grid;
-grid-template-columns:1.1fr 1.6fr 1fr .9fr;
-gap:5px;
-padding-bottom:9px;
-border-bottom:1px solid #eee;
-font-size:9px;
-font-weight:bold;
-color:#8a93a3;
-text-transform:uppercase;
-}
-
-.transaction-row{
-display:grid;
-grid-template-columns:1.1fr 1.6fr 1fr .9fr;
-gap:5px;
-align-items:center;
-padding:13px 0;
-border-bottom:1px solid #f0f0f0;
-font-size:10px;
-}
-
-.transaction-row:last-child{
-border-bottom:none;
-}
-
-.transaction-type{
-font-weight:bold;
-}
-
-.credit{
-color:#238636;
-}
-
-.debit{
-color:#d93025;
-}
-
-.transaction-description{
-font-weight:bold;
-color:#222;
-}
-
-.transaction-amount{
-font-weight:bold;
-}
-
-.transaction-date{
-font-size:9px;
-color:#777;
-text-align:right;
-}
-
-.no-transactions{
-text-align:center;
-padding:20px 5px;
-color:#888;
-font-size:13px;
-}
-
-.virtual-card{
-margin:18px 15px;
-height:195px;
-border-radius:21px;
-padding:21px;
-color:white;
-background:linear-gradient(135deg,#111827,#1f4ed8);
-box-shadow:0 8px 20px rgba(0,0,0,.22);
-position:relative;
-overflow:hidden;
-}
-
-.virtual-card::before{
-content:"";
-position:absolute;
-width:220px;
-height:220px;
-border-radius:50%;
-background:rgba(255,255,255,.08);
-right:-80px;
-top:-90px;
-}
-
-.virtual-card::after{
-content:"";
-position:absolute;
-width:180px;
-height:180px;
-border-radius:50%;
-background:rgba(255,255,255,.05);
-left:-80px;
-bottom:-100px;
-}
-
-.card-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-position:relative;
-z-index:2;
-}
-
-.card-brand{
-font-size:18px;
-font-weight:bold;
-letter-spacing:1px;
-}
-
-.virtual-label{
-font-size:10px;
-padding:5px 8px;
-border:1px solid rgba(255,255,255,.5);
-border-radius:20px;
-}
-
-.chip{
-width:43px;
-height:30px;
-background:#d6d6d6;
-border-radius:7px;
-margin-top:22px;
-position:relative;
-z-index:2;
-}
-
-.chip::after{
-content:"";
-position:absolute;
-left:20px;
-top:0;
-width:2px;
-height:30px;
-background:#999;
-}
-
-.chip::before{
-content:"";
-position:absolute;
-left:0;
-top:14px;
-width:43px;
-height:2px;
-background:#999;
-}
-
-.card-number{
-font-size:19px;
-letter-spacing:3px;
-margin-top:13px;
-position:relative;
-z-index:2;
-font-weight:bold;
-}
-
-.card-bottom{
-display:flex;
-justify-content:space-between;
-align-items:flex-end;
-margin-top:12px;
-position:relative;
-z-index:2;
-}
-
-.card-holder-label{
-font-size:8px;
-opacity:.7;
-margin-bottom:3px;
-}
-
-.card-holder{
-font-size:13px;
-font-weight:bold;
-text-transform:uppercase;
-max-width:200px;
-overflow:hidden;
-white-space:nowrap;
-text-overflow:ellipsis;
-}
-
-.card-type{
-font-size:15px;
-font-weight:bold;
-font-style:italic;
-}
-
-.quick{
-display:flex;
-justify-content:space-around;
-margin:22px 15px;
-}
-
-.quick a{
-text-decoration:none;
-color:#222;
-text-align:center;
-font-size:13px;
-}
-
-.circle{
-width:62px;
-height:62px;
-border-radius:50%;
-background:white;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:25px;
-color:#1f4ed8;
-box-shadow:0 4px 12px rgba(0,0,0,.12);
-margin:auto;
-margin-bottom:7px;
-}
-
-.card{
-background:white;
-margin:15px;
-padding:18px;
-border-radius:16px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.card h3{
-margin-bottom:12px;
-color:#1f4ed8;
-font-size:18px;
-}
-
-.action{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:14px 0;
-border-bottom:1px solid #eee;
-text-decoration:none;
-color:#222;
-font-size:15px;
-}
-
-.action:last-child{
-border-bottom:none;
-}
-
-.action i{
-margin-right:7px;
-color:#1f4ed8;
-}
-
-.bottom{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:white;
-display:flex;
-justify-content:space-around;
-padding:12px 0;
-box-shadow:0 -3px 15px rgba(0,0,0,.13);
-z-index:20;
-}
-
-.bottom a{
-text-decoration:none;
-color:#777;
-text-align:center;
-font-size:11px;
-}
-
-.bottom i{
-display:block;
-font-size:20px;
-margin-bottom:4px;
-}
-
-.active{
-color:#1f4ed8!important;
-font-weight:bold;
-}
-
 </style>
 </head>
 
 <body>
 
 <div class="header">
-
-<div class="top">
-
-<div class="logo-box">
-<div class="logo-mark">A</div>
+    <h2>Transfer Money</h2>
 </div>
 
-<div class="brand">
-APEX <span>BANK</span>
+<div class="container">
+
+<label>Recipient Name</label>
+<input type="text" id="recipient" placeholder="Recipient Name">
+
+<label>Country</label>
+<select id="country" onchange="countryChanged()">
+    <option value="">-- Select Country --</option>
+
+    <!-- Africa -->
+    <option value="NG">🇳🇬 Nigeria</option>
+    <option value="ZA">🇿🇦 South Africa</option>
+    <option value="EG">🇪🇬 Egypt</option>
+    <option value="MA">🇲🇦 Morocco</option>
+
+    <!-- Asia -->
+    <option value="ID">🇮🇩 Indonesia</option>
+    <option value="VN">🇻🇳 Vietnam</option>
+    <option value="JP">🇯🇵 Japan</option>
+    <option value="CN">🇨🇳 China</option>
+    <option value="IN">🇮🇳 India</option>
+    <option value="TH">🇹🇭 Thailand</option>
+    <option value="PH">🇵🇭 Philippines</option>
+    <option value="MY">🇲🇾 Malaysia</option>
+    <option value="SG">🇸🇬 Singapore</option>
+    <option value="KR">🇰🇷 South Korea</option>
+    <option value="HK">🇭🇰 Hong Kong</option>
+    <option value="TW">🇹🇼 Taiwan</option>
+    <option value="PK">🇵🇰 Pakistan</option>
+    <option value="BD">🇧🇩 Bangladesh</option>
+    <option value="NP">🇳🇵 Nepal</option>
+    <option value="LK">🇱🇰 Sri Lanka</option>
+    <option value="AE">🇦🇪 UAE</option>
+    <option value="SA">🇸🇦 Saudi Arabia</option>
+    <option value="QA">🇶🇦 Qatar</option>
+    <option value="TR">🇹🇷 Turkey</option>
+
+    <!-- South America -->
+    <option value="BR">🇧🇷 Brazil</option>
+    <option value="AR">🇦🇷 Argentina</option>
+    <option value="CL">🇨🇱 Chile</option>
+    <option value="CO">🇨🇴 Colombia</option>
+    <option value="PE">🇵🇪 Peru</option>
+    <option value="UY">🇺🇾 Uruguay</option>
+    <option value="PY">🇵🇾 Paraguay</option>
+    <option value="BO">🇧🇴 Bolivia</option>
+    <option value="EC">🇪🇨 Ecuador</option>
+    <option value="GY">🇬🇾 Guyana</option>
+    <option value="SR">🇸🇷 Suriname</option>
+    <option value="VE">🇻🇪 Venezuela</option>
+
+    <!-- Europe -->
+    <option value="GB">🇬🇧 United Kingdom</option>
+    <option value="DE">🇩🇪 Germany</option>
+    <option value="FR">🇫🇷 France</option>
+    <option value="IT">🇮🇹 Italy</option>
+    <option value="ES">🇪🇸 Spain</option>
+    <option value="PT">🇵🇹 Portugal</option>
+    <option value="NL">🇳🇱 Netherlands</option>
+    <option value="BE">🇧🇪 Belgium</option>
+    <option value="AT">🇦🇹 Austria</option>
+    <option value="IE">🇮🇪 Ireland</option>
+    <option value="GR">🇬🇷 Greece</option>
+    <option value="SE">🇸🇪 Sweden</option>
+    <option value="NO">🇳🇴 Norway</option>
+    <option value="DK">🇩🇰 Denmark</option>
+    <option value="CH">🇨🇭 Switzerland</option>
+    <option value="PL">🇵🇱 Poland</option>
+    <option value="CZ">🇨🇿 Czech Republic</option>
+    <option value="HU">🇭🇺 Hungary</option>
+    <option value="RO">🇷🇴 Romania</option>
+    <option value="UA">🇺🇦 Ukraine</option>
+
+    <!-- Other -->
+    <option value="US">🇺🇸 United States</option>
+    <option value="CA">🇨🇦 Canada</option>
+    <option value="AU">🇦🇺 Australia</option>
+    <option value="NZ">🇳🇿 New Zealand</option>
+</select>
+
+<label>Currency</label>
+<select id="currency" onchange="updateConversion()">
+    <option value="">-- Select Currency --</option>
+</select>
+
+<label>Bank</label>
+<select id="bank">
+    <option value="">-- Select Bank --</option>
+</select>
+
+<label>Account Number</label>
+<input type="text" id="account" placeholder="Account Number">
+
+<label>Amount (USD)</label>
+<input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01"
+       oninput="updateConversion()">
+
+<div class="conversion">
+
+    <div class="rate" id="rateText">
+        Select a country and currency
+    </div>
+
+    <div class="receive" id="receiveText">
+        Recipient receives: —
+    </div>
+
+    <div class="note">
+        Virtual transfer conversion
+    </div>
+
 </div>
 
-<img
-id="profilePic"
-class="profile"
-src="https://i.imgur.com/4Z7bKQp.png"
-alt="Profile Picture"
->
+<button onclick="continueTransfer()">
+    Continue
+</button>
 
-</div>
-
-<div class="welcome">
-Welcome
-</div>
-
-<div id="welcomeName" class="name">
-User
-</div>
-
-<div class="account">
-
-<div class="account-top">
-
-<small>
-APEX CHECKING ACCOUNT
-</small>
-
-<div class="virtual-text">
-VIRTUAL FUNDS
-</div>
-
-</div>
-
-<div class="balance">
-$<span id="balance" data-real-balance="0.00">0.00</span>
-</div>
-
-<div class="view" onclick="toggleBalance()">
-
-<i id="eyeIcon" class="fa-solid fa-eye"></i>
-
-&nbsp; View Balance Details
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="transactions">
-
-<div class="transactions-header">
-
-<h3>
-Recent Transactions
-</h3>
-
-<a href="history.html" class="view-all">
-View all
+<a href="dashboard.html" class="back">
+    ← Back to Dashboard
 </a>
 
 </div>
 
-<div class="transaction-head">
+<script>
 
-<div>Type</div>
-<div>Description</div>
-<div>Amount</div>
-<div>Date</div>
+/*
+========================================
+COUNTRY DATA
+========================================
+Rates are demo rates against USD.
+Change the rates whenever you want.
+*/
 
-</div>
+const countries = {
 
-<div id="recentTransactions">
+NG: {
+    currency:"NGN",
+    name:"Nigerian Naira",
+    symbol:"₦",
+    rate:1500,
+    banks:[
+        "Opay",
+        "PalmPay",
+        "Kuda",
+        "Access Bank",
+        "GTBank",
+        "First Bank",
+        "UBA",
+        "Zenith Bank",
+        "Fidelity Bank",
+        "Moniepoint",
+        "FCMB",
+        "Stanbic IBTC",
+        "Union Bank",
+        "Sterling Bank",
+        "Polaris Bank",
+        "Wema Bank"
+    ]
+},
 
-<div class="no-transactions">
-Loading transactions...
-</div>
+ZA:{
+    currency:"ZAR",
+    name:"South African Rand",
+    symbol:"R",
+    rate:18,
+    banks:[
+        "Capitec",
+        "FNB",
+        "Standard Bank",
+        "Absa",
+        "Nedbank",
+        "TymeBank",
+        "Discovery Bank",
+        "African Bank",
+        "Investec"
+    ]
+},
 
-</div>
+EG:{
+    currency:"EGP",
+    name:"Egyptian Pound",
+    symbol:"E£",
+    rate:50,
+    banks:[
+        "National Bank of Egypt",
+        "Banque Misr",
+        "CIB",
+        "QNB Alahli",
+        "AlexBank",
+        "ADIB Egypt"
+    ]
+},
 
-</div>
+MA:{
+    currency:"MAD",
+    name:"Moroccan Dirham",
+    symbol:"د.م.",
+    rate:10,
+    banks:[
+        "Attijariwafa Bank",
+        "Banque Populaire",
+        "Bank of Africa",
+        "CIH Bank",
+        "Crédit du Maroc",
+        "Société Générale Maroc"
+    ]
+},
 
+ID:{
+    currency:"IDR",
+    name:"Indonesian Rupiah",
+    symbol:"Rp",
+    rate:16000,
+    banks:[
+        "Bank Central Asia (BCA)",
+        "Bank Mandiri",
+        "Bank Rakyat Indonesia (BRI)",
+        "BNI",
+        "Bank Danamon",
+        "CIMB Niaga",
+        "Bank Permata"
+    ]
+},
 
-<div class="virtual-card">
+VN:{
+    currency:"VND",
+    name:"Vietnamese Dong",
+    symbol:"₫",
+    rate:25000,
+    banks:[
+        "Vietcombank",
+        "BIDV",
+        "VietinBank",
+        "Agribank",
+        "ACB",
+        "Sacombank",
+        "Techcombank"
+    ]
+},
 
-<div class="card-top">
+JP:{
+    currency:"JPY",
+    name:"Japanese Yen",
+    symbol:"¥",
+    rate:150,
+    banks:[
+        "MUFG Bank",
+        "SMBC",
+        "Mizuho Bank",
+        "Resona Bank",
+        "Japan Post Bank"
+    ]
+},
 
-<div class="card-brand">
-APEX WALLET
-</div>
+CN:{
+    currency:"CNY",
+    name:"Chinese Yuan",
+    symbol:"¥",
+    rate:7.2,
+    banks:[
+        "Bank of China",
+        "ICBC",
+        "China Construction Bank",
+        "Agricultural Bank of China",
+        "Bank of Communications"
+    ]
+},
 
-<div class="virtual-label">
-VIRTUAL
-</div>
+IN:{
+    currency:"INR",
+    name:"Indian Rupee",
+    symbol:"₹",
+    rate:85,
+    banks:[
+        "State Bank of India",
+        "HDFC Bank",
+        "ICICI Bank",
+        "Axis Bank",
+        "Kotak Mahindra Bank",
+        "Punjab National Bank"
+    ]
+},
 
-</div>
+TH:{
+    currency:"THB",
+    name:"Thai Baht",
+    symbol:"฿",
+    rate:35,
+    banks:[
+        "Bangkok Bank",
+        "Kasikornbank",
+        "Krung Thai Bank",
+        "Siam Commercial Bank",
+        "Krungsri",
+        "TTB"
+    ]
+},
 
-<div class="chip"></div>
+PH:{
+    currency:"PHP",
+    name:"Philippine Peso",
+    symbol:"₱",
+    rate:57,
+    banks:[
+        "BDO",
+        "BPI",
+        "Metrobank",
+        "LandBank",
+        "UnionBank",
+        "Security Bank"
+    ]
+},
 
-<div class="card-number">
-•••• •••• •••• 4821
-</div>
+MY:{
+    currency:"MYR",
+    name:"Malaysian Ringgit",
+    symbol:"RM",
+    rate:4.5,
+    banks:[
+        "Maybank",
+        "CIMB Bank",
+        "Public Bank",
+        "RHB Bank",
+        "Hong Leong Bank",
+        "AmBank"
+    ]
+},
 
-<div class="card-bottom">
+SG:{
+    currency:"SGD",
+    name:"Singapore Dollar",
+    symbol:"S$",
+    rate:1.3,
+    banks:[
+        "DBS",
+        "OCBC",
+        "UOB",
+        "Standard Chartered Singapore",
+        "Citibank Singapore"
+    ]
+},
 
-<div>
+KR:{
+    currency:"KRW",
+    name:"South Korean Won",
+    symbol:"₩",
+    rate:1400,
+    banks:[
+        "KB Kookmin Bank",
+        "Shinhan Bank",
+        "Woori Bank",
+        "Hana Bank",
+        "NH NongHyup Bank"
+    ]
+},
 
-<div class="card-holder-label">
-CARDHOLDER
-</div>
+HK:{
+    currency:"HKD",
+    name:"Hong Kong Dollar",
+    symbol:"HK$",
+    rate:7.8,
+    banks:[
+        "HSBC Hong Kong",
+        "Bank of China Hong Kong",
+        "Hang Seng Bank",
+        "Standard Chartered Hong Kong",
+        "DBS Hong Kong"
+    ]
+},
 
-<div id="cardHolderName" class="card-holder">
-USER
-</div>
+TW:{
+    currency:"TWD",
+    name:"Taiwan Dollar",
+    symbol:"NT$",
+    rate:32,
+    banks:[
+        "CTBC Bank",
+        "Cathay United Bank",
+        "Taipei Fubon Bank",
+        "E.SUN Bank",
+        "Mega International Commercial Bank"
+    ]
+},
 
-</div>
+PK:{
+    currency:"PKR",
+    name:"Pakistani Rupee",
+    symbol:"₨",
+    rate:280,
+    banks:[
+        "HBL",
+        "UBL",
+        "Meezan Bank",
+        "MCB Bank",
+        "Allied Bank",
+        "Bank Alfalah"
+    ]
+},
 
-<div class="card-type">
-VIRTUAL
-</div>
+BD:{
+    currency:"BDT",
+    name:"Bangladeshi Taka",
+    symbol:"৳",
+    rate:120,
+    banks:[
+        "Dutch-Bangla Bank",
+        "BRAC Bank",
+        "City Bank",
+        "Eastern Bank",
+        "Prime Bank",
+        "Bank Asia"
+    ]
+},
 
-</div>
+NP:{
+    currency:"NPR",
+    name:"Nepalese Rupee",
+    symbol:"रू",
+    rate:135,
+    banks:[
+        "Nabil Bank",
+        "Global IME Bank",
+        "NIC Asia Bank",
+        "Nepal Investment Mega Bank",
+        "Himalayan Bank"
+    ]
+},
 
-</div>
+LK:{
+    currency:"LKR",
+    name:"Sri Lankan Rupee",
+    symbol:"Rs",
+    rate:300,
+    banks:[
+        "Bank of Ceylon",
+        "People's Bank",
+        "Commercial Bank",
+        "Sampath Bank",
+        "Hatton National Bank"
+    ]
+},
 
+AE:{
+    currency:"AED",
+    name:"UAE Dirham",
+    symbol:"د.إ",
+    rate:3.67,
+    banks:[
+        "Emirates NBD",
+        "ADCB",
+        "FAB",
+        "Mashreq",
+        "Dubai Islamic Bank",
+        "RAKBANK"
+    ]
+},
 
-<div class="quick">
+SA:{
+    currency:"SAR",
+    name:"Saudi Riyal",
+    symbol:"﷼",
+    rate:3.75,
+    banks:[
+        "Al Rajhi Bank",
+        "Saudi National Bank",
+        "Riyad Bank",
+        "Bank Albilad",
+        "Arab National Bank"
+    ]
+},
 
-<a href="#">
+QA:{
+    currency:"QAR",
+    name:"Qatari Riyal",
+    symbol:"﷼",
+    rate:3.64,
+    banks:[
+        "Qatar National Bank",
+        "Doha Bank",
+        "Commercial Bank",
+        "QIB",
+        "Dukhan Bank"
+    ]
+},
 
-<div class="circle">
-<i class="fa-solid fa-building-columns"></i>
-</div>
+TR:{
+    currency:"TRY",
+    name:"Turkish Lira",
+    symbol:"₺",
+    rate:40,
+    banks:[
+        "Ziraat Bank",
+        "Garanti BBVA",
+        "İşbank",
+        "Akbank",
+        "Yapı Kredi",
+        "QNB Finansbank"
+    ]
+},
 
-My Account
+BR:{
+    currency:"BRL",
+    name:"Brazilian Real",
+    symbol:"R$",
+    rate:5,
+    banks:[
+        "Nubank",
+        "Itaú",
+        "Bradesco",
+        "Banco do Brasil",
+        "Caixa Econômica Federal",
+        "Santander",
+        "Banco Inter",
+        "C6 Bank",
+        "PicPay",
+        "Mercado Pago"
+    ]
+},
 
-</a>
+AR:{
+    currency:"ARS",
+    name:"Argentine Peso",
+    symbol:"$",
+    rate:1300,
+    banks:[
+        "Banco Nación",
+        "BBVA Argentina",
+        "Santander Argentina",
+        "Galicia",
+        "Banco Macro"
+    ]
+},
 
-</div>
+CL:{
+    currency:"CLP",
+    name:"Chilean Peso",
+    symbol:"$",
+    rate:950,
+    banks:[
+        "Banco de Chile",
+        "BancoEstado",
+        "Santander Chile",
+        "BCI",
+        "Scotiabank Chile"
+    ]
+},
 
+CO:{
+    currency:"COP",
+    name:"Colombian Peso",
+    symbol:"$",
+    rate:4200,
+    banks:[
+        "Bancolombia",
+        "Davivienda",
+        "Banco de Bogotá",
+        "BBVA Colombia",
+        "Banco de Occidente"
+    ]
+},
 
-<div class="card">
+PE:{
+    currency:"PEN",
+    name:"Peruvian Sol",
+    symbol:"S/",
+    rate:3.7,
+    banks:[
+        "BCP",
+        "BBVA Perú",
+        "Interbank",
+        "Scotiabank Perú",
+        "Banco de la Nación"
+    ]
+},
 
-<h3>
-Quick Services
-</h3>
+UY:{
+    currency:"UYU",
+    name:"Uruguayan Peso",
+    symbol:"$",
+    rate:40,
+    banks:[
+        "Banco República",
+        "Santander Uruguay",
+        "BBVA Uruguay",
+        "Scotiabank Uruguay"
+    ]
+},
 
-<a href="history.html" class="action">
+PY:{
+    currency:"PYG",
+    name:"Paraguayan Guarani",
+    symbol:"₲",
+    rate:8000,
+    banks:[
+        "Banco Nacional de Fomento",
+        "Banco Continental",
+        "Banco Itaú Paraguay",
+        "Sudameris Bank"
+    ]
+},
 
-<span>
-<i class="fa-solid fa-clock-rotate-left"></i>
-Transaction History
-</span>
+BO:{
+    currency:"BOB",
+    name:"Bolivian Boliviano",
+    symbol:"Bs",
+    rate:7,
+    banks:[
+        "Banco Nacional de Bolivia",
+        "Banco Mercantil Santa Cruz",
+        "Banco Unión",
+        "Banco Bisa"
+    ]
+},
 
-<i class="fa-solid fa-chevron-right"></i>
+EC:{
+    currency:"USD",
+    name:"US Dollar",
+    symbol:"$",
+    rate:1,
+    banks:[
+        "Banco Pichincha",
+        "Banco Guayaquil",
+        "Produbanco",
+        "Banco Bolivariano"
+    ]
+},
 
-</a>
+GY:{
+    currency:"GYD",
+    name:"Guyanese Dollar",
+    symbol:"$",
+    rate:210,
+    banks:[
+        "Republic Bank Guyana",
+        "Guyana Bank for Trade and Industry",
+        "Demerara Bank",
+        "Citizens Bank Guyana"
+    ]
+},
 
-<a href="transfer.html" class="action">
+SR:{
+    currency:"SRD",
+    name:"Surinamese Dollar",
+    symbol:"$",
+    rate:35,
+    banks:[
+        "De Surinaamsche Bank",
+        "Republic Bank Suriname",
+        "Hakrinbank"
+    ]
+},
 
-<span>
-<i class="fa-solid fa-money-bill-transfer"></i>
-Transfer Money
-</span>
+VE:{
+    currency:"VES",
+    name:"Venezuelan Bolívar",
+    symbol:"Bs.",
+    rate:100,
+    banks:[
+        "Banco de Venezuela",
+        "Banesco",
+        "BBVA Provincial",
+        "Mercantil Banco Universal"
+    ]
+},
 
-<i class="fa-solid fa-chevron-right"></i>
+GB:{
+    currency:"GBP",
+    name:"British Pound",
+    symbol:"£",
+    rate:0.78,
+    banks:[
+        "Barclays",
+        "HSBC UK",
+        "Lloyds Bank",
+        "NatWest",
+        "Santander UK",
+        "Halifax",
+        "Monzo",
+        "Revolut"
+    ]
+},
 
-</a>
+DE:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Deutsche Bank",
+        "Commerzbank",
+        "DKB",
+        "ING Germany",
+        "N26"
+    ]
+},
 
-<a href="settings.html" class="action">
+FR:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "BNP Paribas",
+        "Crédit Agricole",
+        "Société Générale",
+        "Banque Populaire",
+        "LCL"
+    ]
+},
 
-<span>
-<i class="fa-solid fa-gear"></i>
-Settings
-</span>
+IT:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "UniCredit",
+        "Intesa Sanpaolo",
+        "Banco BPM",
+        "BPER Banca",
+        "Poste Italiane"
+    ]
+},
 
-<i class="fa-solid fa-chevron-right"></i>
+ES:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Banco Santander",
+        "BBVA",
+        "CaixaBank",
+        "Sabadell",
+        "Bankinter"
+    ]
+},
 
-</a>
+PT:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Millennium BCP",
+        "Caixa Geral de Depósitos",
+        "Novo Banco",
+        "Santander Portugal"
+    ]
+},
 
-</div>
+NL:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "ING",
+        "ABN AMRO",
+        "Rabobank",
+        "SNS Bank"
+    ]
+},
 
+BE:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "KBC",
+        "BNP Paribas Fortis",
+        "Belfius",
+        "ING Belgium"
+    ]
+},
 
-<div class="bottom">
+AT:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "Erste Bank",
+        "Raiffeisen Bank",
+        "Bank Austria",
+        "BAWAG"
+    ]
+},
 
-<a href="dashboard2.html" class="active">
-<i class="fa-solid fa-house"></i>
-Home
-</a>
+IE:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "AIB",
+        "Bank of Ireland",
+        "Permanent TSB",
+        "Revolut Ireland"
+    ]
+},
 
-<a href="transfer.html">
-<i class="fa-solid fa-paper-plane"></i>
-Transfer
-</a>
+GR:{
+    currency:"EUR",
+    name:"Euro",
+    symbol:"€",
+    rate:0.86,
+    banks:[
+        "National Bank of Greece",
+        "Piraeus Bank",
+        "Alpha Bank",
+        "Eurobank"
+    ]
+},
 
-<a href="history.html">
-<i class="fa-solid fa-file-lines"></i>
-History
-</a>
+SE:{
+    currency:"SEK",
+    name:"Swedish Krona",
+    symbol:"kr",
+    rate:9.5,
+    banks:[
+        "SEB",
+        "Swedbank",
+        "Handelsbanken",
+        "Nordea"
+    ]
+},
 
-<a href="settings.html">
-<i class="fa-solid fa-gear"></i>
-Settings
-</a>
+NO:{
+    currency:"NOK",
+    name:"Norwegian Krone",
+    symbol:"kr",
+    rate:10.5,
+    banks:[
+        "DNB",
+        "Nordea Norway",
+        "SpareBank 1",
+        "Handelsbanken Norway"
+    ]
+},
 
-</div>
+DK:{
+    currency:"DKK",
+    name:"Danish Krone",
+    symbol:"kr",
+    rate:6.4,
+    banks:[
+        "Danske Bank",
+        "Jyske Bank",
+        "Sydbank",
+        "Nordea Denmark"
+    ]
+},
 
+CH:{
+    currency:"CHF",
+    name:"Swiss Franc",
+    symbol:"CHF",
+    rate:0.85,
+    banks:[
+        "UBS",
+        "Credit Suisse",
+        "Zürcher Kantonalbank",
+        "Raiffeisen Switzerland"
+    ]
+},
 
-<script type="module">
+PL:{
+    currency:"PLN",
+    name:"Polish Zloty",
+    symbol:"zł",
+    rate:3.7,
+    banks:[
+        "PKO Bank Polski",
+        "Bank Pekao",
+        "mBank",
+        "Santander Bank Polska"
+    ]
+},
 
-import {
-initializeApp
+CZ:{
+    currency:"CZK",
+    name:"Czech Koruna",
+    symbol:"Kč",
+    rate:21.5,
+    banks:[
+        "Česká spořitelna",
+        "ČSOB",
+        "Komerční banka",
+        "Air Bank"
+    ]
+},
+
+HU:{
+    currency:"HUF",
+    name:"Hungarian Forint",
+    symbol:"Ft",
+    rate:350,
+    banks:[
+        "OTP Bank",
+        "K&H Bank",
+        "Erste Bank Hungary",
+        "UniCredit Hungary"
+    ]
+},
+
+RO:{
+    currency:"RON",
+    name:"Romanian Leu",
+    symbol:"lei",
+    rate:4.4,
+    banks:[
+        "Banca Transilvania",
+        "BRD",
+        "BCR",
+        "Raiffeisen Bank Romania"
+    ]
+},
+
+UA:{
+    currency:"UAH",
+    name:"Ukrainian Hryvnia",
+    symbol:"₴",
+    rate:42,
+    banks:[
+        "PrivatBank",
+        "Oschadbank",
+        "Raiffeisen Bank Ukraine",
+        "PUMB"
+    ]
+},
+
+US:{
+    currency:"USD",
+    name:"US Dollar",
+    symbol:"$",
+    rate:1,
+    banks:[
+        "Bank of America",
+        "Chase",
+        "Wells Fargo",
+        "Citibank",
+        "U.S. Bank",
+        "Capital One"
+    ]
+},
+
+CA:{
+    currency:"CAD",
+    name:"Canadian Dollar",
+    symbol:"C$",
+    rate:1.38,
+    banks:[
+        "RBC",
+        "TD Canada Trust",
+        "Scotiabank",
+        "BMO",
+        "CIBC",
+        "National Bank of Canada"
+    ]
+},
+
+AU:{
+    currency:"AUD",
+    name:"Australian Dollar",
+    symbol:"A$",
+    rate:1.55,
+    banks:[
+        "Commonwealth Bank",
+        "Westpac",
+        "ANZ",
+        "NAB",
+        "Macquarie Bank"
+    ]
+},
+
+NZ:{
+    currency:"NZD",
+    name:"New Zealand Dollar",
+    symbol:"NZ$",
+    rate:1.7,
+    banks:[
+        "ANZ New Zealand",
+        "ASB Bank",
+        "BNZ",
+        "Westpac New Zealand",
+        "Kiwibank"
+    ]
 }
-from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
-import {
-getAuth,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
-import {
-getFirestore,
-collection,
-query,
-where,
-getDocs
-}
-from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-
-const firebaseConfig = {
-
-apiKey:
-"AIzaSyDqpSzFzHDS-zI1gR6oP-wXWqKBfXgcX4w",
-
-authDomain:
-"apex-wallet-2.firebaseapp.com",
-
-projectId:
-"apex-wallet-2",
-
-storageBucket:
-"apex-wallet-2.firebasestorage.app",
-
-messagingSenderId:
-"660772557652",
-
-appId:
-"1:660772557652:web:b9535515388134f8802ec1",
-
-measurementId:
-"G-KEJP4GN5VV"
 
 };
 
+/* ========================================
+   COUNTRY CHANGE
+======================================== */
 
-const app =
-initializeApp(firebaseConfig);
+function countryChanged(){
 
-const auth =
-getAuth(app);
+    const countryCode =
+        document.getElementById("country").value;
 
-const db =
-getFirestore(app);
+    const currency =
+        document.getElementById("currency");
 
+    const bank =
+        document.getElementById("bank");
 
-/* =========================
-   DATE
-========================= */
+    currency.innerHTML =
+        '<option value="">-- Select Currency --</option>';
 
-function getTransactionDate(value){
+    bank.innerHTML =
+        '<option value="">-- Select Bank --</option>';
 
-if(!value){
-return null;
+    if(!countryCode){
+        updateConversion();
+        return;
+    }
+
+    const data = countries[countryCode];
+
+    /* Add currency */
+
+    const option = document.createElement("option");
+
+    option.value = data.currency;
+
+    option.textContent =
+        data.symbol + " " +
+        data.currency + " — " +
+        data.name;
+
+    option.selected = true;
+
+    currency.appendChild(option);
+
+    /* Add banks */
+
+    data.banks.forEach(function(bankName){
+
+        const bankOption =
+            document.createElement("option");
+
+        bankOption.value = bankName;
+
+        bankOption.textContent = bankName;
+
+        bank.appendChild(bankOption);
+
+    });
+
+    updateConversion();
 }
 
-if(
-typeof value === "object" &&
-typeof value.toDate === "function"
-){
+/* ========================================
+   CONVERSION
+======================================== */
 
-return value.toDate();
+function updateConversion(){
 
+    const countryCode =
+        document.getElementById("country").value;
+
+    const amount =
+        parseFloat(
+            document.getElementById("amount").value
+        );
+
+    const rateText =
+        document.getElementById("rateText");
+
+    const receiveText =
+        document.getElementById("receiveText");
+
+    if(!countryCode){
+
+        rateText.textContent =
+            "Select a country and currency";
+
+        receiveText.textContent =
+            "Recipient receives: —";
+
+        return;
+    }
+
+    const data = countries[countryCode];
+
+    rateText.textContent =
+        "Exchange rate: 1 USD = " +
+        data.rate.toLocaleString() +
+        " " +
+        data.currency;
+
+    if(isNaN(amount) || amount <= 0){
+
+        receiveText.textContent =
+            "Recipient receives: —";
+
+        return;
+    }
+
+    const converted =
+        amount * data.rate;
+
+    receiveText.textContent =
+        "Recipient receives: " +
+        data.symbol +
+        converted.toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        ) +
+        " " +
+        data.currency;
 }
 
-if(
-typeof value === "object" &&
-value.seconds !== undefined
-){
+/* ========================================
+   CONTINUE
+======================================== */
 
-return new Date(
-Number(value.seconds) * 1000
-);
+function continueTransfer(){
 
+    const recipient =
+        document.getElementById("recipient").value.trim();
+
+    const account =
+        document.getElementById("account").value.trim();
+
+    const countryCode =
+        document.getElementById("country").value;
+
+    const currency =
+        document.getElementById("currency").value;
+
+    const bank =
+        document.getElementById("bank").value;
+
+    const amount =
+        document.getElementById("amount").value;
+
+    if(
+        !recipient ||
+        !account ||
+        !countryCode ||
+        !currency ||
+        !bank ||
+        !amount
+    ){
+
+        alert("Please complete all transfer details.");
+
+        return;
+    }
+
+    const data = countries[countryCode];
+
+    const converted =
+        parseFloat(amount) * data.rate;
+
+    localStorage.setItem(
+        "recipient",
+        recipient
+    );
+
+    localStorage.setItem(
+        "account",
+        account
+    );
+
+    localStorage.setItem(
+        "bank",
+        bank
+    );
+
+    localStorage.setItem(
+        "country",
+        document.getElementById("country")
+        .selectedOptions[0].text
+    );
+
+    localStorage.setItem(
+        "currency",
+        data.currency
+    );
+
+    localStorage.setItem(
+        "currencyName",
+        data.name
+    );
+
+    localStorage.setItem(
+        "currencySymbol",
+        data.symbol
+    );
+
+    localStorage.setItem(
+        "exchangeRate",
+        data.rate
+    );
+
+    localStorage.setItem(
+        "amount",
+        amount
+    );
+
+    localStorage.setItem(
+        "localAmount",
+        converted
+    );
+
+    window.location.href =
+        "confirm.html";
 }
-
-const date =
-new Date(value);
-
-if(
-!isNaN(date.getTime())
-){
-
-return date;
-
-}
-
-return null;
-
-}
-
-
-/* =========================
-   ESCAPE HTML
-========================= */
-
-function escapeHTML(value){
-
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
-
-onAuthStateChanged(
-auth,
-async(user)=>{
-
-if(!user){
-
-document.getElementById(
-"recentTransactions"
-).innerHTML=`
-<div class="no-transactions">
-Please sign in again.
-</div>
-`;
-
-return;
-
-}
-
-
-/* =========================
-   SAVE LOGIN
-========================= */
-
-localStorage.setItem(
-"loggedIn",
-"true"
-);
-
-localStorage.setItem(
-"userEmail",
-user.email || ""
-);
-
-
-/* =========================
-   FIND USER
-   EMAIL FIRST
-========================= */
-
-let userData=null;
-let userDocumentId=null;
-
-
-/*
-IMPORTANT:
-
-ADMIN.HTML FINDS USERS BY EMAIL.
-
-SO WE ALSO FIND THE USER BY EMAIL
-FIRST.
-
-THIS MAKES SURE DASHBOARD AND ADMIN
-USE THE SAME FIRESTORE DOCUMENT.
-*/
-
-if(user.email){
-
-try{
-
-const usersRef=
-collection(
-db,
-"users"
-);
-
-const emailQuery=
-query(
-usersRef,
-where(
-"email",
-"==",
-user.email
-)
-);
-
-const emailSnapshot=
-await getDocs(
-emailQuery
-);
-
-if(
-!emailSnapshot.empty
-){
-
-const userDocument=
-emailSnapshot.docs[0];
-
-userData=
-userDocument.data();
-
-userDocumentId=
-userDocument.id;
-
-}
-
-}catch(error){
-
-console.error(
-"EMAIL USER SEARCH ERROR:",
-error
-);
-
-}
-
-}
-
-
-/*
-ONLY IF EMAIL SEARCH FINDS NOTHING,
-TRY THE AUTH UID.
-*/
-
-if(
-!userData
-){
-
-try{
-
-const usersRef=
-collection(
-db,
-"users"
-);
-
-const uidQuery=
-query(
-usersRef,
-where(
-"uid",
-"==",
-user.uid
-)
-);
-
-const uidSnapshot=
-await getDocs(
-uidQuery
-);
-
-if(
-!uidSnapshot.empty
-){
-
-const userDocument=
-uidSnapshot.docs[0];
-
-userData=
-userDocument.data();
-
-userDocumentId=
-userDocument.id;
-
-}
-
-}catch(error){
-
-console.error(
-"UID FIELD SEARCH ERROR:",
-error
-);
-
-}
-
-}
-
-
-/*
-FINAL FALLBACK:
-
-Check users/{AUTH UID}
-*/
-
-if(
-!userData
-){
-
-try{
-
-const usersRef=
-collection(
-db,
-"users"
-);
-
-const directQuery=
-query(
-usersRef,
-where(
-"email",
-"==",
-user.email || ""
-)
-);
-
-const directSnapshot=
-await getDocs(
-directQuery
-);
-
-if(
-!directSnapshot.empty
-){
-
-const userDocument=
-directSnapshot.docs[0];
-
-userData=
-userDocument.data();
-
-userDocumentId=
-userDocument.id;
-
-}
-
-}catch(error){
-
-console.error(
-"FINAL USER SEARCH ERROR:",
-error
-);
-
-}
-
-}
-
-
-/* =========================
-   USER NOT FOUND
-========================= */
-
-if(
-!userData ||
-!userDocumentId
-){
-
-document.getElementById(
-"balance"
-).textContent="0.00";
-
-document.getElementById(
-"recentTransactions"
-).innerHTML=`
-<div class="no-transactions">
-Account information could not be found.
-</div>
-`;
-
-return;
-
-}
-
-
-/* =========================
-   NAME
-========================= */
-
-const userName=
-userData.fullname ||
-userData.fullName ||
-userData.name ||
-user.displayName ||
-"User";
-
-
-document.getElementById(
-"welcomeName"
-).textContent=
-userName;
-
-
-document.getElementById(
-"cardHolderName"
-).textContent=
-userName;
-
-
-/* =========================
-   PROFILE PICTURE
-========================= */
-
-if(
-userData.profileImage
-){
-
-const profilePic=
-document.getElementById(
-"profilePic"
-);
-
-profilePic.src=
-userData.profileImage;
-
-profilePic.onerror=
-function(){
-
-this.onerror=null;
-
-this.src=
-"https://i.imgur.com/4Z7bKQp.png";
-
-};
-
-}
-
-
-/* =========================
-   BALANCE
-========================= */
-
-/*
-READ THE BALANCE FROM THE SAME
-USER DOCUMENT THAT ADMIN UPDATES.
-*/
-
-let realBalance=
-Number(
-userData.balance
-);
-
-if(
-isNaN(realBalance)
-){
-
-realBalance=0;
-
-}
-
-const balanceElement=
-document.getElementById(
-"balance"
-);
-
-balanceElement.dataset.realBalance=
-realBalance.toFixed(2);
-
-balanceElement.textContent=
-realBalance.toFixed(2);
-
-
-/* =========================
-   TRANSACTIONS
-========================= */
-
-const recentTransactions=
-document.getElementById(
-"recentTransactions"
-);
-
-const transactionsRef=
-collection(
-db,
-"transactions"
-);
-
-let transactions=[];
-let transactionIds=new Set();
-
-
-/*
-FIRST:
-
-GET TRANSACTIONS USING THE SAME
-USER DOCUMENT ID THAT ADMIN USES.
-*/
-
-try{
-
-const userQuery=
-query(
-transactionsRef,
-where(
-"userId",
-"==",
-userDocumentId
-)
-);
-
-const userSnapshot=
-await getDocs(
-userQuery
-);
-
-userSnapshot.forEach(
-transactionDoc=>{
-
-if(
-!transactionIds.has(
-transactionDoc.id
-)
-){
-
-transactionIds.add(
-transactionDoc.id
-);
-
-transactions.push({
-
-id:transactionDoc.id,
-...transactionDoc.data()
-
-});
-
-}
-
-});
-
-}catch(error){
-
-console.error(
-"DOCUMENT ID TRANSACTION ERROR:",
-error
-);
-
-}
-
-
-/*
-SECOND:
-
-SOME OLD TRANSACTIONS MAY HAVE BEEN
-SAVED USING THE AUTH UID.
-
-CHECK THAT TOO.
-
-IMPORTANT:
-WE DO NOT SEARCH BY EMAIL, SO ADMIN'S
-DUPLICATE TRANSACTION IS NOT INCLUDED.
-*/
-
-if(
-user.uid !== userDocumentId
-){
-
-try{
-
-const uidQuery=
-query(
-transactionsRef,
-where(
-"userId",
-"==",
-user.uid
-)
-);
-
-const uidSnapshot=
-await getDocs(
-uidQuery
-);
-
-uidSnapshot.forEach(
-transactionDoc=>{
-
-if(
-!transactionIds.has(
-transactionDoc.id
-)
-){
-
-transactionIds.add(
-transactionDoc.id
-);
-
-transactions.push({
-
-id:transactionDoc.id,
-...transactionDoc.data()
-
-});
-
-}
-
-});
-
-}catch(error){
-
-console.error(
-"AUTH UID TRANSACTION ERROR:",
-error
-);
-
-}
-
-}
-
-
-/* =========================
-   SORT TRANSACTIONS
-========================= */
-
-transactions.sort(
-(a,b)=>{
-
-const dateA=
-getTransactionDate(
-a.date
-);
-
-const dateB=
-getTransactionDate(
-b.date
-);
-
-const timeA=
-dateA
-?
-dateA.getTime()
-:
-0;
-
-const timeB=
-dateB
-?
-dateB.getTime()
-:
-0;
-
-return timeB-timeA;
-
-}
-);
-
-
-/* =========================
-   DISPLAY
-========================= */
-
-if(
-transactions.length===0
-){
-
-recentTransactions.innerHTML=`
-<div class="no-transactions">
-No recent transactions.
-</div>
-`;
-
-}else{
-
-recentTransactions.innerHTML="";
-
-let displayed=0;
-
-for(
-const transaction of transactions
-){
-
-if(
-displayed>=5
-){
-break;
-}
-
-
-const rawType=
-String(
-transaction.type ||
-transaction.transactionType ||
-""
-)
-.toLowerCase()
-.trim();
-
-
-let received=false;
-let sent=false;
-
-
-if(
-rawType==="money received" ||
-rawType==="credit" ||
-rawType==="received"
-){
-
-received=true;
-
-}
-
-
-if(
-rawType==="money sent" ||
-rawType==="debit" ||
-rawType==="transfer" ||
-rawType==="sent"
-){
-
-sent=true;
-
-}
-
-
-if(
-!received &&
-!sent
-){
-
-continue;
-
-}
-
-
-const amount=
-Math.abs(
-Number(
-transaction.amount || 0
-)
-);
-
-
-const formattedAmount=
-amount.toLocaleString(
-"en-US",
-{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}
-);
-
-
-const dateObject=
-getTransactionDate(
-transaction.date
-);
-
-
-let formattedDate=
-"Date unavailable";
-
-
-if(
-dateObject
-){
-
-formattedDate=
-dateObject.toLocaleDateString(
-"en-US",
-{
-month:"short",
-day:"numeric",
-year:"numeric"
-}
-);
-
-}
-
-
-const row=
-document.createElement(
-"div"
-);
-
-row.className=
-"transaction-row";
-
-
-row.innerHTML=`
-
-<div class="transaction-type ${
-received
-?
-"credit"
-:
-"debit"
-}">
-${received ? "Credit" : "Debit"}
-</div>
-
-<div class="transaction-description">
-${received ? "Money Received" : "Money Sent"}
-</div>
-
-<div class="transaction-amount ${
-received
-?
-"credit"
-:
-"debit"
-}">
-${received ? "+" : "-"}$${formattedAmount}
-</div>
-
-<div class="transaction-date">
-${escapeHTML(formattedDate)}
-</div>
-
-`;
-
-
-recentTransactions.appendChild(
-row
-);
-
-displayed++;
-
-}
-
-
-if(
-displayed===0
-){
-
-recentTransactions.innerHTML=`
-<div class="no-transactions">
-No recent transactions.
-</div>
-`;
-
-}
-
-}
-
-});
-
-
-/* =========================
-   BALANCE EYE
-========================= */
-
-let balanceVisible=true;
-
-
-function toggleBalance(){
-
-const balance=
-document.getElementById(
-"balance"
-);
-
-const eyeIcon=
-document.getElementById(
-"eyeIcon"
-);
-
-
-if(
-balanceVisible
-){
-
-balance.dataset.realBalance=
-balance.textContent;
-
-balance.textContent=
-"****";
-
-eyeIcon.className=
-"fa-solid fa-eye-slash";
-
-balanceVisible=false;
-
-}else{
-
-balance.textContent=
-balance.dataset.realBalance ||
-"0.00";
-
-eyeIcon.className=
-"fa-solid fa-eye";
-
-balanceVisible=true;
-
-}
-
-}
-
-
-window.toggleBalance=
-toggleBalance;
 
 </script>
 
