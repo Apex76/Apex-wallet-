@@ -718,7 +718,7 @@ getFirestore(app);
 
 
 /* ================================
-   DATE HELPER
+   DATE
 ================================ */
 
 function getTransactionDate(value){
@@ -731,22 +731,28 @@ if(
 typeof value === "object" &&
 typeof value.toDate === "function"
 ){
+
 return value.toDate();
+
 }
 
 if(
 typeof value === "object" &&
 value.seconds !== undefined
 ){
+
 return new Date(
 Number(value.seconds) * 1000
 );
+
 }
 
 const date = new Date(value);
 
 if(!isNaN(date.getTime())){
+
 return date;
+
 }
 
 return null;
@@ -755,7 +761,7 @@ return null;
 
 
 /* ================================
-   ESCAPE HTML
+   ESCAPE
 ================================ */
 
 function escapeHTML(value){
@@ -792,6 +798,7 @@ return;
 
 }
 
+
 localStorage.setItem(
 "loggedIn",
 "true"
@@ -804,7 +811,7 @@ user.email || ""
 
 
 /* ================================
-   FIND THE REAL USER DOCUMENT
+   FIND USER DOCUMENT
 ================================ */
 
 let userData = null;
@@ -812,36 +819,36 @@ let userDocumentId = null;
 
 
 /*
-FIRST:
-Try Firebase Auth UID as Firestore document ID.
+FIRST TRY:
+users/{AUTH UID}
 */
 
 try{
 
-const uidRef =
+const uidDocument =
 doc(
 db,
 "users",
 user.uid
 );
 
-const uidSnap =
-await getDoc(uidRef);
+const uidSnapshot =
+await getDoc(uidDocument);
 
-if(uidSnap.exists()){
+if(uidSnapshot.exists()){
 
 userData =
-uidSnap.data();
+uidSnapshot.data();
 
 userDocumentId =
-uidSnap.id;
+uidSnapshot.id;
 
 }
 
 }catch(error){
 
 console.error(
-"USER UID ERROR:",
+"UID USER LOOKUP ERROR:",
 error
 );
 
@@ -849,17 +856,25 @@ error
 
 
 /*
-SECOND:
-If UID document was not found,
-find the user's document by email.
+SECOND TRY:
+Find user by email.
+
+This gives us the actual Firestore
+document ID used by admin.html.
 */
 
-if(!userData && user.email){
+if(
+!userData &&
+user.email
+){
 
 try{
 
 const usersRef =
-collection(db,"users");
+collection(
+db,
+"users"
+);
 
 const emailQuery =
 query(
@@ -871,26 +886,30 @@ user.email
 )
 );
 
-const emailSnap =
-await getDocs(emailQuery);
+const emailSnapshot =
+await getDocs(
+emailQuery
+);
 
-if(!emailSnap.empty){
+if(
+!emailSnapshot.empty
+){
 
-const userDoc =
-emailSnap.docs[0];
+const userDocument =
+emailSnapshot.docs[0];
 
 userData =
-userDoc.data();
+userDocument.data();
 
 userDocumentId =
-userDoc.id;
+userDocument.id;
 
 }
 
 }catch(error){
 
 console.error(
-"USER EMAIL ERROR:",
+"EMAIL USER LOOKUP ERROR:",
 error
 );
 
@@ -900,11 +919,15 @@ error
 
 
 /*
-If the user document cannot be found,
-stop safely.
+If user still cannot be found,
+show an actual error instead of
+silently pretending the balance is 0.
 */
 
-if(!userData || !userDocumentId){
+if(
+!userData ||
+!userDocumentId
+){
 
 document.getElementById(
 "balance"
@@ -915,7 +938,7 @@ document.getElementById(
 "recentTransactions"
 ).innerHTML = `
 <div class="no-transactions">
-Unable to load account information.
+Account information could not be found.
 </div>
 `;
 
@@ -933,9 +956,6 @@ userData.fullname ||
 userData.fullName ||
 userData.name ||
 user.displayName ||
-localStorage.getItem("fullname") ||
-localStorage.getItem("fullName") ||
-localStorage.getItem("name") ||
 "User";
 
 
@@ -981,28 +1001,25 @@ this.src =
 
 
 /* ================================
-   LOAD REAL ACCOUNT BALANCE
+   BALANCE
 ================================ */
 
 /*
 IMPORTANT:
 
-admin.html already updates:
-
-users/{userDocumentId}.balance
-
-So we use that value directly.
-
-We DO NOT calculate the balance
+The balance is NOT calculated
 from transactions.
+
+We read the balance stored
+inside this exact user's
+Firestore document.
 */
 
-let realBalance = Number(
-userData.balance ??
-userData.currentBalance ??
-userData.accountBalance ??
-0
+let realBalance =
+Number(
+userData.balance
 );
+
 
 if(
 isNaN(realBalance)
@@ -1014,7 +1031,9 @@ realBalance = 0;
 
 
 const balanceElement =
-document.getElementById("balance");
+document.getElementById(
+"balance"
+);
 
 
 balanceElement.textContent =
@@ -1026,7 +1045,7 @@ realBalance.toFixed(2);
 
 
 /* ================================
-   LOAD USER TRANSACTIONS
+   LOAD TRANSACTIONS
 ================================ */
 
 const recentTransactions =
@@ -1037,30 +1056,21 @@ document.getElementById(
 let transactions = [];
 
 
+/*
+FIRST:
+Use the exact Firestore user
+document ID.
+*/
+
 try{
 
 const transactionsRef =
-collection(db,"transactions");
+collection(
+db,
+"transactions"
+);
 
-
-/*
-CRITICAL FIX:
-
-Use the actual Firestore USER
-DOCUMENT ID.
-
-NOT user.email.
-
-NOT receiverEmail.
-
-NOT the admin transaction.
-
-This means the user's dashboard
-only receives the transaction
-created for that user.
-*/
-
-const userTransactionQuery =
+const userQuery =
 query(
 transactionsRef,
 where(
@@ -1070,19 +1080,19 @@ userDocumentId
 )
 );
 
-
-const snapshot =
+const userSnapshot =
 await getDocs(
-userTransactionQuery
+userQuery
 );
 
 
-snapshot.forEach(
+userSnapshot.forEach(
 transactionDoc => {
 
 transactions.push({
 
-id:transactionDoc.id,
+id:
+transactionDoc.id,
 
 ...transactionDoc.data()
 
@@ -1090,23 +1100,113 @@ id:transactionDoc.id,
 
 });
 
+}catch(error){
+
+console.error(
+"USER TRANSACTION ERROR:",
+error
+);
+
+}
+
+
+/*
+If no records were found and the
+Firestore document ID is different
+from the Auth UID, try the Auth UID
+as a second identifier.
+
+This does NOT use email, so the
+admin's duplicate record cannot
+be pulled into the user's list.
+*/
+
+if(
+transactions.length === 0 &&
+userDocumentId !== user.uid
+){
+
+try{
+
+const transactionsRef =
+collection(
+db,
+"transactions"
+);
+
+const uidQuery =
+query(
+transactionsRef,
+where(
+"userId",
+"==",
+user.uid
+)
+);
+
+const uidSnapshot =
+await getDocs(
+uidQuery
+);
+
+
+uidSnapshot.forEach(
+transactionDoc => {
+
+transactions.push({
+
+id:
+transactionDoc.id,
+
+...transactionDoc.data()
+
+});
+
+});
 
 }catch(error){
 
 console.error(
-"TRANSACTIONS ERROR:",
+"AUTH UID TRANSACTION ERROR:",
 error
 );
 
-recentTransactions.innerHTML = `
-<div class="no-transactions">
-Unable to load transactions.
-</div>
-`;
-
-return;
+}
 
 }
+
+
+/* ================================
+   REMOVE DUPLICATE DOCUMENTS
+================================ */
+
+const uniqueTransactions = [];
+
+const seenIds = new Set();
+
+
+transactions.forEach(
+transaction => {
+
+if(
+!seenIds.has(transaction.id)
+){
+
+seenIds.add(
+transaction.id
+);
+
+uniqueTransactions.push(
+transaction
+);
+
+}
+
+});
+
+
+transactions =
+uniqueTransactions;
 
 
 /* ================================
@@ -1117,10 +1217,14 @@ transactions.sort(
 (a,b) => {
 
 const dateA =
-getTransactionDate(a.date);
+getTransactionDate(
+a.date
+);
 
 const dateB =
-getTransactionDate(b.date);
+getTransactionDate(
+b.date
+);
 
 const timeA =
 dateA
@@ -1143,7 +1247,7 @@ return timeB - timeA;
 
 
 /* ================================
-   NO TRANSACTIONS
+   DISPLAY TRANSACTIONS
 ================================ */
 
 if(
@@ -1161,10 +1265,6 @@ return;
 }
 
 
-/* ================================
-   DISPLAY TRANSACTIONS
-================================ */
-
 recentTransactions.innerHTML = "";
 
 
@@ -1173,44 +1273,45 @@ transactions
 .forEach(
 transaction => {
 
-const row =
-document.createElement("div");
-
-row.className =
-"transaction-row";
-
-
 const rawType =
 String(
 transaction.type ||
 transaction.transactionType ||
 ""
-).toLowerCase()
+)
+.toLowerCase()
 .trim();
 
 
 /*
-USER TRANSACTION RECORDS:
-
 Money Received = CREDIT
 Money Sent = DEBIT
 */
 
-const received =
+let received = false;
+let sent = false;
+
+
+if(
 rawType === "money received" ||
-rawType === "credit";
+rawType === "credit"
+){
+
+received = true;
+
+}
 
 
-const sent =
+if(
 rawType === "money sent" ||
 rawType === "debit" ||
-rawType === "transfer";
+rawType === "transfer"
+){
 
+sent = true;
 
-/*
-If it is not a known transaction,
-skip it.
-*/
+}
+
 
 if(
 !received &&
@@ -1220,6 +1321,15 @@ if(
 return;
 
 }
+
+
+const row =
+document.createElement(
+"div"
+);
+
+row.className =
+"transaction-row";
 
 
 const displayType =
@@ -1316,7 +1426,9 @@ ${amountText}
 </div>
 
 <div class="transaction-date">
-${escapeHTML(formattedDate)}
+${escapeHTML(
+formattedDate
+)}
 </div>
 
 `;
@@ -1330,7 +1442,8 @@ row
 
 
 /*
-If all records were unknown types.
+If records existed but none had
+a recognized type.
 */
 
 if(
@@ -1358,10 +1471,14 @@ let balanceVisible = true;
 function toggleBalance(){
 
 const balance =
-document.getElementById("balance");
+document.getElementById(
+"balance"
+);
 
 const eyeIcon =
-document.getElementById("eyeIcon");
+document.getElementById(
+"eyeIcon"
+);
 
 
 if(balanceVisible){
@@ -1391,6 +1508,7 @@ balanceVisible = true;
 }
 
 }
+
 
 window.toggleBalance =
 toggleBalance;
