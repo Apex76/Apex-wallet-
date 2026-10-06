@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Admin Dashboard</title>
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -85,8 +87,23 @@ opacity:.6;
 cursor:not-allowed;
 }
 
+.logout{
+background:#777;
+margin-top:10px;
+}
+
 #message{
 margin-top:15px;
+text-align:center;
+font-weight:bold;
+line-height:1.5;
+}
+
+.admin-status{
+background:#eef5ff;
+padding:12px;
+border-radius:10px;
+margin-bottom:20px;
 text-align:center;
 font-weight:bold;
 }
@@ -109,6 +126,7 @@ color:#003366;
 .receipt-row{
 display:flex;
 justify-content:space-between;
+gap:15px;
 padding:9px 0;
 border-bottom:1px solid #eee;
 }
@@ -124,7 +142,13 @@ font-weight:bold;
 .receipt button{
 margin-top:15px;
 }
+
+#transferSection{
+display:none;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -135,7 +159,55 @@ ADMIN DASHBOARD
 
 <div class="container">
 
+
+<!-- =========================
+     ADMIN LOGIN
+========================= -->
+
+<div class="card" id="loginSection">
+
+<h3>Admin Sign In</h3>
+
+<br>
+
+<label>Admin Email</label>
+
+<input
+type="email"
+id="adminEmail"
+placeholder="Enter admin email"
+autocomplete="email"
+>
+
+<label>Admin Password</label>
+
+<input
+type="password"
+id="adminPassword"
+placeholder="Enter admin password"
+autocomplete="current-password"
+>
+
+<button id="loginBtn">
+Sign In
+</button>
+
+<div id="loginMessage"></div>
+
+</div>
+
+
+<!-- =========================
+     TRANSFER SECTION
+========================= -->
+
+<div id="transferSection">
+
 <div class="card">
+
+<div class="admin-status" id="adminStatus">
+Admin authenticated
+</div>
 
 <h3>Admin Balance</h3>
 
@@ -143,14 +215,15 @@ ADMIN DASHBOARD
 $999,999,999
 </div>
 
+
 <label>Sender Name</label>
 
 <input
 type="text"
 id="senderName"
 placeholder="Enter sender name"
-required
 >
+
 
 <label>User Email</label>
 
@@ -158,8 +231,8 @@ required
 type="email"
 id="userEmail"
 placeholder="Enter user's email"
-required
 >
+
 
 <label>Amount</label>
 
@@ -169,8 +242,8 @@ id="amount"
 placeholder="Amount (USD)"
 min="0"
 step="0.01"
-required
 >
+
 
 <label>Action</label>
 
@@ -185,6 +258,7 @@ Debit User
 </option>
 
 </select>
+
 
 <label>Transaction Status</label>
 
@@ -203,6 +277,7 @@ Declined
 </option>
 
 </select>
+
 
 <button id="transferBtn">
 Transfer Money
@@ -223,64 +298,97 @@ Transfer Money
 TRANSACTION RECEIPT
 </p>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 Transaction ID
 </span>
 
 <span id="receiptId"></span>
+
 </div>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 From
 </span>
 
 <span id="receiptSender"></span>
+
 </div>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 To
 </span>
 
 <span id="receiptReceiver"></span>
+
 </div>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 Amount
 </span>
 
 <span id="receiptAmount"></span>
+
 </div>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 Type
 </span>
 
 <span id="receiptType"></span>
+
 </div>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 Status
 </span>
 
 <span id="receiptStatus"></span>
+
 </div>
 
+
 <div class="receipt-row">
+
 <span class="receipt-label">
 Date
 </span>
 
 <span id="receiptDate"></span>
+
 </div>
+
 
 <button onclick="window.print()">
 Print Receipt
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<button class="logout" id="logoutBtn">
+Sign Out
 </button>
 
 </div>
@@ -291,6 +399,7 @@ Print Receipt
 
 
 <script type="module">
+
 
 import {
 initializeApp
@@ -311,9 +420,15 @@ setDoc
 
 import {
 getAuth,
-onAuthStateChanged
+signInWithEmailAndPassword,
+onAuthStateChanged,
+signOut
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
 
 const firebaseConfig = {
 
@@ -341,35 +456,51 @@ measurementId:
 };
 
 
+/* =========================
+   INITIALIZE FIREBASE
+========================= */
+
 const app =
 initializeApp(firebaseConfig);
 
-
 const db =
 getFirestore(app);
-
 
 const auth =
 getAuth(app);
 
 
-const transferBtn =
-document.getElementById(
-"transferBtn"
-);
+/* =========================
+   ELEMENTS
+========================= */
 
+const loginSection =
+document.getElementById("loginSection");
+
+const transferSection =
+document.getElementById("transferSection");
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+const loginMessage =
+document.getElementById("loginMessage");
 
 const message =
-document.getElementById(
-"message"
-);
+document.getElementById("message");
 
+const transferBtn =
+document.getElementById("transferBtn");
 
-let currentAdmin = null;
+const adminStatus =
+document.getElementById("adminStatus");
 
 
 /* =========================
-   CHECK LOGIN
+   AUTH STATE
 ========================= */
 
 onAuthStateChanged(
@@ -378,28 +509,139 @@ auth,
 
 if(user){
 
-currentAdmin = user;
+loginSection.style.display =
+"none";
 
-message.textContent =
-"Admin authenticated.";
+transferSection.style.display =
+"block";
 
-message.style.color =
+adminStatus.textContent =
+"Admin signed in: " +
+(user.email || "");
+
+adminStatus.style.color =
 "green";
 
 }else{
 
-currentAdmin = null;
+loginSection.style.display =
+"block";
 
-message.textContent =
-"Please sign in before making a transfer.";
+transferSection.style.display =
+"none";
 
-message.style.color =
+}
+
+});
+
+
+/* =========================
+   ADMIN LOGIN
+========================= */
+
+loginBtn.addEventListener(
+"click",
+async () => {
+
+const email =
+document.getElementById(
+"adminEmail"
+).value.trim();
+
+const password =
+document.getElementById(
+"adminPassword"
+).value;
+
+
+loginMessage.textContent =
+"";
+
+
+if(!email){
+
+loginMessage.textContent =
+"Enter your admin email.";
+
+loginMessage.style.color =
 "red";
 
-}
+return;
 
 }
+
+
+if(!password){
+
+loginMessage.textContent =
+"Enter your admin password.";
+
+loginMessage.style.color =
+"red";
+
+return;
+
+}
+
+
+loginBtn.disabled =
+true;
+
+loginBtn.textContent =
+"Signing In...";
+
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
 );
+
+
+loginMessage.textContent =
+"Admin signed in successfully.";
+
+loginMessage.style.color =
+"green";
+
+
+}catch(error){
+
+console.error(error);
+
+loginMessage.textContent =
+"Sign in failed: " +
+error.message;
+
+loginMessage.style.color =
+"red";
+
+}finally{
+
+loginBtn.disabled =
+false;
+
+loginBtn.textContent =
+"Sign In";
+
+}
+
+});
+
+
+/* =========================
+   ADMIN LOGOUT
+========================= */
+
+logoutBtn.addEventListener(
+"click",
+async () => {
+
+await signOut(auth);
+
+});
 
 
 /* =========================
@@ -410,7 +652,14 @@ transferBtn.addEventListener(
 "click",
 async () => {
 
-message.textContent = "";
+
+message.textContent =
+"";
+
+
+message.style.color =
+"";
+
 
 document.getElementById(
 "receipt"
@@ -418,10 +667,14 @@ document.getElementById(
 "none";
 
 
+const currentAdmin =
+auth.currentUser;
+
+
 if(!currentAdmin){
 
 message.textContent =
-"Transfer failed: Admin is not signed in.";
+"Please sign in as admin first.";
 
 message.style.color =
 "red";
@@ -462,6 +715,10 @@ document.getElementById(
 "status"
 ).value;
 
+
+/* =========================
+   VALIDATION
+========================= */
 
 if(!senderName){
 
@@ -511,8 +768,16 @@ transferBtn.textContent =
 
 try{
 
+
+/* =========================
+   FIND USER
+========================= */
+
 const usersRef =
-collection(db,"users");
+collection(
+db,
+"users"
+);
 
 
 const userQuery =
@@ -563,10 +828,9 @@ let newBalance =
 currentBalance;
 
 
-/*
-ONLY COMPLETED
-TRANSACTIONS CHANGE BALANCE
-*/
+/* =========================
+   UPDATE BALANCE
+========================= */
 
 if(status === "Completed"){
 
@@ -596,22 +860,26 @@ currentBalance - amount;
 
 
 await updateDoc(
+
 doc(
 db,
 "users",
 userDoc.id
 ),
+
 {
-balance:newBalance
+balance:
+newBalance
 }
+
 );
 
 }
 
 
-/*
-CREATE TRANSACTION
-*/
+/* =========================
+   CREATE TRANSACTION
+========================= */
 
 const transactionRef =
 doc(
@@ -630,12 +898,20 @@ const date =
 new Date().toISOString();
 
 
-/*
-USER TRANSACTION
-*/
+const receiverName =
+userData.fullName ||
+userData.name ||
+email;
+
+
+/* =========================
+   USER HISTORY
+========================= */
 
 await setDoc(
+
 transactionRef,
+
 {
 
 transactionId:
@@ -657,9 +933,7 @@ senderName:
 senderName,
 
 receiverName:
-userData.fullName ||
-userData.name ||
-email,
+receiverName,
 
 amount:
 amount,
@@ -676,83 +950,24 @@ date:
 date
 
 }
+
 );
 
 
-/*
-ADMIN TRANSACTION
-*/
-
-const adminHistoryRef =
-doc(
-collection(
-db,
-"transactions"
-)
-);
-
-
-await setDoc(
-adminHistoryRef,
-{
-
-transactionId:
-transactionId,
-
-userId:
-"admin",
-
-adminId:
-currentAdmin.uid,
-
-userEmail:
-email,
-
-senderId:
-currentAdmin.uid,
-
-senderEmail:
-currentAdmin.email || "",
-
-senderName:
-senderName,
-
-receiverName:
-userData.fullName ||
-userData.name ||
-email,
-
-amount:
-amount,
-
-type:
-action === "credit"
-? "Money Sent"
-: "Money Received",
-
-status:
-status,
-
-date:
-date
-
-}
-);
-
-
-/*
-SUCCESS MESSAGE
-*/
+/* =========================
+   SUCCESS
+========================= */
 
 if(status === "Completed"){
 
 message.textContent =
-`Transfer successful. User balance is now $${newBalance.toLocaleString(
+"Transfer successful. User balance is now $" +
+newBalance.toLocaleString(
 "en-US",
 {
 minimumFractionDigits:2
 }
-)}`;
+);
 
 message.style.color =
 "green";
@@ -776,9 +991,9 @@ message.style.color =
 }
 
 
-/*
-SHOW RECEIPT
-*/
+/* =========================
+   RECEIPT
+========================= */
 
 document.getElementById(
 "receiptId"
@@ -795,9 +1010,7 @@ senderName;
 document.getElementById(
 "receiptReceiver"
 ).textContent =
-userData.fullName ||
-userData.name ||
-email;
+receiverName;
 
 
 document.getElementById(
@@ -816,8 +1029,8 @@ document.getElementById(
 "receiptType"
 ).textContent =
 action === "credit"
-? "Money Sent"
-: "Money Received";
+? "Money Received"
+: "Money Sent";
 
 
 document.getElementById(
@@ -838,15 +1051,14 @@ document.getElementById(
 "block";
 
 
-/*
-CLEAR FORM
-*/
+/* =========================
+   CLEAR FORM
+========================= */
 
 document.getElementById(
 "amount"
 ).value =
 "";
-
 
 document.getElementById(
 "senderName"
@@ -865,6 +1077,7 @@ error.message;
 message.style.color =
 "red";
 
+
 }finally{
 
 transferBtn.disabled =
@@ -876,6 +1089,7 @@ transferBtn.textContent =
 }
 
 });
+
 
 </script>
 
