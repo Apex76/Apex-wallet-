@@ -104,7 +104,7 @@ button:hover{
 <div class="container">
 
     <p>
-        Please enter your COT Code to complete this transfer.
+        Please enter your COT Code to continue this virtual transfer.
     </p>
 
     <input
@@ -118,8 +118,8 @@ button:hover{
         Need assistance with your COT code?<br>
         Please contact Customer Care on WhatsApp.<br>
 
-        <a href="https://wa.me/447752785987" target="_blank">
-            +44 7752 785987
+        <a href="https://wa.me/447402221007" target="_blank">
+            +44 7402 221007
         </a>
     </p>
 
@@ -131,14 +131,20 @@ button:hover{
 
 <script>
 function verifyCOT(){
-    const cotCode = document.getElementById("cotCode").value.trim();
+
+    const cotCode =
+        document.getElementById("cotCode").value.trim();
 
     if(cotCode === ""){
+
         alert("Please enter your COT Code.");
+
         return;
     }
 
-    alert("Invalid COT Code. Please contact your account officer.");
+    alert(
+        "Invalid COT Code. Please contact Customer Care."
+    );
 }
 </script>
 
